@@ -32,7 +32,3 @@
 [[constraint]]
   name = "github.com/volatiletech/null"
   version = "8.0.0"
-
-[[constraint]]
-  name = "github.com/json-iterator/go"
-  version = "1.1.5"
