@@ -243,11 +243,6 @@ func AddStreetHook(hookPoint boil.HookPoint, streetHook StreetHook) {
 	}
 }
 
-// OneG returns a single street record from the query using the global executor.
-func (q streetQuery) OneG(ctx context.Context) (*Street, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single street record from the query.
 func (q streetQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Street, error) {
 	o := &Street{}
@@ -267,11 +262,6 @@ func (q streetQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Stree
 	}
 
 	return o, nil
-}
-
-// AllG returns all Street records from the query using the global executor.
-func (q streetQuery) AllG(ctx context.Context) (StreetSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Street records from the query.
@@ -294,11 +284,6 @@ func (q streetQuery) All(ctx context.Context, exec boil.ContextExecutor) (Street
 	return o, nil
 }
 
-// CountG returns the count of all Street records in the query, and panics on error.
-func (q streetQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Street records in the query.
 func (q streetQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -312,11 +297,6 @@ func (q streetQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q streetQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -773,14 +753,6 @@ func (streetL) LoadAddresses(ctx context.Context, e boil.ContextExecutor, singul
 	return nil
 }
 
-// SetSuburbG of the street to the related item.
-// Sets o.R.Suburb to related.
-// Adds o to related.R.Streets.
-// Uses the global database handle.
-func (o *Street) SetSuburbG(ctx context.Context, insert bool, related *Suburb) error {
-	return o.SetSuburb(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetSuburb of the street to the related item.
 // Sets o.R.Suburb to related.
 // Adds o to related.R.Streets.
@@ -826,14 +798,6 @@ func (o *Street) SetSuburb(ctx context.Context, exec boil.ContextExecutor, inser
 	}
 
 	return nil
-}
-
-// SetStreetTypeG of the street to the related item.
-// Sets o.R.StreetType to related.
-// Adds o to related.R.Streets.
-// Uses the global database handle.
-func (o *Street) SetStreetTypeG(ctx context.Context, insert bool, related *StreetType) error {
-	return o.SetStreetType(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetStreetType of the street to the related item.
@@ -883,14 +847,6 @@ func (o *Street) SetStreetType(ctx context.Context, exec boil.ContextExecutor, i
 	return nil
 }
 
-// SetStreetNameG of the street to the related item.
-// Sets o.R.StreetName to related.
-// Adds o to related.R.Streets.
-// Uses the global database handle.
-func (o *Street) SetStreetNameG(ctx context.Context, insert bool, related *StreetName) error {
-	return o.SetStreetName(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetStreetName of the street to the related item.
 // Sets o.R.StreetName to related.
 // Adds o to related.R.Streets.
@@ -936,15 +892,6 @@ func (o *Street) SetStreetName(ctx context.Context, exec boil.ContextExecutor, i
 	}
 
 	return nil
-}
-
-// AddAddressesG adds the given related objects to the existing relationships
-// of the street, optionally inserting them as new records.
-// Appends related to o.R.Addresses.
-// Sets related.R.Street appropriately.
-// Uses the global database handle.
-func (o *Street) AddAddressesG(ctx context.Context, insert bool, related ...*Address) error {
-	return o.AddAddresses(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddAddresses adds the given related objects to the existing relationships
@@ -1006,11 +953,6 @@ func Streets(mods ...qm.QueryMod) streetQuery {
 	return streetQuery{NewQuery(mods...)}
 }
 
-// FindStreetG retrieves a single record by ID.
-func FindStreetG(ctx context.Context, streetID int64, selectCols ...string) (*Street, error) {
-	return FindStreet(ctx, boil.GetContextDB(), streetID, selectCols...)
-}
-
 // FindStreet retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindStreet(ctx context.Context, exec boil.ContextExecutor, streetID int64, selectCols ...string) (*Street, error) {
@@ -1035,11 +977,6 @@ func FindStreet(ctx context.Context, exec boil.ContextExecutor, streetID int64, 
 	}
 
 	return streetObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Street) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1118,12 +1055,6 @@ func (o *Street) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Street record using the global executor.
-// See Update for more documentation.
-func (o *Street) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Street.
@@ -1206,11 +1137,6 @@ func (q streetQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o StreetSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o StreetSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1257,11 +1183,6 @@ func (o StreetSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all street")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Street) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1379,12 +1300,6 @@ func (o *Street) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Street record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Street) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Street record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Street) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1442,11 +1357,6 @@ func (q streetQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o StreetSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o StreetSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1500,15 +1410,6 @@ func (o StreetSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Street) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Street provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Street) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1519,16 +1420,6 @@ func (o *Street) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *StreetSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty StreetSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1558,11 +1449,6 @@ func (o *StreetSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 	*o = slice
 
 	return nil
-}
-
-// StreetExistsG checks if the Street row exists.
-func StreetExistsG(ctx context.Context, streetID int64) (bool, error) {
-	return StreetExists(ctx, boil.GetContextDB(), streetID)
 }
 
 // StreetExists checks if the Street row exists.

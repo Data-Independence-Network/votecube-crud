@@ -255,11 +255,6 @@ func AddMessageHook(hookPoint boil.HookPoint, messageHook MessageHook) {
 	}
 }
 
-// OneG returns a single message record from the query using the global executor.
-func (q messageQuery) OneG(ctx context.Context) (*Message, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single message record from the query.
 func (q messageQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Message, error) {
 	o := &Message{}
@@ -279,11 +274,6 @@ func (q messageQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Mess
 	}
 
 	return o, nil
-}
-
-// AllG returns all Message records from the query using the global executor.
-func (q messageQuery) AllG(ctx context.Context) (MessageSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Message records from the query.
@@ -306,11 +296,6 @@ func (q messageQuery) All(ctx context.Context, exec boil.ContextExecutor) (Messa
 	return o, nil
 }
 
-// CountG returns the count of all Message records in the query, and panics on error.
-func (q messageQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Message records in the query.
 func (q messageQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -324,11 +309,6 @@ func (q messageQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q messageQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -896,14 +876,6 @@ func (messageL) LoadPollsMessages(ctx context.Context, e boil.ContextExecutor, s
 	return nil
 }
 
-// SetUserAccountG of the message to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Messages.
-// Uses the global database handle.
-func (o *Message) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the message to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Messages.
@@ -951,14 +923,6 @@ func (o *Message) SetUserAccount(ctx context.Context, exec boil.ContextExecutor,
 	return nil
 }
 
-// SetParentMessageG of the message to the related item.
-// Sets o.R.ParentMessage to related.
-// Adds o to related.R.ParentMessageMessage.
-// Uses the global database handle.
-func (o *Message) SetParentMessageG(ctx context.Context, insert bool, related *Message) error {
-	return o.SetParentMessage(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetParentMessage of the message to the related item.
 // Sets o.R.ParentMessage to related.
 // Adds o to related.R.ParentMessageMessage.
@@ -1004,14 +968,6 @@ func (o *Message) SetParentMessage(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return nil
-}
-
-// SetParentMessageMessageG of the message to the related item.
-// Sets o.R.ParentMessageMessage to related.
-// Adds o to related.R.ParentMessage.
-// Uses the global database handle.
-func (o *Message) SetParentMessageMessageG(ctx context.Context, insert bool, related *Message) error {
-	return o.SetParentMessageMessage(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetParentMessageMessage of the message to the related item.
@@ -1065,15 +1021,6 @@ func (o *Message) SetParentMessageMessage(ctx context.Context, exec boil.Context
 	return nil
 }
 
-// AddMessagesLinksG adds the given related objects to the existing relationships
-// of the message, optionally inserting them as new records.
-// Appends related to o.R.MessagesLinks.
-// Sets related.R.Message appropriately.
-// Uses the global database handle.
-func (o *Message) AddMessagesLinksG(ctx context.Context, insert bool, related ...*MessagesLink) error {
-	return o.AddMessagesLinks(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddMessagesLinks adds the given related objects to the existing relationships
 // of the message, optionally inserting them as new records.
 // Appends related to o.R.MessagesLinks.
@@ -1125,15 +1072,6 @@ func (o *Message) AddMessagesLinks(ctx context.Context, exec boil.ContextExecuto
 		}
 	}
 	return nil
-}
-
-// AddPollsMessagesG adds the given related objects to the existing relationships
-// of the message, optionally inserting them as new records.
-// Appends related to o.R.PollsMessages.
-// Sets related.R.Message appropriately.
-// Uses the global database handle.
-func (o *Message) AddPollsMessagesG(ctx context.Context, insert bool, related ...*PollsMessage) error {
-	return o.AddPollsMessages(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsMessages adds the given related objects to the existing relationships
@@ -1195,11 +1133,6 @@ func Messages(mods ...qm.QueryMod) messageQuery {
 	return messageQuery{NewQuery(mods...)}
 }
 
-// FindMessageG retrieves a single record by ID.
-func FindMessageG(ctx context.Context, messageID int64, selectCols ...string) (*Message, error) {
-	return FindMessage(ctx, boil.GetContextDB(), messageID, selectCols...)
-}
-
 // FindMessage retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindMessage(ctx context.Context, exec boil.ContextExecutor, messageID int64, selectCols ...string) (*Message, error) {
@@ -1224,11 +1157,6 @@ func FindMessage(ctx context.Context, exec boil.ContextExecutor, messageID int64
 	}
 
 	return messageObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Message) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1314,12 +1242,6 @@ func (o *Message) Insert(ctx context.Context, exec boil.ContextExecutor, columns
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Message record using the global executor.
-// See Update for more documentation.
-func (o *Message) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Message.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1400,11 +1322,6 @@ func (q messageQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o MessageSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o MessageSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1451,11 +1368,6 @@ func (o MessageSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all message")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Message) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1578,12 +1490,6 @@ func (o *Message) Upsert(ctx context.Context, exec boil.ContextExecutor, updateO
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Message record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Message) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Message record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Message) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1641,11 +1547,6 @@ func (q messageQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) 
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o MessageSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o MessageSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1699,15 +1600,6 @@ func (o MessageSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) 
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Message) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Message provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Message) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1718,16 +1610,6 @@ func (o *Message) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *MessageSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty MessageSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1757,11 +1639,6 @@ func (o *MessageSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor)
 	*o = slice
 
 	return nil
-}
-
-// MessageExistsG checks if the Message row exists.
-func MessageExistsG(ctx context.Context, messageID int64) (bool, error) {
-	return MessageExists(ctx, boil.GetContextDB(), messageID)
 }
 
 // MessageExists checks if the Message row exists.

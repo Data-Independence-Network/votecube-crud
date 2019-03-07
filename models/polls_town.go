@@ -234,11 +234,6 @@ func AddPollsTownHook(hookPoint boil.HookPoint, pollsTownHook PollsTownHook) {
 	}
 }
 
-// OneG returns a single pollsTown record from the query using the global executor.
-func (q pollsTownQuery) OneG(ctx context.Context) (*PollsTown, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsTown record from the query.
 func (q pollsTownQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsTown, error) {
 	o := &PollsTown{}
@@ -258,11 +253,6 @@ func (q pollsTownQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Po
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsTown records from the query using the global executor.
-func (q pollsTownQuery) AllG(ctx context.Context) (PollsTownSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsTown records from the query.
@@ -285,11 +275,6 @@ func (q pollsTownQuery) All(ctx context.Context, exec boil.ContextExecutor) (Pol
 	return o, nil
 }
 
-// CountG returns the count of all PollsTown records in the query, and panics on error.
-func (q pollsTownQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsTown records in the query.
 func (q pollsTownQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -303,11 +288,6 @@ func (q pollsTownQuery) Count(ctx context.Context, exec boil.ContextExecutor) (i
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsTownQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -543,14 +523,6 @@ func (pollsTownL) LoadPoll(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
-// SetTownG of the pollsTown to the related item.
-// Sets o.R.Town to related.
-// Adds o to related.R.PollsTowns.
-// Uses the global database handle.
-func (o *PollsTown) SetTownG(ctx context.Context, insert bool, related *Town) error {
-	return o.SetTown(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetTown of the pollsTown to the related item.
 // Sets o.R.Town to related.
 // Adds o to related.R.PollsTowns.
@@ -596,14 +568,6 @@ func (o *PollsTown) SetTown(ctx context.Context, exec boil.ContextExecutor, inse
 	}
 
 	return nil
-}
-
-// SetPollG of the pollsTown to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.PollsTowns.
-// Uses the global database handle.
-func (o *PollsTown) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetPoll of the pollsTown to the related item.
@@ -659,11 +623,6 @@ func PollsTowns(mods ...qm.QueryMod) pollsTownQuery {
 	return pollsTownQuery{NewQuery(mods...)}
 }
 
-// FindPollsTownG retrieves a single record by ID.
-func FindPollsTownG(ctx context.Context, pollTownID int64, selectCols ...string) (*PollsTown, error) {
-	return FindPollsTown(ctx, boil.GetContextDB(), pollTownID, selectCols...)
-}
-
 // FindPollsTown retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPollsTown(ctx context.Context, exec boil.ContextExecutor, pollTownID int64, selectCols ...string) (*PollsTown, error) {
@@ -688,11 +647,6 @@ func FindPollsTown(ctx context.Context, exec boil.ContextExecutor, pollTownID in
 	}
 
 	return pollsTownObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsTown) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -771,12 +725,6 @@ func (o *PollsTown) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PollsTown record using the global executor.
-// See Update for more documentation.
-func (o *PollsTown) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PollsTown.
@@ -859,11 +807,6 @@ func (q pollsTownQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsTownSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsTownSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -910,11 +853,6 @@ func (o PollsTownSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsTown")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsTown) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1032,12 +970,6 @@ func (o *PollsTown) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsTown record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsTown) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsTown record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsTown) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1095,11 +1027,6 @@ func (q pollsTownQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsTownSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsTownSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1153,15 +1080,6 @@ func (o PollsTownSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsTown) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsTown provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsTown) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1172,16 +1090,6 @@ func (o *PollsTown) Reload(ctx context.Context, exec boil.ContextExecutor) error
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsTownSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsTownSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1211,11 +1119,6 @@ func (o *PollsTownSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 	*o = slice
 
 	return nil
-}
-
-// PollsTownExistsG checks if the PollsTown row exists.
-func PollsTownExistsG(ctx context.Context, pollTownID int64) (bool, error) {
-	return PollsTownExists(ctx, boil.GetContextDB(), pollTownID)
 }
 
 // PollsTownExists checks if the PollsTown row exists.

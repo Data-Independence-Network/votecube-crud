@@ -237,11 +237,6 @@ func AddUserAccountSuffixHook(hookPoint boil.HookPoint, userAccountSuffixHook Us
 	}
 }
 
-// OneG returns a single userAccountSuffix record from the query using the global executor.
-func (q userAccountSuffixQuery) OneG(ctx context.Context) (*UserAccountSuffix, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single userAccountSuffix record from the query.
 func (q userAccountSuffixQuery) One(ctx context.Context, exec boil.ContextExecutor) (*UserAccountSuffix, error) {
 	o := &UserAccountSuffix{}
@@ -261,11 +256,6 @@ func (q userAccountSuffixQuery) One(ctx context.Context, exec boil.ContextExecut
 	}
 
 	return o, nil
-}
-
-// AllG returns all UserAccountSuffix records from the query using the global executor.
-func (q userAccountSuffixQuery) AllG(ctx context.Context) (UserAccountSuffixSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all UserAccountSuffix records from the query.
@@ -288,11 +278,6 @@ func (q userAccountSuffixQuery) All(ctx context.Context, exec boil.ContextExecut
 	return o, nil
 }
 
-// CountG returns the count of all UserAccountSuffix records in the query, and panics on error.
-func (q userAccountSuffixQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all UserAccountSuffix records in the query.
 func (q userAccountSuffixQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -306,11 +291,6 @@ func (q userAccountSuffixQuery) Count(ctx context.Context, exec boil.ContextExec
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q userAccountSuffixQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -546,14 +526,6 @@ func (userAccountSuffixL) LoadSuffix(ctx context.Context, e boil.ContextExecutor
 	return nil
 }
 
-// SetUserAccountG of the userAccountSuffix to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.UserAccountSuffixes.
-// Uses the global database handle.
-func (o *UserAccountSuffix) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the userAccountSuffix to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.UserAccountSuffixes.
@@ -599,14 +571,6 @@ func (o *UserAccountSuffix) SetUserAccount(ctx context.Context, exec boil.Contex
 	}
 
 	return nil
-}
-
-// SetSuffixG of the userAccountSuffix to the related item.
-// Sets o.R.Suffix to related.
-// Adds o to related.R.UserAccountSuffixes.
-// Uses the global database handle.
-func (o *UserAccountSuffix) SetSuffixG(ctx context.Context, insert bool, related *Suffix) error {
-	return o.SetSuffix(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetSuffix of the userAccountSuffix to the related item.
@@ -662,11 +626,6 @@ func UserAccountSuffixes(mods ...qm.QueryMod) userAccountSuffixQuery {
 	return userAccountSuffixQuery{NewQuery(mods...)}
 }
 
-// FindUserAccountSuffixG retrieves a single record by ID.
-func FindUserAccountSuffixG(ctx context.Context, userAccountSuffixID int64, selectCols ...string) (*UserAccountSuffix, error) {
-	return FindUserAccountSuffix(ctx, boil.GetContextDB(), userAccountSuffixID, selectCols...)
-}
-
 // FindUserAccountSuffix retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUserAccountSuffix(ctx context.Context, exec boil.ContextExecutor, userAccountSuffixID int64, selectCols ...string) (*UserAccountSuffix, error) {
@@ -691,11 +650,6 @@ func FindUserAccountSuffix(ctx context.Context, exec boil.ContextExecutor, userA
 	}
 
 	return userAccountSuffixObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *UserAccountSuffix) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -774,12 +728,6 @@ func (o *UserAccountSuffix) Insert(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single UserAccountSuffix record using the global executor.
-// See Update for more documentation.
-func (o *UserAccountSuffix) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the UserAccountSuffix.
@@ -862,11 +810,6 @@ func (q userAccountSuffixQuery) UpdateAll(ctx context.Context, exec boil.Context
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o UserAccountSuffixSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o UserAccountSuffixSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -913,11 +856,6 @@ func (o UserAccountSuffixSlice) UpdateAll(ctx context.Context, exec boil.Context
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all userAccountSuffix")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *UserAccountSuffix) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1035,12 +973,6 @@ func (o *UserAccountSuffix) Upsert(ctx context.Context, exec boil.ContextExecuto
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single UserAccountSuffix record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *UserAccountSuffix) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single UserAccountSuffix record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *UserAccountSuffix) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1098,11 +1030,6 @@ func (q userAccountSuffixQuery) DeleteAll(ctx context.Context, exec boil.Context
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o UserAccountSuffixSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o UserAccountSuffixSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1156,15 +1083,6 @@ func (o UserAccountSuffixSlice) DeleteAll(ctx context.Context, exec boil.Context
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *UserAccountSuffix) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no UserAccountSuffix provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserAccountSuffix) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1175,16 +1093,6 @@ func (o *UserAccountSuffix) Reload(ctx context.Context, exec boil.ContextExecuto
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *UserAccountSuffixSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty UserAccountSuffixSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1214,11 +1122,6 @@ func (o *UserAccountSuffixSlice) ReloadAll(ctx context.Context, exec boil.Contex
 	*o = slice
 
 	return nil
-}
-
-// UserAccountSuffixExistsG checks if the UserAccountSuffix row exists.
-func UserAccountSuffixExistsG(ctx context.Context, userAccountSuffixID int64) (bool, error) {
-	return UserAccountSuffixExists(ctx, boil.GetContextDB(), userAccountSuffixID)
 }
 
 // UserAccountSuffixExists checks if the UserAccountSuffix row exists.

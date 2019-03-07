@@ -228,11 +228,6 @@ func AddNameAfterLastNameHook(hookPoint boil.HookPoint, nameAfterLastNameHook Na
 	}
 }
 
-// OneG returns a single nameAfterLastName record from the query using the global executor.
-func (q nameAfterLastNameQuery) OneG(ctx context.Context) (*NameAfterLastName, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single nameAfterLastName record from the query.
 func (q nameAfterLastNameQuery) One(ctx context.Context, exec boil.ContextExecutor) (*NameAfterLastName, error) {
 	o := &NameAfterLastName{}
@@ -252,11 +247,6 @@ func (q nameAfterLastNameQuery) One(ctx context.Context, exec boil.ContextExecut
 	}
 
 	return o, nil
-}
-
-// AllG returns all NameAfterLastName records from the query using the global executor.
-func (q nameAfterLastNameQuery) AllG(ctx context.Context) (NameAfterLastNameSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all NameAfterLastName records from the query.
@@ -279,11 +269,6 @@ func (q nameAfterLastNameQuery) All(ctx context.Context, exec boil.ContextExecut
 	return o, nil
 }
 
-// CountG returns the count of all NameAfterLastName records in the query, and panics on error.
-func (q nameAfterLastNameQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all NameAfterLastName records in the query.
 func (q nameAfterLastNameQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -297,11 +282,6 @@ func (q nameAfterLastNameQuery) Count(ctx context.Context, exec boil.ContextExec
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q nameAfterLastNameQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -366,7 +346,7 @@ func (nameAfterLastNameL) LoadUserAccounts(ctx context.Context, e boil.ContextEx
 			}
 
 			for _, a := range args {
-				if a == obj.NameAfterLastNameID {
+				if queries.Equal(a, obj.NameAfterLastNameID) {
 					continue Outer
 				}
 			}
@@ -417,7 +397,7 @@ func (nameAfterLastNameL) LoadUserAccounts(ctx context.Context, e boil.ContextEx
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.NameAfterLastNameID == foreign.NameAfterLastNameID {
+			if queries.Equal(local.NameAfterLastNameID, foreign.NameAfterLastNameID) {
 				local.R.UserAccounts = append(local.R.UserAccounts, foreign)
 				if foreign.R == nil {
 					foreign.R = &userAccountR{}
@@ -431,15 +411,6 @@ func (nameAfterLastNameL) LoadUserAccounts(ctx context.Context, e boil.ContextEx
 	return nil
 }
 
-// AddUserAccountsG adds the given related objects to the existing relationships
-// of the name_after_last_name, optionally inserting them as new records.
-// Appends related to o.R.UserAccounts.
-// Sets related.R.NameAfterLastName appropriately.
-// Uses the global database handle.
-func (o *NameAfterLastName) AddUserAccountsG(ctx context.Context, insert bool, related ...*UserAccount) error {
-	return o.AddUserAccounts(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddUserAccounts adds the given related objects to the existing relationships
 // of the name_after_last_name, optionally inserting them as new records.
 // Appends related to o.R.UserAccounts.
@@ -448,7 +419,7 @@ func (o *NameAfterLastName) AddUserAccounts(ctx context.Context, exec boil.Conte
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.NameAfterLastNameID = o.NameAfterLastNameID
+			queries.Assign(&rel.NameAfterLastNameID, o.NameAfterLastNameID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -469,7 +440,7 @@ func (o *NameAfterLastName) AddUserAccounts(ctx context.Context, exec boil.Conte
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.NameAfterLastNameID = o.NameAfterLastNameID
+			queries.Assign(&rel.NameAfterLastNameID, o.NameAfterLastNameID)
 		}
 	}
 
@@ -493,15 +464,80 @@ func (o *NameAfterLastName) AddUserAccounts(ctx context.Context, exec boil.Conte
 	return nil
 }
 
+// SetUserAccounts removes all previously related items of the
+// name_after_last_name replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.NameAfterLastName's UserAccounts accordingly.
+// Replaces o.R.UserAccounts with related.
+// Sets related.R.NameAfterLastName's UserAccounts accordingly.
+func (o *NameAfterLastName) SetUserAccounts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserAccount) error {
+	query := "update \"user_account\" set \"name_after_last_name_id\" = null where \"name_after_last_name_id\" = $1"
+	values := []interface{}{o.NameAfterLastNameID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.UserAccounts {
+			queries.SetScanner(&rel.NameAfterLastNameID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.NameAfterLastName = nil
+		}
+
+		o.R.UserAccounts = nil
+	}
+	return o.AddUserAccounts(ctx, exec, insert, related...)
+}
+
+// RemoveUserAccounts relationships from objects passed in.
+// Removes related items from R.UserAccounts (uses pointer comparison, removal does not keep order)
+// Sets related.R.NameAfterLastName.
+func (o *NameAfterLastName) RemoveUserAccounts(ctx context.Context, exec boil.ContextExecutor, related ...*UserAccount) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.NameAfterLastNameID, nil)
+		if rel.R != nil {
+			rel.R.NameAfterLastName = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("name_after_last_name_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.UserAccounts {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.UserAccounts)
+			if ln > 1 && i < ln-1 {
+				o.R.UserAccounts[i] = o.R.UserAccounts[ln-1]
+			}
+			o.R.UserAccounts = o.R.UserAccounts[:ln-1]
+			break
+		}
+	}
+
+	return nil
+}
+
 // NameAfterLastNames retrieves all the records using an executor.
 func NameAfterLastNames(mods ...qm.QueryMod) nameAfterLastNameQuery {
 	mods = append(mods, qm.From("\"name_after_last_name\""))
 	return nameAfterLastNameQuery{NewQuery(mods...)}
-}
-
-// FindNameAfterLastNameG retrieves a single record by ID.
-func FindNameAfterLastNameG(ctx context.Context, nameAfterLastNameID int64, selectCols ...string) (*NameAfterLastName, error) {
-	return FindNameAfterLastName(ctx, boil.GetContextDB(), nameAfterLastNameID, selectCols...)
 }
 
 // FindNameAfterLastName retrieves a single record by ID with an executor.
@@ -528,11 +564,6 @@ func FindNameAfterLastName(ctx context.Context, exec boil.ContextExecutor, nameA
 	}
 
 	return nameAfterLastNameObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *NameAfterLastName) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -611,12 +642,6 @@ func (o *NameAfterLastName) Insert(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single NameAfterLastName record using the global executor.
-// See Update for more documentation.
-func (o *NameAfterLastName) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the NameAfterLastName.
@@ -699,11 +724,6 @@ func (q nameAfterLastNameQuery) UpdateAll(ctx context.Context, exec boil.Context
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o NameAfterLastNameSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o NameAfterLastNameSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -750,11 +770,6 @@ func (o NameAfterLastNameSlice) UpdateAll(ctx context.Context, exec boil.Context
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all nameAfterLastName")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *NameAfterLastName) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -872,12 +887,6 @@ func (o *NameAfterLastName) Upsert(ctx context.Context, exec boil.ContextExecuto
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single NameAfterLastName record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *NameAfterLastName) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single NameAfterLastName record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *NameAfterLastName) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -935,11 +944,6 @@ func (q nameAfterLastNameQuery) DeleteAll(ctx context.Context, exec boil.Context
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o NameAfterLastNameSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o NameAfterLastNameSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -993,15 +997,6 @@ func (o NameAfterLastNameSlice) DeleteAll(ctx context.Context, exec boil.Context
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *NameAfterLastName) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no NameAfterLastName provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *NameAfterLastName) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1012,16 +1007,6 @@ func (o *NameAfterLastName) Reload(ctx context.Context, exec boil.ContextExecuto
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *NameAfterLastNameSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty NameAfterLastNameSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1051,11 +1036,6 @@ func (o *NameAfterLastNameSlice) ReloadAll(ctx context.Context, exec boil.Contex
 	*o = slice
 
 	return nil
-}
-
-// NameAfterLastNameExistsG checks if the NameAfterLastName row exists.
-func NameAfterLastNameExistsG(ctx context.Context, nameAfterLastNameID int64) (bool, error) {
-	return NameAfterLastNameExists(ctx, boil.GetContextDB(), nameAfterLastNameID)
 }
 
 // NameAfterLastNameExists checks if the NameAfterLastName row exists.

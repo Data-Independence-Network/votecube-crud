@@ -237,11 +237,6 @@ func AddEmailAddressHook(hookPoint boil.HookPoint, emailAddressHook EmailAddress
 	}
 }
 
-// OneG returns a single emailAddress record from the query using the global executor.
-func (q emailAddressQuery) OneG(ctx context.Context) (*EmailAddress, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single emailAddress record from the query.
 func (q emailAddressQuery) One(ctx context.Context, exec boil.ContextExecutor) (*EmailAddress, error) {
 	o := &EmailAddress{}
@@ -261,11 +256,6 @@ func (q emailAddressQuery) One(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return o, nil
-}
-
-// AllG returns all EmailAddress records from the query using the global executor.
-func (q emailAddressQuery) AllG(ctx context.Context) (EmailAddressSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all EmailAddress records from the query.
@@ -288,11 +278,6 @@ func (q emailAddressQuery) All(ctx context.Context, exec boil.ContextExecutor) (
 	return o, nil
 }
 
-// CountG returns the count of all EmailAddress records in the query, and panics on error.
-func (q emailAddressQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all EmailAddress records in the query.
 func (q emailAddressQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -306,11 +291,6 @@ func (q emailAddressQuery) Count(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q emailAddressQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -546,14 +526,6 @@ func (emailAddressL) LoadEmailDomain(ctx context.Context, e boil.ContextExecutor
 	return nil
 }
 
-// SetUserAccountG of the emailAddress to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.EmailAddresses.
-// Uses the global database handle.
-func (o *EmailAddress) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the emailAddress to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.EmailAddresses.
@@ -599,14 +571,6 @@ func (o *EmailAddress) SetUserAccount(ctx context.Context, exec boil.ContextExec
 	}
 
 	return nil
-}
-
-// SetEmailDomainG of the emailAddress to the related item.
-// Sets o.R.EmailDomain to related.
-// Adds o to related.R.EmailAddresses.
-// Uses the global database handle.
-func (o *EmailAddress) SetEmailDomainG(ctx context.Context, insert bool, related *EmailDomain) error {
-	return o.SetEmailDomain(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetEmailDomain of the emailAddress to the related item.
@@ -662,11 +626,6 @@ func EmailAddresses(mods ...qm.QueryMod) emailAddressQuery {
 	return emailAddressQuery{NewQuery(mods...)}
 }
 
-// FindEmailAddressG retrieves a single record by ID.
-func FindEmailAddressG(ctx context.Context, emailName string, emailDomainID int64, selectCols ...string) (*EmailAddress, error) {
-	return FindEmailAddress(ctx, boil.GetContextDB(), emailName, emailDomainID, selectCols...)
-}
-
 // FindEmailAddress retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindEmailAddress(ctx context.Context, exec boil.ContextExecutor, emailName string, emailDomainID int64, selectCols ...string) (*EmailAddress, error) {
@@ -691,11 +650,6 @@ func FindEmailAddress(ctx context.Context, exec boil.ContextExecutor, emailName 
 	}
 
 	return emailAddressObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *EmailAddress) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -781,12 +735,6 @@ func (o *EmailAddress) Insert(ctx context.Context, exec boil.ContextExecutor, co
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single EmailAddress record using the global executor.
-// See Update for more documentation.
-func (o *EmailAddress) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the EmailAddress.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -867,11 +815,6 @@ func (q emailAddressQuery) UpdateAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o EmailAddressSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o EmailAddressSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -918,11 +861,6 @@ func (o EmailAddressSlice) UpdateAll(ctx context.Context, exec boil.ContextExecu
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all emailAddress")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *EmailAddress) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1045,12 +983,6 @@ func (o *EmailAddress) Upsert(ctx context.Context, exec boil.ContextExecutor, up
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single EmailAddress record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *EmailAddress) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single EmailAddress record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *EmailAddress) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1108,11 +1040,6 @@ func (q emailAddressQuery) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o EmailAddressSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o EmailAddressSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1166,15 +1093,6 @@ func (o EmailAddressSlice) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *EmailAddress) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no EmailAddress provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *EmailAddress) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1185,16 +1103,6 @@ func (o *EmailAddress) Reload(ctx context.Context, exec boil.ContextExecutor) er
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *EmailAddressSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty EmailAddressSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1224,11 +1132,6 @@ func (o *EmailAddressSlice) ReloadAll(ctx context.Context, exec boil.ContextExec
 	*o = slice
 
 	return nil
-}
-
-// EmailAddressExistsG checks if the EmailAddress row exists.
-func EmailAddressExistsG(ctx context.Context, emailName string, emailDomainID int64) (bool, error) {
-	return EmailAddressExists(ctx, boil.GetContextDB(), emailName, emailDomainID)
 }
 
 // EmailAddressExists checks if the EmailAddress row exists.

@@ -240,11 +240,6 @@ func AddDimensionDirectionHook(hookPoint boil.HookPoint, dimensionDirectionHook 
 	}
 }
 
-// OneG returns a single dimensionDirection record from the query using the global executor.
-func (q dimensionDirectionQuery) OneG(ctx context.Context) (*DimensionDirection, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single dimensionDirection record from the query.
 func (q dimensionDirectionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*DimensionDirection, error) {
 	o := &DimensionDirection{}
@@ -264,11 +259,6 @@ func (q dimensionDirectionQuery) One(ctx context.Context, exec boil.ContextExecu
 	}
 
 	return o, nil
-}
-
-// AllG returns all DimensionDirection records from the query using the global executor.
-func (q dimensionDirectionQuery) AllG(ctx context.Context) (DimensionDirectionSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all DimensionDirection records from the query.
@@ -291,11 +281,6 @@ func (q dimensionDirectionQuery) All(ctx context.Context, exec boil.ContextExecu
 	return o, nil
 }
 
-// CountG returns the count of all DimensionDirection records in the query, and panics on error.
-func (q dimensionDirectionQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all DimensionDirection records in the query.
 func (q dimensionDirectionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -309,11 +294,6 @@ func (q dimensionDirectionQuery) Count(ctx context.Context, exec boil.ContextExe
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q dimensionDirectionQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -661,14 +641,6 @@ func (dimensionDirectionL) LoadPollsDimensionsDirections(ctx context.Context, e 
 	return nil
 }
 
-// SetDirectionG of the dimensionDirection to the related item.
-// Sets o.R.Direction to related.
-// Adds o to related.R.DimensionDirections.
-// Uses the global database handle.
-func (o *DimensionDirection) SetDirectionG(ctx context.Context, insert bool, related *Direction) error {
-	return o.SetDirection(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetDirection of the dimensionDirection to the related item.
 // Sets o.R.Direction to related.
 // Adds o to related.R.DimensionDirections.
@@ -716,14 +688,6 @@ func (o *DimensionDirection) SetDirection(ctx context.Context, exec boil.Context
 	return nil
 }
 
-// SetDimensionG of the dimensionDirection to the related item.
-// Sets o.R.Dimension to related.
-// Adds o to related.R.DimensionDirections.
-// Uses the global database handle.
-func (o *DimensionDirection) SetDimensionG(ctx context.Context, insert bool, related *Dimension) error {
-	return o.SetDimension(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetDimension of the dimensionDirection to the related item.
 // Sets o.R.Dimension to related.
 // Adds o to related.R.DimensionDirections.
@@ -769,15 +733,6 @@ func (o *DimensionDirection) SetDimension(ctx context.Context, exec boil.Context
 	}
 
 	return nil
-}
-
-// AddPollsDimensionsDirectionsG adds the given related objects to the existing relationships
-// of the dimension_direction, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
-// Sets related.R.DimensionDirection appropriately.
-// Uses the global database handle.
-func (o *DimensionDirection) AddPollsDimensionsDirectionsG(ctx context.Context, insert bool, related ...*PollsDimensionsDirection) error {
-	return o.AddPollsDimensionsDirections(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsDimensionsDirections adds the given related objects to the existing relationships
@@ -839,11 +794,6 @@ func DimensionDirections(mods ...qm.QueryMod) dimensionDirectionQuery {
 	return dimensionDirectionQuery{NewQuery(mods...)}
 }
 
-// FindDimensionDirectionG retrieves a single record by ID.
-func FindDimensionDirectionG(ctx context.Context, dimensionDirectionID int64, selectCols ...string) (*DimensionDirection, error) {
-	return FindDimensionDirection(ctx, boil.GetContextDB(), dimensionDirectionID, selectCols...)
-}
-
 // FindDimensionDirection retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindDimensionDirection(ctx context.Context, exec boil.ContextExecutor, dimensionDirectionID int64, selectCols ...string) (*DimensionDirection, error) {
@@ -868,11 +818,6 @@ func FindDimensionDirection(ctx context.Context, exec boil.ContextExecutor, dime
 	}
 
 	return dimensionDirectionObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *DimensionDirection) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -958,12 +903,6 @@ func (o *DimensionDirection) Insert(ctx context.Context, exec boil.ContextExecut
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single DimensionDirection record using the global executor.
-// See Update for more documentation.
-func (o *DimensionDirection) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the DimensionDirection.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1044,11 +983,6 @@ func (q dimensionDirectionQuery) UpdateAll(ctx context.Context, exec boil.Contex
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o DimensionDirectionSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o DimensionDirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1095,11 +1029,6 @@ func (o DimensionDirectionSlice) UpdateAll(ctx context.Context, exec boil.Contex
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all dimensionDirection")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *DimensionDirection) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1222,12 +1151,6 @@ func (o *DimensionDirection) Upsert(ctx context.Context, exec boil.ContextExecut
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single DimensionDirection record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *DimensionDirection) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single DimensionDirection record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *DimensionDirection) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1285,11 +1208,6 @@ func (q dimensionDirectionQuery) DeleteAll(ctx context.Context, exec boil.Contex
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o DimensionDirectionSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o DimensionDirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1343,15 +1261,6 @@ func (o DimensionDirectionSlice) DeleteAll(ctx context.Context, exec boil.Contex
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *DimensionDirection) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no DimensionDirection provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *DimensionDirection) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1362,16 +1271,6 @@ func (o *DimensionDirection) Reload(ctx context.Context, exec boil.ContextExecut
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *DimensionDirectionSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty DimensionDirectionSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1401,11 +1300,6 @@ func (o *DimensionDirectionSlice) ReloadAll(ctx context.Context, exec boil.Conte
 	*o = slice
 
 	return nil
-}
-
-// DimensionDirectionExistsG checks if the DimensionDirection row exists.
-func DimensionDirectionExistsG(ctx context.Context, dimensionDirectionID int64) (bool, error) {
-	return DimensionDirectionExists(ctx, boil.GetContextDB(), dimensionDirectionID)
 }
 
 // DimensionDirectionExists checks if the DimensionDirection row exists.

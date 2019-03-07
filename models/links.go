@@ -246,11 +246,6 @@ func AddLinkHook(hookPoint boil.HookPoint, linkHook LinkHook) {
 	}
 }
 
-// OneG returns a single link record from the query using the global executor.
-func (q linkQuery) OneG(ctx context.Context) (*Link, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single link record from the query.
 func (q linkQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Link, error) {
 	o := &Link{}
@@ -270,11 +265,6 @@ func (q linkQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Link, e
 	}
 
 	return o, nil
-}
-
-// AllG returns all Link records from the query using the global executor.
-func (q linkQuery) AllG(ctx context.Context) (LinkSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Link records from the query.
@@ -297,11 +287,6 @@ func (q linkQuery) All(ctx context.Context, exec boil.ContextExecutor) (LinkSlic
 	return o, nil
 }
 
-// CountG returns the count of all Link records in the query, and panics on error.
-func (q linkQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Link records in the query.
 func (q linkQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -315,11 +300,6 @@ func (q linkQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64,
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q linkQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -782,14 +762,6 @@ func (linkL) LoadPollsLinks(ctx context.Context, e boil.ContextExecutor, singula
 	return nil
 }
 
-// SetUserAccountG of the link to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Links.
-// Uses the global database handle.
-func (o *Link) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the link to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Links.
@@ -835,15 +807,6 @@ func (o *Link) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, in
 	}
 
 	return nil
-}
-
-// AddDimensionsLinksG adds the given related objects to the existing relationships
-// of the link, optionally inserting them as new records.
-// Appends related to o.R.DimensionsLinks.
-// Sets related.R.Link appropriately.
-// Uses the global database handle.
-func (o *Link) AddDimensionsLinksG(ctx context.Context, insert bool, related ...*DimensionsLink) error {
-	return o.AddDimensionsLinks(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddDimensionsLinks adds the given related objects to the existing relationships
@@ -899,15 +862,6 @@ func (o *Link) AddDimensionsLinks(ctx context.Context, exec boil.ContextExecutor
 	return nil
 }
 
-// AddMessagesLinksG adds the given related objects to the existing relationships
-// of the link, optionally inserting them as new records.
-// Appends related to o.R.MessagesLinks.
-// Sets related.R.Link appropriately.
-// Uses the global database handle.
-func (o *Link) AddMessagesLinksG(ctx context.Context, insert bool, related ...*MessagesLink) error {
-	return o.AddMessagesLinks(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddMessagesLinks adds the given related objects to the existing relationships
 // of the link, optionally inserting them as new records.
 // Appends related to o.R.MessagesLinks.
@@ -959,15 +913,6 @@ func (o *Link) AddMessagesLinks(ctx context.Context, exec boil.ContextExecutor, 
 		}
 	}
 	return nil
-}
-
-// AddPollsLinksG adds the given related objects to the existing relationships
-// of the link, optionally inserting them as new records.
-// Appends related to o.R.PollsLinks.
-// Sets related.R.Link appropriately.
-// Uses the global database handle.
-func (o *Link) AddPollsLinksG(ctx context.Context, insert bool, related ...*PollsLink) error {
-	return o.AddPollsLinks(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsLinks adds the given related objects to the existing relationships
@@ -1029,11 +974,6 @@ func Links(mods ...qm.QueryMod) linkQuery {
 	return linkQuery{NewQuery(mods...)}
 }
 
-// FindLinkG retrieves a single record by ID.
-func FindLinkG(ctx context.Context, linkID int64, selectCols ...string) (*Link, error) {
-	return FindLink(ctx, boil.GetContextDB(), linkID, selectCols...)
-}
-
 // FindLink retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindLink(ctx context.Context, exec boil.ContextExecutor, linkID int64, selectCols ...string) (*Link, error) {
@@ -1058,11 +998,6 @@ func FindLink(ctx context.Context, exec boil.ContextExecutor, linkID int64, sele
 	}
 
 	return linkObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Link) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1148,12 +1083,6 @@ func (o *Link) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Link record using the global executor.
-// See Update for more documentation.
-func (o *Link) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Link.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1234,11 +1163,6 @@ func (q linkQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o LinkSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o LinkSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1285,11 +1209,6 @@ func (o LinkSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all link")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Link) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1412,12 +1331,6 @@ func (o *Link) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Link record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Link) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Link record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Link) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1475,11 +1388,6 @@ func (q linkQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o LinkSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o LinkSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1533,15 +1441,6 @@ func (o LinkSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Link) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Link provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Link) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1552,16 +1451,6 @@ func (o *Link) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *LinkSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty LinkSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1591,11 +1480,6 @@ func (o *LinkSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 	*o = slice
 
 	return nil
-}
-
-// LinkExistsG checks if the Link row exists.
-func LinkExistsG(ctx context.Context, linkID int64) (bool, error) {
-	return LinkExists(ctx, boil.GetContextDB(), linkID)
 }
 
 // LinkExists checks if the Link row exists.

@@ -27,9 +27,9 @@ type UserAccount struct {
 	UserName             string      `boil:"user_name" json:"user_name" toml:"user_name" yaml:"user_name"`
 	FirstName            null.String `boil:"first_name" json:"first_name,omitempty" toml:"first_name" yaml:"first_name,omitempty"`
 	MiddleNameOrInitials null.String `boil:"middle_name_or_initials" json:"middle_name_or_initials,omitempty" toml:"middle_name_or_initials" yaml:"middle_name_or_initials,omitempty"`
-	PrefixLastNameID     int64       `boil:"prefix_last_name_id" json:"prefix_last_name_id" toml:"prefix_last_name_id" yaml:"prefix_last_name_id"`
+	PrefixLastNameID     null.Int64  `boil:"prefix_last_name_id" json:"prefix_last_name_id,omitempty" toml:"prefix_last_name_id" yaml:"prefix_last_name_id,omitempty"`
 	LastName             null.String `boil:"last_name" json:"last_name,omitempty" toml:"last_name" yaml:"last_name,omitempty"`
-	NameAfterLastNameID  int64       `boil:"name_after_last_name_id" json:"name_after_last_name_id" toml:"name_after_last_name_id" yaml:"name_after_last_name_id"`
+	NameAfterLastNameID  null.Int64  `boil:"name_after_last_name_id" json:"name_after_last_name_id,omitempty" toml:"name_after_last_name_id" yaml:"name_after_last_name_id,omitempty"`
 	BirthDate            time.Time   `boil:"birth_date" json:"birth_date" toml:"birth_date" yaml:"birth_date"`
 	CreatedAt            time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
@@ -304,11 +304,6 @@ func AddUserAccountHook(hookPoint boil.HookPoint, userAccountHook UserAccountHoo
 	}
 }
 
-// OneG returns a single userAccount record from the query using the global executor.
-func (q userAccountQuery) OneG(ctx context.Context) (*UserAccount, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single userAccount record from the query.
 func (q userAccountQuery) One(ctx context.Context, exec boil.ContextExecutor) (*UserAccount, error) {
 	o := &UserAccount{}
@@ -328,11 +323,6 @@ func (q userAccountQuery) One(ctx context.Context, exec boil.ContextExecutor) (*
 	}
 
 	return o, nil
-}
-
-// AllG returns all UserAccount records from the query using the global executor.
-func (q userAccountQuery) AllG(ctx context.Context) (UserAccountSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all UserAccount records from the query.
@@ -355,11 +345,6 @@ func (q userAccountQuery) All(ctx context.Context, exec boil.ContextExecutor) (U
 	return o, nil
 }
 
-// CountG returns the count of all UserAccount records in the query, and panics on error.
-func (q userAccountQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all UserAccount records in the query.
 func (q userAccountQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -373,11 +358,6 @@ func (q userAccountQuery) Count(ctx context.Context, exec boil.ContextExecutor) 
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q userAccountQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -806,7 +786,7 @@ func (userAccountL) LoadPrefixLastName(ctx context.Context, e boil.ContextExecut
 			}
 
 			for _, a := range args {
-				if a == obj.PrefixLastNameID {
+				if queries.Equal(a, obj.PrefixLastNameID) {
 					continue Outer
 				}
 			}
@@ -861,7 +841,7 @@ func (userAccountL) LoadPrefixLastName(ctx context.Context, e boil.ContextExecut
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.PrefixLastNameID == foreign.PrefixLastNameID {
+			if queries.Equal(local.PrefixLastNameID, foreign.PrefixLastNameID) {
 				local.R.PrefixLastName = foreign
 				if foreign.R == nil {
 					foreign.R = &prefixLastNameR{}
@@ -901,7 +881,7 @@ func (userAccountL) LoadNameAfterLastName(ctx context.Context, e boil.ContextExe
 			}
 
 			for _, a := range args {
-				if a == obj.NameAfterLastNameID {
+				if queries.Equal(a, obj.NameAfterLastNameID) {
 					continue Outer
 				}
 			}
@@ -956,7 +936,7 @@ func (userAccountL) LoadNameAfterLastName(ctx context.Context, e boil.ContextExe
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.NameAfterLastNameID == foreign.NameAfterLastNameID {
+			if queries.Equal(local.NameAfterLastNameID, foreign.NameAfterLastNameID) {
 				local.R.NameAfterLastName = foreign
 				if foreign.R == nil {
 					foreign.R = &nameAfterLastNameR{}
@@ -2517,14 +2497,6 @@ func (userAccountL) LoadVotes(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
-// SetPrefixLastNameG of the userAccount to the related item.
-// Sets o.R.PrefixLastName to related.
-// Adds o to related.R.UserAccounts.
-// Uses the global database handle.
-func (o *UserAccount) SetPrefixLastNameG(ctx context.Context, insert bool, related *PrefixLastName) error {
-	return o.SetPrefixLastName(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetPrefixLastName of the userAccount to the related item.
 // Sets o.R.PrefixLastName to related.
 // Adds o to related.R.UserAccounts.
@@ -2552,7 +2524,7 @@ func (o *UserAccount) SetPrefixLastName(ctx context.Context, exec boil.ContextEx
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.PrefixLastNameID = related.PrefixLastNameID
+	queries.Assign(&o.PrefixLastNameID, related.PrefixLastNameID)
 	if o.R == nil {
 		o.R = &userAccountR{
 			PrefixLastName: related,
@@ -2572,12 +2544,35 @@ func (o *UserAccount) SetPrefixLastName(ctx context.Context, exec boil.ContextEx
 	return nil
 }
 
-// SetNameAfterLastNameG of the userAccount to the related item.
-// Sets o.R.NameAfterLastName to related.
-// Adds o to related.R.UserAccounts.
-// Uses the global database handle.
-func (o *UserAccount) SetNameAfterLastNameG(ctx context.Context, insert bool, related *NameAfterLastName) error {
-	return o.SetNameAfterLastName(ctx, boil.GetContextDB(), insert, related)
+// RemovePrefixLastName relationship.
+// Sets o.R.PrefixLastName to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *UserAccount) RemovePrefixLastName(ctx context.Context, exec boil.ContextExecutor, related *PrefixLastName) error {
+	var err error
+
+	queries.SetScanner(&o.PrefixLastNameID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("prefix_last_name_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.PrefixLastName = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.UserAccounts {
+		if queries.Equal(o.PrefixLastNameID, ri.PrefixLastNameID) {
+			continue
+		}
+
+		ln := len(related.R.UserAccounts)
+		if ln > 1 && i < ln-1 {
+			related.R.UserAccounts[i] = related.R.UserAccounts[ln-1]
+		}
+		related.R.UserAccounts = related.R.UserAccounts[:ln-1]
+		break
+	}
+	return nil
 }
 
 // SetNameAfterLastName of the userAccount to the related item.
@@ -2607,7 +2602,7 @@ func (o *UserAccount) SetNameAfterLastName(ctx context.Context, exec boil.Contex
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.NameAfterLastNameID = related.NameAfterLastNameID
+	queries.Assign(&o.NameAfterLastNameID, related.NameAfterLastNameID)
 	if o.R == nil {
 		o.R = &userAccountR{
 			NameAfterLastName: related,
@@ -2627,13 +2622,35 @@ func (o *UserAccount) SetNameAfterLastName(ctx context.Context, exec boil.Contex
 	return nil
 }
 
-// AddDimensionsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Dimensions.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddDimensionsG(ctx context.Context, insert bool, related ...*Dimension) error {
-	return o.AddDimensions(ctx, boil.GetContextDB(), insert, related...)
+// RemoveNameAfterLastName relationship.
+// Sets o.R.NameAfterLastName to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *UserAccount) RemoveNameAfterLastName(ctx context.Context, exec boil.ContextExecutor, related *NameAfterLastName) error {
+	var err error
+
+	queries.SetScanner(&o.NameAfterLastNameID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("name_after_last_name_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.NameAfterLastName = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.UserAccounts {
+		if queries.Equal(o.NameAfterLastNameID, ri.NameAfterLastNameID) {
+			continue
+		}
+
+		ln := len(related.R.UserAccounts)
+		if ln > 1 && i < ln-1 {
+			related.R.UserAccounts[i] = related.R.UserAccounts[ln-1]
+		}
+		related.R.UserAccounts = related.R.UserAccounts[:ln-1]
+		break
+	}
+	return nil
 }
 
 // AddDimensions adds the given related objects to the existing relationships
@@ -2689,15 +2706,6 @@ func (o *UserAccount) AddDimensions(ctx context.Context, exec boil.ContextExecut
 	return nil
 }
 
-// AddDimensionsLinksG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.DimensionsLinks.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddDimensionsLinksG(ctx context.Context, insert bool, related ...*DimensionsLink) error {
-	return o.AddDimensionsLinks(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddDimensionsLinks adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.DimensionsLinks.
@@ -2749,15 +2757,6 @@ func (o *UserAccount) AddDimensionsLinks(ctx context.Context, exec boil.ContextE
 		}
 	}
 	return nil
-}
-
-// AddDirectionsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Directions.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddDirectionsG(ctx context.Context, insert bool, related ...*Direction) error {
-	return o.AddDirections(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddDirections adds the given related objects to the existing relationships
@@ -2813,15 +2812,6 @@ func (o *UserAccount) AddDirections(ctx context.Context, exec boil.ContextExecut
 	return nil
 }
 
-// AddEmailAddressesG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.EmailAddresses.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddEmailAddressesG(ctx context.Context, insert bool, related ...*EmailAddress) error {
-	return o.AddEmailAddresses(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddEmailAddresses adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.EmailAddresses.
@@ -2873,15 +2863,6 @@ func (o *UserAccount) AddEmailAddresses(ctx context.Context, exec boil.ContextEx
 		}
 	}
 	return nil
-}
-
-// AddEmailDomainsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.EmailDomains.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddEmailDomainsG(ctx context.Context, insert bool, related ...*EmailDomain) error {
-	return o.AddEmailDomains(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddEmailDomains adds the given related objects to the existing relationships
@@ -2937,15 +2918,6 @@ func (o *UserAccount) AddEmailDomains(ctx context.Context, exec boil.ContextExec
 	return nil
 }
 
-// AddLabelsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Labels.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddLabelsG(ctx context.Context, insert bool, related ...*Label) error {
-	return o.AddLabels(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddLabels adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.Labels.
@@ -2997,15 +2969,6 @@ func (o *UserAccount) AddLabels(ctx context.Context, exec boil.ContextExecutor, 
 		}
 	}
 	return nil
-}
-
-// AddLinksG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Links.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddLinksG(ctx context.Context, insert bool, related ...*Link) error {
-	return o.AddLinks(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddLinks adds the given related objects to the existing relationships
@@ -3061,15 +3024,6 @@ func (o *UserAccount) AddLinks(ctx context.Context, exec boil.ContextExecutor, i
 	return nil
 }
 
-// AddMessagesG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Messages.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddMessagesG(ctx context.Context, insert bool, related ...*Message) error {
-	return o.AddMessages(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddMessages adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.Messages.
@@ -3121,15 +3075,6 @@ func (o *UserAccount) AddMessages(ctx context.Context, exec boil.ContextExecutor
 		}
 	}
 	return nil
-}
-
-// AddPollsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Polls.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddPollsG(ctx context.Context, insert bool, related ...*Poll) error {
-	return o.AddPolls(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPolls adds the given related objects to the existing relationships
@@ -3185,15 +3130,6 @@ func (o *UserAccount) AddPolls(ctx context.Context, exec boil.ContextExecutor, i
 	return nil
 }
 
-// AddPollsGroupsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.PollsGroups.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddPollsGroupsG(ctx context.Context, insert bool, related ...*PollsGroup) error {
-	return o.AddPollsGroups(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsGroups adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.PollsGroups.
@@ -3245,15 +3181,6 @@ func (o *UserAccount) AddPollsGroups(ctx context.Context, exec boil.ContextExecu
 		}
 	}
 	return nil
-}
-
-// AddPollsLabelsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.PollsLabels.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddPollsLabelsG(ctx context.Context, insert bool, related ...*PollsLabel) error {
-	return o.AddPollsLabels(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsLabels adds the given related objects to the existing relationships
@@ -3309,15 +3236,6 @@ func (o *UserAccount) AddPollsLabels(ctx context.Context, exec boil.ContextExecu
 	return nil
 }
 
-// AddPollsLinksG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.PollsLinks.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddPollsLinksG(ctx context.Context, insert bool, related ...*PollsLink) error {
-	return o.AddPollsLinks(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsLinks adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.PollsLinks.
@@ -3369,15 +3287,6 @@ func (o *UserAccount) AddPollsLinks(ctx context.Context, exec boil.ContextExecut
 		}
 	}
 	return nil
-}
-
-// AddPollsPollsGroupsG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.PollsPollsGroups.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddPollsPollsGroupsG(ctx context.Context, insert bool, related ...*PollsPollsGroup) error {
-	return o.AddPollsPollsGroups(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsPollsGroups adds the given related objects to the existing relationships
@@ -3433,15 +3342,6 @@ func (o *UserAccount) AddPollsPollsGroups(ctx context.Context, exec boil.Context
 	return nil
 }
 
-// AddUserAccountEthnicitiesG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.UserAccountEthnicities.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddUserAccountEthnicitiesG(ctx context.Context, insert bool, related ...*UserAccountEthnicity) error {
-	return o.AddUserAccountEthnicities(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddUserAccountEthnicities adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.UserAccountEthnicities.
@@ -3493,15 +3393,6 @@ func (o *UserAccount) AddUserAccountEthnicities(ctx context.Context, exec boil.C
 		}
 	}
 	return nil
-}
-
-// AddUserAccountSuffixesG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.UserAccountSuffixes.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddUserAccountSuffixesG(ctx context.Context, insert bool, related ...*UserAccountSuffix) error {
-	return o.AddUserAccountSuffixes(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddUserAccountSuffixes adds the given related objects to the existing relationships
@@ -3557,15 +3448,6 @@ func (o *UserAccount) AddUserAccountSuffixes(ctx context.Context, exec boil.Cont
 	return nil
 }
 
-// AddUserPersonalInfosG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.UserPersonalInfos.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddUserPersonalInfosG(ctx context.Context, insert bool, related ...*UserPersonalInfo) error {
-	return o.AddUserPersonalInfos(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddUserPersonalInfos adds the given related objects to the existing relationships
 // of the user_account, optionally inserting them as new records.
 // Appends related to o.R.UserPersonalInfos.
@@ -3617,15 +3499,6 @@ func (o *UserAccount) AddUserPersonalInfos(ctx context.Context, exec boil.Contex
 		}
 	}
 	return nil
-}
-
-// AddVotesG adds the given related objects to the existing relationships
-// of the user_account, optionally inserting them as new records.
-// Appends related to o.R.Votes.
-// Sets related.R.UserAccount appropriately.
-// Uses the global database handle.
-func (o *UserAccount) AddVotesG(ctx context.Context, insert bool, related ...*Vote) error {
-	return o.AddVotes(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddVotes adds the given related objects to the existing relationships
@@ -3687,11 +3560,6 @@ func UserAccounts(mods ...qm.QueryMod) userAccountQuery {
 	return userAccountQuery{NewQuery(mods...)}
 }
 
-// FindUserAccountG retrieves a single record by ID.
-func FindUserAccountG(ctx context.Context, userAccountID int64, selectCols ...string) (*UserAccount, error) {
-	return FindUserAccount(ctx, boil.GetContextDB(), userAccountID, selectCols...)
-}
-
 // FindUserAccount retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUserAccount(ctx context.Context, exec boil.ContextExecutor, userAccountID int64, selectCols ...string) (*UserAccount, error) {
@@ -3716,11 +3584,6 @@ func FindUserAccount(ctx context.Context, exec boil.ContextExecutor, userAccount
 	}
 
 	return userAccountObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *UserAccount) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -3806,12 +3669,6 @@ func (o *UserAccount) Insert(ctx context.Context, exec boil.ContextExecutor, col
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single UserAccount record using the global executor.
-// See Update for more documentation.
-func (o *UserAccount) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the UserAccount.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -3892,11 +3749,6 @@ func (q userAccountQuery) UpdateAll(ctx context.Context, exec boil.ContextExecut
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o UserAccountSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o UserAccountSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -3943,11 +3795,6 @@ func (o UserAccountSlice) UpdateAll(ctx context.Context, exec boil.ContextExecut
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all userAccount")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *UserAccount) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -4070,12 +3917,6 @@ func (o *UserAccount) Upsert(ctx context.Context, exec boil.ContextExecutor, upd
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single UserAccount record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *UserAccount) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single UserAccount record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *UserAccount) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -4133,11 +3974,6 @@ func (q userAccountQuery) DeleteAll(ctx context.Context, exec boil.ContextExecut
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o UserAccountSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o UserAccountSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -4191,15 +4027,6 @@ func (o UserAccountSlice) DeleteAll(ctx context.Context, exec boil.ContextExecut
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *UserAccount) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no UserAccount provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserAccount) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -4210,16 +4037,6 @@ func (o *UserAccount) Reload(ctx context.Context, exec boil.ContextExecutor) err
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *UserAccountSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty UserAccountSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -4249,11 +4066,6 @@ func (o *UserAccountSlice) ReloadAll(ctx context.Context, exec boil.ContextExecu
 	*o = slice
 
 	return nil
-}
-
-// UserAccountExistsG checks if the UserAccount row exists.
-func UserAccountExistsG(ctx context.Context, userAccountID int64) (bool, error) {
-	return UserAccountExists(ctx, boil.GetContextDB(), userAccountID)
 }
 
 // UserAccountExists checks if the UserAccount row exists.

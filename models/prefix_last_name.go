@@ -228,11 +228,6 @@ func AddPrefixLastNameHook(hookPoint boil.HookPoint, prefixLastNameHook PrefixLa
 	}
 }
 
-// OneG returns a single prefixLastName record from the query using the global executor.
-func (q prefixLastNameQuery) OneG(ctx context.Context) (*PrefixLastName, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single prefixLastName record from the query.
 func (q prefixLastNameQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PrefixLastName, error) {
 	o := &PrefixLastName{}
@@ -252,11 +247,6 @@ func (q prefixLastNameQuery) One(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return o, nil
-}
-
-// AllG returns all PrefixLastName records from the query using the global executor.
-func (q prefixLastNameQuery) AllG(ctx context.Context) (PrefixLastNameSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PrefixLastName records from the query.
@@ -279,11 +269,6 @@ func (q prefixLastNameQuery) All(ctx context.Context, exec boil.ContextExecutor)
 	return o, nil
 }
 
-// CountG returns the count of all PrefixLastName records in the query, and panics on error.
-func (q prefixLastNameQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PrefixLastName records in the query.
 func (q prefixLastNameQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -297,11 +282,6 @@ func (q prefixLastNameQuery) Count(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q prefixLastNameQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -366,7 +346,7 @@ func (prefixLastNameL) LoadUserAccounts(ctx context.Context, e boil.ContextExecu
 			}
 
 			for _, a := range args {
-				if a == obj.PrefixLastNameID {
+				if queries.Equal(a, obj.PrefixLastNameID) {
 					continue Outer
 				}
 			}
@@ -417,7 +397,7 @@ func (prefixLastNameL) LoadUserAccounts(ctx context.Context, e boil.ContextExecu
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.PrefixLastNameID == foreign.PrefixLastNameID {
+			if queries.Equal(local.PrefixLastNameID, foreign.PrefixLastNameID) {
 				local.R.UserAccounts = append(local.R.UserAccounts, foreign)
 				if foreign.R == nil {
 					foreign.R = &userAccountR{}
@@ -431,15 +411,6 @@ func (prefixLastNameL) LoadUserAccounts(ctx context.Context, e boil.ContextExecu
 	return nil
 }
 
-// AddUserAccountsG adds the given related objects to the existing relationships
-// of the prefix_last_name, optionally inserting them as new records.
-// Appends related to o.R.UserAccounts.
-// Sets related.R.PrefixLastName appropriately.
-// Uses the global database handle.
-func (o *PrefixLastName) AddUserAccountsG(ctx context.Context, insert bool, related ...*UserAccount) error {
-	return o.AddUserAccounts(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddUserAccounts adds the given related objects to the existing relationships
 // of the prefix_last_name, optionally inserting them as new records.
 // Appends related to o.R.UserAccounts.
@@ -448,7 +419,7 @@ func (o *PrefixLastName) AddUserAccounts(ctx context.Context, exec boil.ContextE
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.PrefixLastNameID = o.PrefixLastNameID
+			queries.Assign(&rel.PrefixLastNameID, o.PrefixLastNameID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -469,7 +440,7 @@ func (o *PrefixLastName) AddUserAccounts(ctx context.Context, exec boil.ContextE
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.PrefixLastNameID = o.PrefixLastNameID
+			queries.Assign(&rel.PrefixLastNameID, o.PrefixLastNameID)
 		}
 	}
 
@@ -493,15 +464,80 @@ func (o *PrefixLastName) AddUserAccounts(ctx context.Context, exec boil.ContextE
 	return nil
 }
 
+// SetUserAccounts removes all previously related items of the
+// prefix_last_name replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.PrefixLastName's UserAccounts accordingly.
+// Replaces o.R.UserAccounts with related.
+// Sets related.R.PrefixLastName's UserAccounts accordingly.
+func (o *PrefixLastName) SetUserAccounts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserAccount) error {
+	query := "update \"user_account\" set \"prefix_last_name_id\" = null where \"prefix_last_name_id\" = $1"
+	values := []interface{}{o.PrefixLastNameID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.UserAccounts {
+			queries.SetScanner(&rel.PrefixLastNameID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.PrefixLastName = nil
+		}
+
+		o.R.UserAccounts = nil
+	}
+	return o.AddUserAccounts(ctx, exec, insert, related...)
+}
+
+// RemoveUserAccounts relationships from objects passed in.
+// Removes related items from R.UserAccounts (uses pointer comparison, removal does not keep order)
+// Sets related.R.PrefixLastName.
+func (o *PrefixLastName) RemoveUserAccounts(ctx context.Context, exec boil.ContextExecutor, related ...*UserAccount) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.PrefixLastNameID, nil)
+		if rel.R != nil {
+			rel.R.PrefixLastName = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("prefix_last_name_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.UserAccounts {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.UserAccounts)
+			if ln > 1 && i < ln-1 {
+				o.R.UserAccounts[i] = o.R.UserAccounts[ln-1]
+			}
+			o.R.UserAccounts = o.R.UserAccounts[:ln-1]
+			break
+		}
+	}
+
+	return nil
+}
+
 // PrefixLastNames retrieves all the records using an executor.
 func PrefixLastNames(mods ...qm.QueryMod) prefixLastNameQuery {
 	mods = append(mods, qm.From("\"prefix_last_name\""))
 	return prefixLastNameQuery{NewQuery(mods...)}
-}
-
-// FindPrefixLastNameG retrieves a single record by ID.
-func FindPrefixLastNameG(ctx context.Context, prefixLastNameID int64, selectCols ...string) (*PrefixLastName, error) {
-	return FindPrefixLastName(ctx, boil.GetContextDB(), prefixLastNameID, selectCols...)
 }
 
 // FindPrefixLastName retrieves a single record by ID with an executor.
@@ -528,11 +564,6 @@ func FindPrefixLastName(ctx context.Context, exec boil.ContextExecutor, prefixLa
 	}
 
 	return prefixLastNameObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PrefixLastName) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -611,12 +642,6 @@ func (o *PrefixLastName) Insert(ctx context.Context, exec boil.ContextExecutor, 
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PrefixLastName record using the global executor.
-// See Update for more documentation.
-func (o *PrefixLastName) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PrefixLastName.
@@ -699,11 +724,6 @@ func (q prefixLastNameQuery) UpdateAll(ctx context.Context, exec boil.ContextExe
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PrefixLastNameSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PrefixLastNameSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -750,11 +770,6 @@ func (o PrefixLastNameSlice) UpdateAll(ctx context.Context, exec boil.ContextExe
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all prefixLastName")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PrefixLastName) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -872,12 +887,6 @@ func (o *PrefixLastName) Upsert(ctx context.Context, exec boil.ContextExecutor, 
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PrefixLastName record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PrefixLastName) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PrefixLastName record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PrefixLastName) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -935,11 +944,6 @@ func (q prefixLastNameQuery) DeleteAll(ctx context.Context, exec boil.ContextExe
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PrefixLastNameSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PrefixLastNameSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -993,15 +997,6 @@ func (o PrefixLastNameSlice) DeleteAll(ctx context.Context, exec boil.ContextExe
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PrefixLastName) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PrefixLastName provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PrefixLastName) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1012,16 +1007,6 @@ func (o *PrefixLastName) Reload(ctx context.Context, exec boil.ContextExecutor) 
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PrefixLastNameSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PrefixLastNameSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1051,11 +1036,6 @@ func (o *PrefixLastNameSlice) ReloadAll(ctx context.Context, exec boil.ContextEx
 	*o = slice
 
 	return nil
-}
-
-// PrefixLastNameExistsG checks if the PrefixLastName row exists.
-func PrefixLastNameExistsG(ctx context.Context, prefixLastNameID int64) (bool, error) {
-	return PrefixLastNameExists(ctx, boil.GetContextDB(), prefixLastNameID)
 }
 
 // PrefixLastNameExists checks if the PrefixLastName row exists.

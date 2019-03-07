@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -22,14 +23,14 @@ import (
 
 // PollsDimensionsDirection is an object representing the database table.
 type PollsDimensionsDirection struct {
-	PollDimensionDirectionID int64  `boil:"poll_dimension_direction_id" json:"poll_dimension_direction_id" toml:"poll_dimension_direction_id" yaml:"poll_dimension_direction_id"`
-	DimensionDirectionID     int64  `boil:"dimension_direction_id" json:"dimension_direction_id" toml:"dimension_direction_id" yaml:"dimension_direction_id"`
-	PollID                   int64  `boil:"poll_id" json:"poll_id" toml:"poll_id" yaml:"poll_id"`
-	DimensionCoordinateAxis  string `boil:"dimension_coordinate_axis" json:"dimension_coordinate_axis" toml:"dimension_coordinate_axis" yaml:"dimension_coordinate_axis"`
-	DirectionOrientation     bool   `boil:"direction_orientation" json:"direction_orientation" toml:"direction_orientation" yaml:"direction_orientation"`
-	ColorID                  int64  `boil:"color_id" json:"color_id" toml:"color_id" yaml:"color_id"`
-	DesignPatternID          int64  `boil:"design_pattern_id" json:"design_pattern_id" toml:"design_pattern_id" yaml:"design_pattern_id"`
-	EmojiID                  int64  `boil:"emoji_id" json:"emoji_id" toml:"emoji_id" yaml:"emoji_id"`
+	PollDimensionDirectionID int64      `boil:"poll_dimension_direction_id" json:"poll_dimension_direction_id" toml:"poll_dimension_direction_id" yaml:"poll_dimension_direction_id"`
+	DimensionDirectionID     int64      `boil:"dimension_direction_id" json:"dimension_direction_id" toml:"dimension_direction_id" yaml:"dimension_direction_id"`
+	PollID                   int64      `boil:"poll_id" json:"poll_id" toml:"poll_id" yaml:"poll_id"`
+	DimensionCoordinateAxis  string     `boil:"dimension_coordinate_axis" json:"dimension_coordinate_axis" toml:"dimension_coordinate_axis" yaml:"dimension_coordinate_axis"`
+	DirectionOrientation     bool       `boil:"direction_orientation" json:"direction_orientation" toml:"direction_orientation" yaml:"direction_orientation"`
+	ColorID                  int64      `boil:"color_id" json:"color_id" toml:"color_id" yaml:"color_id"`
+	DesignPatternID          null.Int64 `boil:"design_pattern_id" json:"design_pattern_id,omitempty" toml:"design_pattern_id" yaml:"design_pattern_id,omitempty"`
+	EmojiID                  null.Int64 `boil:"emoji_id" json:"emoji_id,omitempty" toml:"emoji_id" yaml:"emoji_id,omitempty"`
 
 	R *pollsDimensionsDirectionR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L pollsDimensionsDirectionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -267,11 +268,6 @@ func AddPollsDimensionsDirectionHook(hookPoint boil.HookPoint, pollsDimensionsDi
 	}
 }
 
-// OneG returns a single pollsDimensionsDirection record from the query using the global executor.
-func (q pollsDimensionsDirectionQuery) OneG(ctx context.Context) (*PollsDimensionsDirection, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsDimensionsDirection record from the query.
 func (q pollsDimensionsDirectionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsDimensionsDirection, error) {
 	o := &PollsDimensionsDirection{}
@@ -291,11 +287,6 @@ func (q pollsDimensionsDirectionQuery) One(ctx context.Context, exec boil.Contex
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsDimensionsDirection records from the query using the global executor.
-func (q pollsDimensionsDirectionQuery) AllG(ctx context.Context) (PollsDimensionsDirectionSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsDimensionsDirection records from the query.
@@ -318,11 +309,6 @@ func (q pollsDimensionsDirectionQuery) All(ctx context.Context, exec boil.Contex
 	return o, nil
 }
 
-// CountG returns the count of all PollsDimensionsDirection records in the query, and panics on error.
-func (q pollsDimensionsDirectionQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsDimensionsDirection records in the query.
 func (q pollsDimensionsDirectionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -336,11 +322,6 @@ func (q pollsDimensionsDirectionQuery) Count(ctx context.Context, exec boil.Cont
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsDimensionsDirectionQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -707,7 +688,7 @@ func (pollsDimensionsDirectionL) LoadEmoji(ctx context.Context, e boil.ContextEx
 			}
 
 			for _, a := range args {
-				if a == obj.EmojiID {
+				if queries.Equal(a, obj.EmojiID) {
 					continue Outer
 				}
 			}
@@ -762,7 +743,7 @@ func (pollsDimensionsDirectionL) LoadEmoji(ctx context.Context, e boil.ContextEx
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.EmojiID == foreign.EmojiID {
+			if queries.Equal(local.EmojiID, foreign.EmojiID) {
 				local.R.Emoji = foreign
 				if foreign.R == nil {
 					foreign.R = &emojiR{}
@@ -802,7 +783,7 @@ func (pollsDimensionsDirectionL) LoadDesignPattern(ctx context.Context, e boil.C
 			}
 
 			for _, a := range args {
-				if a == obj.DesignPatternID {
+				if queries.Equal(a, obj.DesignPatternID) {
 					continue Outer
 				}
 			}
@@ -857,7 +838,7 @@ func (pollsDimensionsDirectionL) LoadDesignPattern(ctx context.Context, e boil.C
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.DesignPatternID == foreign.DesignPatternID {
+			if queries.Equal(local.DesignPatternID, foreign.DesignPatternID) {
 				local.R.DesignPattern = foreign
 				if foreign.R == nil {
 					foreign.R = &designPatternR{}
@@ -1239,14 +1220,6 @@ func (pollsDimensionsDirectionL) LoadXPollDimensionDirectionVotes(ctx context.Co
 	return nil
 }
 
-// SetPollG of the pollsDimensionsDirection to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.PollsDimensionsDirections.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetPoll of the pollsDimensionsDirection to the related item.
 // Sets o.R.Poll to related.
 // Adds o to related.R.PollsDimensionsDirections.
@@ -1292,14 +1265,6 @@ func (o *PollsDimensionsDirection) SetPoll(ctx context.Context, exec boil.Contex
 	}
 
 	return nil
-}
-
-// SetDimensionDirectionG of the pollsDimensionsDirection to the related item.
-// Sets o.R.DimensionDirection to related.
-// Adds o to related.R.PollsDimensionsDirections.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) SetDimensionDirectionG(ctx context.Context, insert bool, related *DimensionDirection) error {
-	return o.SetDimensionDirection(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetDimensionDirection of the pollsDimensionsDirection to the related item.
@@ -1349,14 +1314,6 @@ func (o *PollsDimensionsDirection) SetDimensionDirection(ctx context.Context, ex
 	return nil
 }
 
-// SetEmojiG of the pollsDimensionsDirection to the related item.
-// Sets o.R.Emoji to related.
-// Adds o to related.R.PollsDimensionsDirections.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) SetEmojiG(ctx context.Context, insert bool, related *Emoji) error {
-	return o.SetEmoji(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetEmoji of the pollsDimensionsDirection to the related item.
 // Sets o.R.Emoji to related.
 // Adds o to related.R.PollsDimensionsDirections.
@@ -1384,7 +1341,7 @@ func (o *PollsDimensionsDirection) SetEmoji(ctx context.Context, exec boil.Conte
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.EmojiID = related.EmojiID
+	queries.Assign(&o.EmojiID, related.EmojiID)
 	if o.R == nil {
 		o.R = &pollsDimensionsDirectionR{
 			Emoji: related,
@@ -1404,12 +1361,35 @@ func (o *PollsDimensionsDirection) SetEmoji(ctx context.Context, exec boil.Conte
 	return nil
 }
 
-// SetDesignPatternG of the pollsDimensionsDirection to the related item.
-// Sets o.R.DesignPattern to related.
-// Adds o to related.R.PollsDimensionsDirections.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) SetDesignPatternG(ctx context.Context, insert bool, related *DesignPattern) error {
-	return o.SetDesignPattern(ctx, boil.GetContextDB(), insert, related)
+// RemoveEmoji relationship.
+// Sets o.R.Emoji to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *PollsDimensionsDirection) RemoveEmoji(ctx context.Context, exec boil.ContextExecutor, related *Emoji) error {
+	var err error
+
+	queries.SetScanner(&o.EmojiID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("emoji_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.Emoji = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.PollsDimensionsDirections {
+		if queries.Equal(o.EmojiID, ri.EmojiID) {
+			continue
+		}
+
+		ln := len(related.R.PollsDimensionsDirections)
+		if ln > 1 && i < ln-1 {
+			related.R.PollsDimensionsDirections[i] = related.R.PollsDimensionsDirections[ln-1]
+		}
+		related.R.PollsDimensionsDirections = related.R.PollsDimensionsDirections[:ln-1]
+		break
+	}
+	return nil
 }
 
 // SetDesignPattern of the pollsDimensionsDirection to the related item.
@@ -1439,7 +1419,7 @@ func (o *PollsDimensionsDirection) SetDesignPattern(ctx context.Context, exec bo
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.DesignPatternID = related.DesignPatternID
+	queries.Assign(&o.DesignPatternID, related.DesignPatternID)
 	if o.R == nil {
 		o.R = &pollsDimensionsDirectionR{
 			DesignPattern: related,
@@ -1459,12 +1439,35 @@ func (o *PollsDimensionsDirection) SetDesignPattern(ctx context.Context, exec bo
 	return nil
 }
 
-// SetColorG of the pollsDimensionsDirection to the related item.
-// Sets o.R.Color to related.
-// Adds o to related.R.PollsDimensionsDirections.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) SetColorG(ctx context.Context, insert bool, related *Color) error {
-	return o.SetColor(ctx, boil.GetContextDB(), insert, related)
+// RemoveDesignPattern relationship.
+// Sets o.R.DesignPattern to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *PollsDimensionsDirection) RemoveDesignPattern(ctx context.Context, exec boil.ContextExecutor, related *DesignPattern) error {
+	var err error
+
+	queries.SetScanner(&o.DesignPatternID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("design_pattern_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.DesignPattern = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.PollsDimensionsDirections {
+		if queries.Equal(o.DesignPatternID, ri.DesignPatternID) {
+			continue
+		}
+
+		ln := len(related.R.PollsDimensionsDirections)
+		if ln > 1 && i < ln-1 {
+			related.R.PollsDimensionsDirections[i] = related.R.PollsDimensionsDirections[ln-1]
+		}
+		related.R.PollsDimensionsDirections = related.R.PollsDimensionsDirections[:ln-1]
+		break
+	}
+	return nil
 }
 
 // SetColor of the pollsDimensionsDirection to the related item.
@@ -1512,15 +1515,6 @@ func (o *PollsDimensionsDirection) SetColor(ctx context.Context, exec boil.Conte
 	}
 
 	return nil
-}
-
-// AddZPollDimensionDirectionVotesG adds the given related objects to the existing relationships
-// of the polls_dimensions_direction, optionally inserting them as new records.
-// Appends related to o.R.ZPollDimensionDirectionVotes.
-// Sets related.R.ZPollDimensionDirection appropriately.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) AddZPollDimensionDirectionVotesG(ctx context.Context, insert bool, related ...*Vote) error {
-	return o.AddZPollDimensionDirectionVotes(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddZPollDimensionDirectionVotes adds the given related objects to the existing relationships
@@ -1576,15 +1570,6 @@ func (o *PollsDimensionsDirection) AddZPollDimensionDirectionVotes(ctx context.C
 	return nil
 }
 
-// AddYPollDimensionDirectionVotesG adds the given related objects to the existing relationships
-// of the polls_dimensions_direction, optionally inserting them as new records.
-// Appends related to o.R.YPollDimensionDirectionVotes.
-// Sets related.R.YPollDimensionDirection appropriately.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) AddYPollDimensionDirectionVotesG(ctx context.Context, insert bool, related ...*Vote) error {
-	return o.AddYPollDimensionDirectionVotes(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddYPollDimensionDirectionVotes adds the given related objects to the existing relationships
 // of the polls_dimensions_direction, optionally inserting them as new records.
 // Appends related to o.R.YPollDimensionDirectionVotes.
@@ -1636,15 +1621,6 @@ func (o *PollsDimensionsDirection) AddYPollDimensionDirectionVotes(ctx context.C
 		}
 	}
 	return nil
-}
-
-// AddXPollDimensionDirectionVotesG adds the given related objects to the existing relationships
-// of the polls_dimensions_direction, optionally inserting them as new records.
-// Appends related to o.R.XPollDimensionDirectionVotes.
-// Sets related.R.XPollDimensionDirection appropriately.
-// Uses the global database handle.
-func (o *PollsDimensionsDirection) AddXPollDimensionDirectionVotesG(ctx context.Context, insert bool, related ...*Vote) error {
-	return o.AddXPollDimensionDirectionVotes(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddXPollDimensionDirectionVotes adds the given related objects to the existing relationships
@@ -1706,11 +1682,6 @@ func PollsDimensionsDirections(mods ...qm.QueryMod) pollsDimensionsDirectionQuer
 	return pollsDimensionsDirectionQuery{NewQuery(mods...)}
 }
 
-// FindPollsDimensionsDirectionG retrieves a single record by ID.
-func FindPollsDimensionsDirectionG(ctx context.Context, pollDimensionDirectionID int64, selectCols ...string) (*PollsDimensionsDirection, error) {
-	return FindPollsDimensionsDirection(ctx, boil.GetContextDB(), pollDimensionDirectionID, selectCols...)
-}
-
 // FindPollsDimensionsDirection retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPollsDimensionsDirection(ctx context.Context, exec boil.ContextExecutor, pollDimensionDirectionID int64, selectCols ...string) (*PollsDimensionsDirection, error) {
@@ -1735,11 +1706,6 @@ func FindPollsDimensionsDirection(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return pollsDimensionsDirectionObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsDimensionsDirection) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1818,12 +1784,6 @@ func (o *PollsDimensionsDirection) Insert(ctx context.Context, exec boil.Context
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PollsDimensionsDirection record using the global executor.
-// See Update for more documentation.
-func (o *PollsDimensionsDirection) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PollsDimensionsDirection.
@@ -1906,11 +1866,6 @@ func (q pollsDimensionsDirectionQuery) UpdateAll(ctx context.Context, exec boil.
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsDimensionsDirectionSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsDimensionsDirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1957,11 +1912,6 @@ func (o PollsDimensionsDirectionSlice) UpdateAll(ctx context.Context, exec boil.
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsDimensionsDirection")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsDimensionsDirection) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -2079,12 +2029,6 @@ func (o *PollsDimensionsDirection) Upsert(ctx context.Context, exec boil.Context
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsDimensionsDirection record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsDimensionsDirection) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsDimensionsDirection record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsDimensionsDirection) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -2142,11 +2086,6 @@ func (q pollsDimensionsDirectionQuery) DeleteAll(ctx context.Context, exec boil.
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsDimensionsDirectionSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsDimensionsDirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -2200,15 +2139,6 @@ func (o PollsDimensionsDirectionSlice) DeleteAll(ctx context.Context, exec boil.
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsDimensionsDirection) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsDimensionsDirection provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsDimensionsDirection) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -2219,16 +2149,6 @@ func (o *PollsDimensionsDirection) Reload(ctx context.Context, exec boil.Context
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsDimensionsDirectionSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsDimensionsDirectionSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -2258,11 +2178,6 @@ func (o *PollsDimensionsDirectionSlice) ReloadAll(ctx context.Context, exec boil
 	*o = slice
 
 	return nil
-}
-
-// PollsDimensionsDirectionExistsG checks if the PollsDimensionsDirection row exists.
-func PollsDimensionsDirectionExistsG(ctx context.Context, pollDimensionDirectionID int64) (bool, error) {
-	return PollsDimensionsDirectionExists(ctx, boil.GetContextDB(), pollDimensionDirectionID)
 }
 
 // PollsDimensionsDirectionExists checks if the PollsDimensionsDirection row exists.

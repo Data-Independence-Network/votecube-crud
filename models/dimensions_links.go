@@ -243,11 +243,6 @@ func AddDimensionsLinkHook(hookPoint boil.HookPoint, dimensionsLinkHook Dimensio
 	}
 }
 
-// OneG returns a single dimensionsLink record from the query using the global executor.
-func (q dimensionsLinkQuery) OneG(ctx context.Context) (*DimensionsLink, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single dimensionsLink record from the query.
 func (q dimensionsLinkQuery) One(ctx context.Context, exec boil.ContextExecutor) (*DimensionsLink, error) {
 	o := &DimensionsLink{}
@@ -267,11 +262,6 @@ func (q dimensionsLinkQuery) One(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return o, nil
-}
-
-// AllG returns all DimensionsLink records from the query using the global executor.
-func (q dimensionsLinkQuery) AllG(ctx context.Context) (DimensionsLinkSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all DimensionsLink records from the query.
@@ -294,11 +284,6 @@ func (q dimensionsLinkQuery) All(ctx context.Context, exec boil.ContextExecutor)
 	return o, nil
 }
 
-// CountG returns the count of all DimensionsLink records in the query, and panics on error.
-func (q dimensionsLinkQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all DimensionsLink records in the query.
 func (q dimensionsLinkQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -312,11 +297,6 @@ func (q dimensionsLinkQuery) Count(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q dimensionsLinkQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -661,14 +641,6 @@ func (dimensionsLinkL) LoadDimension(ctx context.Context, e boil.ContextExecutor
 	return nil
 }
 
-// SetUserAccountG of the dimensionsLink to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.DimensionsLinks.
-// Uses the global database handle.
-func (o *DimensionsLink) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the dimensionsLink to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.DimensionsLinks.
@@ -716,14 +688,6 @@ func (o *DimensionsLink) SetUserAccount(ctx context.Context, exec boil.ContextEx
 	return nil
 }
 
-// SetLinkG of the dimensionsLink to the related item.
-// Sets o.R.Link to related.
-// Adds o to related.R.DimensionsLinks.
-// Uses the global database handle.
-func (o *DimensionsLink) SetLinkG(ctx context.Context, insert bool, related *Link) error {
-	return o.SetLink(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetLink of the dimensionsLink to the related item.
 // Sets o.R.Link to related.
 // Adds o to related.R.DimensionsLinks.
@@ -769,14 +733,6 @@ func (o *DimensionsLink) SetLink(ctx context.Context, exec boil.ContextExecutor,
 	}
 
 	return nil
-}
-
-// SetDimensionG of the dimensionsLink to the related item.
-// Sets o.R.Dimension to related.
-// Adds o to related.R.DimensionsLinks.
-// Uses the global database handle.
-func (o *DimensionsLink) SetDimensionG(ctx context.Context, insert bool, related *Dimension) error {
-	return o.SetDimension(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetDimension of the dimensionsLink to the related item.
@@ -832,11 +788,6 @@ func DimensionsLinks(mods ...qm.QueryMod) dimensionsLinkQuery {
 	return dimensionsLinkQuery{NewQuery(mods...)}
 }
 
-// FindDimensionsLinkG retrieves a single record by ID.
-func FindDimensionsLinkG(ctx context.Context, dimensionsLinkID int64, selectCols ...string) (*DimensionsLink, error) {
-	return FindDimensionsLink(ctx, boil.GetContextDB(), dimensionsLinkID, selectCols...)
-}
-
 // FindDimensionsLink retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindDimensionsLink(ctx context.Context, exec boil.ContextExecutor, dimensionsLinkID int64, selectCols ...string) (*DimensionsLink, error) {
@@ -861,11 +812,6 @@ func FindDimensionsLink(ctx context.Context, exec boil.ContextExecutor, dimensio
 	}
 
 	return dimensionsLinkObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *DimensionsLink) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -951,12 +897,6 @@ func (o *DimensionsLink) Insert(ctx context.Context, exec boil.ContextExecutor, 
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single DimensionsLink record using the global executor.
-// See Update for more documentation.
-func (o *DimensionsLink) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the DimensionsLink.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1037,11 +977,6 @@ func (q dimensionsLinkQuery) UpdateAll(ctx context.Context, exec boil.ContextExe
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o DimensionsLinkSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o DimensionsLinkSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1088,11 +1023,6 @@ func (o DimensionsLinkSlice) UpdateAll(ctx context.Context, exec boil.ContextExe
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all dimensionsLink")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *DimensionsLink) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1215,12 +1145,6 @@ func (o *DimensionsLink) Upsert(ctx context.Context, exec boil.ContextExecutor, 
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single DimensionsLink record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *DimensionsLink) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single DimensionsLink record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *DimensionsLink) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1278,11 +1202,6 @@ func (q dimensionsLinkQuery) DeleteAll(ctx context.Context, exec boil.ContextExe
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o DimensionsLinkSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o DimensionsLinkSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1336,15 +1255,6 @@ func (o DimensionsLinkSlice) DeleteAll(ctx context.Context, exec boil.ContextExe
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *DimensionsLink) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no DimensionsLink provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *DimensionsLink) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1355,16 +1265,6 @@ func (o *DimensionsLink) Reload(ctx context.Context, exec boil.ContextExecutor) 
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *DimensionsLinkSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty DimensionsLinkSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1394,11 +1294,6 @@ func (o *DimensionsLinkSlice) ReloadAll(ctx context.Context, exec boil.ContextEx
 	*o = slice
 
 	return nil
-}
-
-// DimensionsLinkExistsG checks if the DimensionsLink row exists.
-func DimensionsLinkExistsG(ctx context.Context, dimensionsLinkID int64) (bool, error) {
-	return DimensionsLinkExists(ctx, boil.GetContextDB(), dimensionsLinkID)
 }
 
 // DimensionsLinkExists checks if the DimensionsLink row exists.

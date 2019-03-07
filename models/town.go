@@ -240,11 +240,6 @@ func AddTownHook(hookPoint boil.HookPoint, townHook TownHook) {
 	}
 }
 
-// OneG returns a single town record from the query using the global executor.
-func (q townQuery) OneG(ctx context.Context) (*Town, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single town record from the query.
 func (q townQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Town, error) {
 	o := &Town{}
@@ -264,11 +259,6 @@ func (q townQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Town, e
 	}
 
 	return o, nil
-}
-
-// AllG returns all Town records from the query using the global executor.
-func (q townQuery) AllG(ctx context.Context) (TownSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Town records from the query.
@@ -291,11 +281,6 @@ func (q townQuery) All(ctx context.Context, exec boil.ContextExecutor) (TownSlic
 	return o, nil
 }
 
-// CountG returns the count of all Town records in the query, and panics on error.
-func (q townQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Town records in the query.
 func (q townQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -309,11 +294,6 @@ func (q townQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64,
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q townQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -664,14 +644,6 @@ func (townL) LoadSuburbs(ctx context.Context, e boil.ContextExecutor, singular b
 	return nil
 }
 
-// SetCountyG of the town to the related item.
-// Sets o.R.County to related.
-// Adds o to related.R.Towns.
-// Uses the global database handle.
-func (o *Town) SetCountyG(ctx context.Context, insert bool, related *County) error {
-	return o.SetCounty(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetCounty of the town to the related item.
 // Sets o.R.County to related.
 // Adds o to related.R.Towns.
@@ -717,15 +689,6 @@ func (o *Town) SetCounty(ctx context.Context, exec boil.ContextExecutor, insert 
 	}
 
 	return nil
-}
-
-// AddPollsTownsG adds the given related objects to the existing relationships
-// of the town, optionally inserting them as new records.
-// Appends related to o.R.PollsTowns.
-// Sets related.R.Town appropriately.
-// Uses the global database handle.
-func (o *Town) AddPollsTownsG(ctx context.Context, insert bool, related ...*PollsTown) error {
-	return o.AddPollsTowns(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsTowns adds the given related objects to the existing relationships
@@ -779,15 +742,6 @@ func (o *Town) AddPollsTowns(ctx context.Context, exec boil.ContextExecutor, ins
 		}
 	}
 	return nil
-}
-
-// AddSuburbsG adds the given related objects to the existing relationships
-// of the town, optionally inserting them as new records.
-// Appends related to o.R.Suburbs.
-// Sets related.R.Town appropriately.
-// Uses the global database handle.
-func (o *Town) AddSuburbsG(ctx context.Context, insert bool, related ...*Suburb) error {
-	return o.AddSuburbs(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddSuburbs adds the given related objects to the existing relationships
@@ -849,11 +803,6 @@ func Towns(mods ...qm.QueryMod) townQuery {
 	return townQuery{NewQuery(mods...)}
 }
 
-// FindTownG retrieves a single record by ID.
-func FindTownG(ctx context.Context, townID int64, selectCols ...string) (*Town, error) {
-	return FindTown(ctx, boil.GetContextDB(), townID, selectCols...)
-}
-
 // FindTown retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindTown(ctx context.Context, exec boil.ContextExecutor, townID int64, selectCols ...string) (*Town, error) {
@@ -878,11 +827,6 @@ func FindTown(ctx context.Context, exec boil.ContextExecutor, townID int64, sele
 	}
 
 	return townObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Town) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -961,12 +905,6 @@ func (o *Town) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Town record using the global executor.
-// See Update for more documentation.
-func (o *Town) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Town.
@@ -1049,11 +987,6 @@ func (q townQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o TownSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o TownSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1100,11 +1033,6 @@ func (o TownSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all town")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Town) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1222,12 +1150,6 @@ func (o *Town) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Town record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Town) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Town record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Town) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1285,11 +1207,6 @@ func (q townQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o TownSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o TownSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1343,15 +1260,6 @@ func (o TownSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Town) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Town provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Town) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1362,16 +1270,6 @@ func (o *Town) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *TownSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty TownSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1401,11 +1299,6 @@ func (o *TownSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 	*o = slice
 
 	return nil
-}
-
-// TownExistsG checks if the Town row exists.
-func TownExistsG(ctx context.Context, townID int64) (bool, error) {
-	return TownExists(ctx, boil.GetContextDB(), townID)
 }
 
 // TownExists checks if the Town row exists.

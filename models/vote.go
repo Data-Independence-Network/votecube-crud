@@ -264,11 +264,6 @@ func AddVoteHook(hookPoint boil.HookPoint, voteHook VoteHook) {
 	}
 }
 
-// OneG returns a single vote record from the query using the global executor.
-func (q voteQuery) OneG(ctx context.Context) (*Vote, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single vote record from the query.
 func (q voteQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Vote, error) {
 	o := &Vote{}
@@ -288,11 +283,6 @@ func (q voteQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Vote, e
 	}
 
 	return o, nil
-}
-
-// AllG returns all Vote records from the query using the global executor.
-func (q voteQuery) AllG(ctx context.Context) (VoteSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Vote records from the query.
@@ -315,11 +305,6 @@ func (q voteQuery) All(ctx context.Context, exec boil.ContextExecutor) (VoteSlic
 	return o, nil
 }
 
-// CountG returns the count of all Vote records in the query, and panics on error.
-func (q voteQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Vote records in the query.
 func (q voteQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -333,11 +318,6 @@ func (q voteQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64,
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q voteQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -900,14 +880,6 @@ func (voteL) LoadXPollDimensionDirection(ctx context.Context, e boil.ContextExec
 	return nil
 }
 
-// SetUserAccountG of the vote to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Votes.
-// Uses the global database handle.
-func (o *Vote) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the vote to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Votes.
@@ -953,14 +925,6 @@ func (o *Vote) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, in
 	}
 
 	return nil
-}
-
-// SetPollG of the vote to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.Votes.
-// Uses the global database handle.
-func (o *Vote) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetPoll of the vote to the related item.
@@ -1010,14 +974,6 @@ func (o *Vote) SetPoll(ctx context.Context, exec boil.ContextExecutor, insert bo
 	return nil
 }
 
-// SetZPollDimensionDirectionG of the vote to the related item.
-// Sets o.R.ZPollDimensionDirection to related.
-// Adds o to related.R.ZPollDimensionDirectionVotes.
-// Uses the global database handle.
-func (o *Vote) SetZPollDimensionDirectionG(ctx context.Context, insert bool, related *PollsDimensionsDirection) error {
-	return o.SetZPollDimensionDirection(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetZPollDimensionDirection of the vote to the related item.
 // Sets o.R.ZPollDimensionDirection to related.
 // Adds o to related.R.ZPollDimensionDirectionVotes.
@@ -1065,14 +1021,6 @@ func (o *Vote) SetZPollDimensionDirection(ctx context.Context, exec boil.Context
 	return nil
 }
 
-// SetYPollDimensionDirectionG of the vote to the related item.
-// Sets o.R.YPollDimensionDirection to related.
-// Adds o to related.R.YPollDimensionDirectionVotes.
-// Uses the global database handle.
-func (o *Vote) SetYPollDimensionDirectionG(ctx context.Context, insert bool, related *PollsDimensionsDirection) error {
-	return o.SetYPollDimensionDirection(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetYPollDimensionDirection of the vote to the related item.
 // Sets o.R.YPollDimensionDirection to related.
 // Adds o to related.R.YPollDimensionDirectionVotes.
@@ -1118,14 +1066,6 @@ func (o *Vote) SetYPollDimensionDirection(ctx context.Context, exec boil.Context
 	}
 
 	return nil
-}
-
-// SetXPollDimensionDirectionG of the vote to the related item.
-// Sets o.R.XPollDimensionDirection to related.
-// Adds o to related.R.XPollDimensionDirectionVotes.
-// Uses the global database handle.
-func (o *Vote) SetXPollDimensionDirectionG(ctx context.Context, insert bool, related *PollsDimensionsDirection) error {
-	return o.SetXPollDimensionDirection(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetXPollDimensionDirection of the vote to the related item.
@@ -1181,11 +1121,6 @@ func Votes(mods ...qm.QueryMod) voteQuery {
 	return voteQuery{NewQuery(mods...)}
 }
 
-// FindVoteG retrieves a single record by ID.
-func FindVoteG(ctx context.Context, voteID int64, selectCols ...string) (*Vote, error) {
-	return FindVote(ctx, boil.GetContextDB(), voteID, selectCols...)
-}
-
 // FindVote retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindVote(ctx context.Context, exec boil.ContextExecutor, voteID int64, selectCols ...string) (*Vote, error) {
@@ -1210,11 +1145,6 @@ func FindVote(ctx context.Context, exec boil.ContextExecutor, voteID int64, sele
 	}
 
 	return voteObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Vote) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1300,12 +1230,6 @@ func (o *Vote) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Vote record using the global executor.
-// See Update for more documentation.
-func (o *Vote) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Vote.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1386,11 +1310,6 @@ func (q voteQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o VoteSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o VoteSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1437,11 +1356,6 @@ func (o VoteSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all vote")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Vote) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1564,12 +1478,6 @@ func (o *Vote) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Vote record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Vote) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Vote record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Vote) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1627,11 +1535,6 @@ func (q voteQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o VoteSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o VoteSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1685,15 +1588,6 @@ func (o VoteSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Vote) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Vote provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Vote) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1704,16 +1598,6 @@ func (o *Vote) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *VoteSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty VoteSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1743,11 +1627,6 @@ func (o *VoteSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 	*o = slice
 
 	return nil
-}
-
-// VoteExistsG checks if the Vote row exists.
-func VoteExistsG(ctx context.Context, voteID int64) (bool, error) {
-	return VoteExists(ctx, boil.GetContextDB(), voteID)
 }
 
 // VoteExists checks if the Vote row exists.

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -22,13 +23,13 @@ import (
 
 // Direction is an object representing the database table.
 type Direction struct {
-	DirectionID          int64     `boil:"direction_id" json:"direction_id" toml:"direction_id" yaml:"direction_id"`
-	ParentDirectionID    int64     `boil:"parent_direction_id" json:"parent_direction_id" toml:"parent_direction_id" yaml:"parent_direction_id"`
-	DirectionDescription string    `boil:"direction_description" json:"direction_description" toml:"direction_description" yaml:"direction_description"`
-	UserAccountID        int64     `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
-	DesignPatternID      int64     `boil:"design_pattern_id" json:"design_pattern_id" toml:"design_pattern_id" yaml:"design_pattern_id"`
-	EmojiID              int64     `boil:"emoji_id" json:"emoji_id" toml:"emoji_id" yaml:"emoji_id"`
-	CreatedAt            time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	DirectionID          int64      `boil:"direction_id" json:"direction_id" toml:"direction_id" yaml:"direction_id"`
+	ParentDirectionID    null.Int64 `boil:"parent_direction_id" json:"parent_direction_id,omitempty" toml:"parent_direction_id" yaml:"parent_direction_id,omitempty"`
+	DirectionDescription string     `boil:"direction_description" json:"direction_description" toml:"direction_description" yaml:"direction_description"`
+	UserAccountID        int64      `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
+	DesignPatternID      null.Int64 `boil:"design_pattern_id" json:"design_pattern_id,omitempty" toml:"design_pattern_id" yaml:"design_pattern_id,omitempty"`
+	EmojiID              null.Int64 `boil:"emoji_id" json:"emoji_id,omitempty" toml:"emoji_id" yaml:"emoji_id,omitempty"`
+	CreatedAt            time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *directionR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L directionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -252,11 +253,6 @@ func AddDirectionHook(hookPoint boil.HookPoint, directionHook DirectionHook) {
 	}
 }
 
-// OneG returns a single direction record from the query using the global executor.
-func (q directionQuery) OneG(ctx context.Context) (*Direction, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single direction record from the query.
 func (q directionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Direction, error) {
 	o := &Direction{}
@@ -276,11 +272,6 @@ func (q directionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Di
 	}
 
 	return o, nil
-}
-
-// AllG returns all Direction records from the query using the global executor.
-func (q directionQuery) AllG(ctx context.Context) (DirectionSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Direction records from the query.
@@ -303,11 +294,6 @@ func (q directionQuery) All(ctx context.Context, exec boil.ContextExecutor) (Dir
 	return o, nil
 }
 
-// CountG returns the count of all Direction records in the query, and panics on error.
-func (q directionQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Direction records in the query.
 func (q directionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -321,11 +307,6 @@ func (q directionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (i
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q directionQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -527,7 +508,7 @@ func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singula
 			}
 
 			for _, a := range args {
-				if a == obj.EmojiID {
+				if queries.Equal(a, obj.EmojiID) {
 					continue Outer
 				}
 			}
@@ -582,7 +563,7 @@ func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singula
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.EmojiID == foreign.EmojiID {
+			if queries.Equal(local.EmojiID, foreign.EmojiID) {
 				local.R.Emoji = foreign
 				if foreign.R == nil {
 					foreign.R = &emojiR{}
@@ -622,7 +603,7 @@ func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor,
 			}
 
 			for _, a := range args {
-				if a == obj.DesignPatternID {
+				if queries.Equal(a, obj.DesignPatternID) {
 					continue Outer
 				}
 			}
@@ -677,7 +658,7 @@ func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor,
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.DesignPatternID == foreign.DesignPatternID {
+			if queries.Equal(local.DesignPatternID, foreign.DesignPatternID) {
 				local.R.DesignPattern = foreign
 				if foreign.R == nil {
 					foreign.R = &designPatternR{}
@@ -782,14 +763,6 @@ func (directionL) LoadDimensionDirections(ctx context.Context, e boil.ContextExe
 	return nil
 }
 
-// SetUserAccountG of the direction to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Directions.
-// Uses the global database handle.
-func (o *Direction) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the direction to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Directions.
@@ -837,14 +810,6 @@ func (o *Direction) SetUserAccount(ctx context.Context, exec boil.ContextExecuto
 	return nil
 }
 
-// SetEmojiG of the direction to the related item.
-// Sets o.R.Emoji to related.
-// Adds o to related.R.Directions.
-// Uses the global database handle.
-func (o *Direction) SetEmojiG(ctx context.Context, insert bool, related *Emoji) error {
-	return o.SetEmoji(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetEmoji of the direction to the related item.
 // Sets o.R.Emoji to related.
 // Adds o to related.R.Directions.
@@ -872,7 +837,7 @@ func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, ins
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.EmojiID = related.EmojiID
+	queries.Assign(&o.EmojiID, related.EmojiID)
 	if o.R == nil {
 		o.R = &directionR{
 			Emoji: related,
@@ -892,12 +857,35 @@ func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, ins
 	return nil
 }
 
-// SetDesignPatternG of the direction to the related item.
-// Sets o.R.DesignPattern to related.
-// Adds o to related.R.Directions.
-// Uses the global database handle.
-func (o *Direction) SetDesignPatternG(ctx context.Context, insert bool, related *DesignPattern) error {
-	return o.SetDesignPattern(ctx, boil.GetContextDB(), insert, related)
+// RemoveEmoji relationship.
+// Sets o.R.Emoji to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *Direction) RemoveEmoji(ctx context.Context, exec boil.ContextExecutor, related *Emoji) error {
+	var err error
+
+	queries.SetScanner(&o.EmojiID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("emoji_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.Emoji = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.Directions {
+		if queries.Equal(o.EmojiID, ri.EmojiID) {
+			continue
+		}
+
+		ln := len(related.R.Directions)
+		if ln > 1 && i < ln-1 {
+			related.R.Directions[i] = related.R.Directions[ln-1]
+		}
+		related.R.Directions = related.R.Directions[:ln-1]
+		break
+	}
+	return nil
 }
 
 // SetDesignPattern of the direction to the related item.
@@ -927,7 +915,7 @@ func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecu
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.DesignPatternID = related.DesignPatternID
+	queries.Assign(&o.DesignPatternID, related.DesignPatternID)
 	if o.R == nil {
 		o.R = &directionR{
 			DesignPattern: related,
@@ -947,13 +935,35 @@ func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecu
 	return nil
 }
 
-// AddDimensionDirectionsG adds the given related objects to the existing relationships
-// of the direction, optionally inserting them as new records.
-// Appends related to o.R.DimensionDirections.
-// Sets related.R.Direction appropriately.
-// Uses the global database handle.
-func (o *Direction) AddDimensionDirectionsG(ctx context.Context, insert bool, related ...*DimensionDirection) error {
-	return o.AddDimensionDirections(ctx, boil.GetContextDB(), insert, related...)
+// RemoveDesignPattern relationship.
+// Sets o.R.DesignPattern to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *Direction) RemoveDesignPattern(ctx context.Context, exec boil.ContextExecutor, related *DesignPattern) error {
+	var err error
+
+	queries.SetScanner(&o.DesignPatternID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("design_pattern_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.DesignPattern = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.Directions {
+		if queries.Equal(o.DesignPatternID, ri.DesignPatternID) {
+			continue
+		}
+
+		ln := len(related.R.Directions)
+		if ln > 1 && i < ln-1 {
+			related.R.Directions[i] = related.R.Directions[ln-1]
+		}
+		related.R.Directions = related.R.Directions[:ln-1]
+		break
+	}
+	return nil
 }
 
 // AddDimensionDirections adds the given related objects to the existing relationships
@@ -1015,11 +1025,6 @@ func Directions(mods ...qm.QueryMod) directionQuery {
 	return directionQuery{NewQuery(mods...)}
 }
 
-// FindDirectionG retrieves a single record by ID.
-func FindDirectionG(ctx context.Context, directionID int64, selectCols ...string) (*Direction, error) {
-	return FindDirection(ctx, boil.GetContextDB(), directionID, selectCols...)
-}
-
 // FindDirection retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindDirection(ctx context.Context, exec boil.ContextExecutor, directionID int64, selectCols ...string) (*Direction, error) {
@@ -1044,11 +1049,6 @@ func FindDirection(ctx context.Context, exec boil.ContextExecutor, directionID i
 	}
 
 	return directionObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Direction) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1134,12 +1134,6 @@ func (o *Direction) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Direction record using the global executor.
-// See Update for more documentation.
-func (o *Direction) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Direction.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1220,11 +1214,6 @@ func (q directionQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o DirectionSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o DirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1271,11 +1260,6 @@ func (o DirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all direction")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Direction) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1398,12 +1382,6 @@ func (o *Direction) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Direction record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Direction) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Direction record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Direction) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1461,11 +1439,6 @@ func (q directionQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o DirectionSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o DirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1519,15 +1492,6 @@ func (o DirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Direction) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Direction provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Direction) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1538,16 +1502,6 @@ func (o *Direction) Reload(ctx context.Context, exec boil.ContextExecutor) error
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *DirectionSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty DirectionSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1577,11 +1531,6 @@ func (o *DirectionSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 	*o = slice
 
 	return nil
-}
-
-// DirectionExistsG checks if the Direction row exists.
-func DirectionExistsG(ctx context.Context, directionID int64) (bool, error) {
-	return DirectionExists(ctx, boil.GetContextDB(), directionID)
 }
 
 // DirectionExists checks if the Direction row exists.

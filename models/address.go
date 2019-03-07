@@ -244,11 +244,6 @@ func AddAddressHook(hookPoint boil.HookPoint, addressHook AddressHook) {
 	}
 }
 
-// OneG returns a single address record from the query using the global executor.
-func (q addressQuery) OneG(ctx context.Context) (*Address, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single address record from the query.
 func (q addressQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Address, error) {
 	o := &Address{}
@@ -268,11 +263,6 @@ func (q addressQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Addr
 	}
 
 	return o, nil
-}
-
-// AllG returns all Address records from the query using the global executor.
-func (q addressQuery) AllG(ctx context.Context) (AddressSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Address records from the query.
@@ -295,11 +285,6 @@ func (q addressQuery) All(ctx context.Context, exec boil.ContextExecutor) (Addre
 	return o, nil
 }
 
-// CountG returns the count of all Address records in the query, and panics on error.
-func (q addressQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Address records in the query.
 func (q addressQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -313,11 +298,6 @@ func (q addressQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q addressQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -556,14 +536,6 @@ func (addressL) LoadUserPersonalInfos(ctx context.Context, e boil.ContextExecuto
 	return nil
 }
 
-// SetStreetG of the address to the related item.
-// Sets o.R.Street to related.
-// Adds o to related.R.Addresses.
-// Uses the global database handle.
-func (o *Address) SetStreetG(ctx context.Context, insert bool, related *Street) error {
-	return o.SetStreet(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetStreet of the address to the related item.
 // Sets o.R.Street to related.
 // Adds o to related.R.Addresses.
@@ -609,15 +581,6 @@ func (o *Address) SetStreet(ctx context.Context, exec boil.ContextExecutor, inse
 	}
 
 	return nil
-}
-
-// AddUserPersonalInfosG adds the given related objects to the existing relationships
-// of the address, optionally inserting them as new records.
-// Appends related to o.R.UserPersonalInfos.
-// Sets related.R.Address appropriately.
-// Uses the global database handle.
-func (o *Address) AddUserPersonalInfosG(ctx context.Context, insert bool, related ...*UserPersonalInfo) error {
-	return o.AddUserPersonalInfos(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddUserPersonalInfos adds the given related objects to the existing relationships
@@ -679,11 +642,6 @@ func Addresses(mods ...qm.QueryMod) addressQuery {
 	return addressQuery{NewQuery(mods...)}
 }
 
-// FindAddressG retrieves a single record by ID.
-func FindAddressG(ctx context.Context, addressID int64, selectCols ...string) (*Address, error) {
-	return FindAddress(ctx, boil.GetContextDB(), addressID, selectCols...)
-}
-
 // FindAddress retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindAddress(ctx context.Context, exec boil.ContextExecutor, addressID int64, selectCols ...string) (*Address, error) {
@@ -708,11 +666,6 @@ func FindAddress(ctx context.Context, exec boil.ContextExecutor, addressID int64
 	}
 
 	return addressObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Address) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -791,12 +744,6 @@ func (o *Address) Insert(ctx context.Context, exec boil.ContextExecutor, columns
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Address record using the global executor.
-// See Update for more documentation.
-func (o *Address) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Address.
@@ -879,11 +826,6 @@ func (q addressQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o AddressSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o AddressSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -930,11 +872,6 @@ func (o AddressSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all address")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Address) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1052,12 +989,6 @@ func (o *Address) Upsert(ctx context.Context, exec boil.ContextExecutor, updateO
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Address record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Address) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Address record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Address) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1115,11 +1046,6 @@ func (q addressQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) 
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o AddressSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o AddressSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1173,15 +1099,6 @@ func (o AddressSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) 
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Address) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Address provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Address) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1192,16 +1109,6 @@ func (o *Address) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *AddressSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty AddressSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1231,11 +1138,6 @@ func (o *AddressSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor)
 	*o = slice
 
 	return nil
-}
-
-// AddressExistsG checks if the Address row exists.
-func AddressExistsG(ctx context.Context, addressID int64) (bool, error) {
-	return AddressExists(ctx, boil.GetContextDB(), addressID)
 }
 
 // AddressExists checks if the Address row exists.

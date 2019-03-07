@@ -1230,57 +1230,6 @@ func testDimensionToOneDimensionUsingParentDimension(t *testing.T) {
 	}
 }
 
-func testDimensionToOneColorUsingColor(t *testing.T) {
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var local Dimension
-	var foreign Color
-
-	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
-	}
-	if err := randomize.Struct(seed, &foreign, colorDBTypes, false, colorColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Color struct: %s", err)
-	}
-
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	local.ColorID = foreign.ColorID
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := local.Color().One(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if check.ColorID != foreign.ColorID {
-		t.Errorf("want: %v, got %v", foreign.ColorID, check.ColorID)
-	}
-
-	slice := DimensionSlice{&local}
-	if err = local.L.LoadColor(ctx, tx, false, (*[]*Dimension)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Color == nil {
-		t.Error("struct should have been eager loaded")
-	}
-
-	local.R.Color = nil
-	if err = local.L.LoadColor(ctx, tx, true, &local, nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Color == nil {
-		t.Error("struct should have been eager loaded")
-	}
-}
-
 func testDimensionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 	var err error
 
@@ -1447,64 +1396,6 @@ func testDimensionToOneRemoveOpDimensionUsingParentDimension(t *testing.T) {
 	}
 }
 
-func testDimensionToOneSetOpColorUsingColor(t *testing.T) {
-	var err error
-
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Dimension
-	var b, c Color
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &b, colorDBTypes, false, strmangle.SetComplement(colorPrimaryKeyColumns, colorColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, colorDBTypes, false, strmangle.SetComplement(colorPrimaryKeyColumns, colorColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	for i, x := range []*Color{&b, &c} {
-		err = a.SetColor(ctx, tx, i != 0, x)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if a.R.Color != x {
-			t.Error("relationship struct not set to correct value")
-		}
-
-		if x.R.Dimensions[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
-		}
-		if a.ColorID != x.ColorID {
-			t.Error("foreign key was wrong value", a.ColorID)
-		}
-
-		zero := reflect.Zero(reflect.TypeOf(a.ColorID))
-		reflect.Indirect(reflect.ValueOf(&a.ColorID)).Set(zero)
-
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
-		}
-
-		if a.ColorID != x.ColorID {
-			t.Error("foreign key was wrong value", a.ColorID, x.ColorID)
-		}
-	}
-}
-
 func testDimensionsReload(t *testing.T) {
 	t.Parallel()
 
@@ -1579,7 +1470,7 @@ func testDimensionsSelect(t *testing.T) {
 }
 
 var (
-	dimensionDBTypes = map[string]string{`ColorID`: `int8`, `CreatedAt`: `timestamptz`, `DimensionDescription`: `varchar`, `DimensionID`: `int8`, `DimensionName`: `varchar`, `ParentDimensionID`: `int8`, `UserAccountID`: `int8`}
+	dimensionDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `DimensionDescription`: `varchar`, `DimensionID`: `int8`, `DimensionName`: `varchar`, `ParentDimensionID`: `int8`, `UserAccountID`: `int8`}
 	_                = bytes.MinRead
 )
 

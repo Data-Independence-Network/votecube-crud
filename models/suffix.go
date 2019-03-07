@@ -228,11 +228,6 @@ func AddSuffixHook(hookPoint boil.HookPoint, suffixHook SuffixHook) {
 	}
 }
 
-// OneG returns a single suffix record from the query using the global executor.
-func (q suffixQuery) OneG(ctx context.Context) (*Suffix, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single suffix record from the query.
 func (q suffixQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Suffix, error) {
 	o := &Suffix{}
@@ -252,11 +247,6 @@ func (q suffixQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Suffi
 	}
 
 	return o, nil
-}
-
-// AllG returns all Suffix records from the query using the global executor.
-func (q suffixQuery) AllG(ctx context.Context) (SuffixSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Suffix records from the query.
@@ -279,11 +269,6 @@ func (q suffixQuery) All(ctx context.Context, exec boil.ContextExecutor) (Suffix
 	return o, nil
 }
 
-// CountG returns the count of all Suffix records in the query, and panics on error.
-func (q suffixQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Suffix records in the query.
 func (q suffixQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -297,11 +282,6 @@ func (q suffixQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q suffixQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -431,15 +411,6 @@ func (suffixL) LoadUserAccountSuffixes(ctx context.Context, e boil.ContextExecut
 	return nil
 }
 
-// AddUserAccountSuffixesG adds the given related objects to the existing relationships
-// of the suffix, optionally inserting them as new records.
-// Appends related to o.R.UserAccountSuffixes.
-// Sets related.R.Suffix appropriately.
-// Uses the global database handle.
-func (o *Suffix) AddUserAccountSuffixesG(ctx context.Context, insert bool, related ...*UserAccountSuffix) error {
-	return o.AddUserAccountSuffixes(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddUserAccountSuffixes adds the given related objects to the existing relationships
 // of the suffix, optionally inserting them as new records.
 // Appends related to o.R.UserAccountSuffixes.
@@ -499,11 +470,6 @@ func Suffixes(mods ...qm.QueryMod) suffixQuery {
 	return suffixQuery{NewQuery(mods...)}
 }
 
-// FindSuffixG retrieves a single record by ID.
-func FindSuffixG(ctx context.Context, suffixID int64, selectCols ...string) (*Suffix, error) {
-	return FindSuffix(ctx, boil.GetContextDB(), suffixID, selectCols...)
-}
-
 // FindSuffix retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindSuffix(ctx context.Context, exec boil.ContextExecutor, suffixID int64, selectCols ...string) (*Suffix, error) {
@@ -528,11 +494,6 @@ func FindSuffix(ctx context.Context, exec boil.ContextExecutor, suffixID int64, 
 	}
 
 	return suffixObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Suffix) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -611,12 +572,6 @@ func (o *Suffix) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Suffix record using the global executor.
-// See Update for more documentation.
-func (o *Suffix) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Suffix.
@@ -699,11 +654,6 @@ func (q suffixQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o SuffixSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o SuffixSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -750,11 +700,6 @@ func (o SuffixSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all suffix")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Suffix) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -872,12 +817,6 @@ func (o *Suffix) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Suffix record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Suffix) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Suffix record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Suffix) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -935,11 +874,6 @@ func (q suffixQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o SuffixSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o SuffixSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -993,15 +927,6 @@ func (o SuffixSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Suffix) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Suffix provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Suffix) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1012,16 +937,6 @@ func (o *Suffix) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *SuffixSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty SuffixSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1051,11 +966,6 @@ func (o *SuffixSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 	*o = slice
 
 	return nil
-}
-
-// SuffixExistsG checks if the Suffix row exists.
-func SuffixExistsG(ctx context.Context, suffixID int64) (bool, error) {
-	return SuffixExists(ctx, boil.GetContextDB(), suffixID)
 }
 
 // SuffixExists checks if the Suffix row exists.

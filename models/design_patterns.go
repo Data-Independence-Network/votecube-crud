@@ -231,11 +231,6 @@ func AddDesignPatternHook(hookPoint boil.HookPoint, designPatternHook DesignPatt
 	}
 }
 
-// OneG returns a single designPattern record from the query using the global executor.
-func (q designPatternQuery) OneG(ctx context.Context) (*DesignPattern, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single designPattern record from the query.
 func (q designPatternQuery) One(ctx context.Context, exec boil.ContextExecutor) (*DesignPattern, error) {
 	o := &DesignPattern{}
@@ -255,11 +250,6 @@ func (q designPatternQuery) One(ctx context.Context, exec boil.ContextExecutor) 
 	}
 
 	return o, nil
-}
-
-// AllG returns all DesignPattern records from the query using the global executor.
-func (q designPatternQuery) AllG(ctx context.Context) (DesignPatternSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all DesignPattern records from the query.
@@ -282,11 +272,6 @@ func (q designPatternQuery) All(ctx context.Context, exec boil.ContextExecutor) 
 	return o, nil
 }
 
-// CountG returns the count of all DesignPattern records in the query, and panics on error.
-func (q designPatternQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all DesignPattern records in the query.
 func (q designPatternQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -300,11 +285,6 @@ func (q designPatternQuery) Count(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q designPatternQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -390,7 +370,7 @@ func (designPatternL) LoadDirections(ctx context.Context, e boil.ContextExecutor
 			}
 
 			for _, a := range args {
-				if a == obj.DesignPatternID {
+				if queries.Equal(a, obj.DesignPatternID) {
 					continue Outer
 				}
 			}
@@ -441,7 +421,7 @@ func (designPatternL) LoadDirections(ctx context.Context, e boil.ContextExecutor
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.DesignPatternID == foreign.DesignPatternID {
+			if queries.Equal(local.DesignPatternID, foreign.DesignPatternID) {
 				local.R.Directions = append(local.R.Directions, foreign)
 				if foreign.R == nil {
 					foreign.R = &directionR{}
@@ -481,7 +461,7 @@ func (designPatternL) LoadPollsDimensionsDirections(ctx context.Context, e boil.
 			}
 
 			for _, a := range args {
-				if a == obj.DesignPatternID {
+				if queries.Equal(a, obj.DesignPatternID) {
 					continue Outer
 				}
 			}
@@ -532,7 +512,7 @@ func (designPatternL) LoadPollsDimensionsDirections(ctx context.Context, e boil.
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.DesignPatternID == foreign.DesignPatternID {
+			if queries.Equal(local.DesignPatternID, foreign.DesignPatternID) {
 				local.R.PollsDimensionsDirections = append(local.R.PollsDimensionsDirections, foreign)
 				if foreign.R == nil {
 					foreign.R = &pollsDimensionsDirectionR{}
@@ -546,15 +526,6 @@ func (designPatternL) LoadPollsDimensionsDirections(ctx context.Context, e boil.
 	return nil
 }
 
-// AddDirectionsG adds the given related objects to the existing relationships
-// of the design_pattern, optionally inserting them as new records.
-// Appends related to o.R.Directions.
-// Sets related.R.DesignPattern appropriately.
-// Uses the global database handle.
-func (o *DesignPattern) AddDirectionsG(ctx context.Context, insert bool, related ...*Direction) error {
-	return o.AddDirections(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddDirections adds the given related objects to the existing relationships
 // of the design_pattern, optionally inserting them as new records.
 // Appends related to o.R.Directions.
@@ -563,7 +534,7 @@ func (o *DesignPattern) AddDirections(ctx context.Context, exec boil.ContextExec
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.DesignPatternID = o.DesignPatternID
+			queries.Assign(&rel.DesignPatternID, o.DesignPatternID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -584,7 +555,7 @@ func (o *DesignPattern) AddDirections(ctx context.Context, exec boil.ContextExec
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.DesignPatternID = o.DesignPatternID
+			queries.Assign(&rel.DesignPatternID, o.DesignPatternID)
 		}
 	}
 
@@ -608,13 +579,74 @@ func (o *DesignPattern) AddDirections(ctx context.Context, exec boil.ContextExec
 	return nil
 }
 
-// AddPollsDimensionsDirectionsG adds the given related objects to the existing relationships
-// of the design_pattern, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
-// Sets related.R.DesignPattern appropriately.
-// Uses the global database handle.
-func (o *DesignPattern) AddPollsDimensionsDirectionsG(ctx context.Context, insert bool, related ...*PollsDimensionsDirection) error {
-	return o.AddPollsDimensionsDirections(ctx, boil.GetContextDB(), insert, related...)
+// SetDirections removes all previously related items of the
+// design_pattern replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.DesignPattern's Directions accordingly.
+// Replaces o.R.Directions with related.
+// Sets related.R.DesignPattern's Directions accordingly.
+func (o *DesignPattern) SetDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Direction) error {
+	query := "update \"directions\" set \"design_pattern_id\" = null where \"design_pattern_id\" = $1"
+	values := []interface{}{o.DesignPatternID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.Directions {
+			queries.SetScanner(&rel.DesignPatternID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.DesignPattern = nil
+		}
+
+		o.R.Directions = nil
+	}
+	return o.AddDirections(ctx, exec, insert, related...)
+}
+
+// RemoveDirections relationships from objects passed in.
+// Removes related items from R.Directions (uses pointer comparison, removal does not keep order)
+// Sets related.R.DesignPattern.
+func (o *DesignPattern) RemoveDirections(ctx context.Context, exec boil.ContextExecutor, related ...*Direction) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.DesignPatternID, nil)
+		if rel.R != nil {
+			rel.R.DesignPattern = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("design_pattern_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.Directions {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.Directions)
+			if ln > 1 && i < ln-1 {
+				o.R.Directions[i] = o.R.Directions[ln-1]
+			}
+			o.R.Directions = o.R.Directions[:ln-1]
+			break
+		}
+	}
+
+	return nil
 }
 
 // AddPollsDimensionsDirections adds the given related objects to the existing relationships
@@ -625,7 +657,7 @@ func (o *DesignPattern) AddPollsDimensionsDirections(ctx context.Context, exec b
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.DesignPatternID = o.DesignPatternID
+			queries.Assign(&rel.DesignPatternID, o.DesignPatternID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -646,7 +678,7 @@ func (o *DesignPattern) AddPollsDimensionsDirections(ctx context.Context, exec b
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.DesignPatternID = o.DesignPatternID
+			queries.Assign(&rel.DesignPatternID, o.DesignPatternID)
 		}
 	}
 
@@ -670,15 +702,80 @@ func (o *DesignPattern) AddPollsDimensionsDirections(ctx context.Context, exec b
 	return nil
 }
 
+// SetPollsDimensionsDirections removes all previously related items of the
+// design_pattern replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.DesignPattern's PollsDimensionsDirections accordingly.
+// Replaces o.R.PollsDimensionsDirections with related.
+// Sets related.R.DesignPattern's PollsDimensionsDirections accordingly.
+func (o *DesignPattern) SetPollsDimensionsDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PollsDimensionsDirection) error {
+	query := "update \"polls_dimensions_directions\" set \"design_pattern_id\" = null where \"design_pattern_id\" = $1"
+	values := []interface{}{o.DesignPatternID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.PollsDimensionsDirections {
+			queries.SetScanner(&rel.DesignPatternID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.DesignPattern = nil
+		}
+
+		o.R.PollsDimensionsDirections = nil
+	}
+	return o.AddPollsDimensionsDirections(ctx, exec, insert, related...)
+}
+
+// RemovePollsDimensionsDirections relationships from objects passed in.
+// Removes related items from R.PollsDimensionsDirections (uses pointer comparison, removal does not keep order)
+// Sets related.R.DesignPattern.
+func (o *DesignPattern) RemovePollsDimensionsDirections(ctx context.Context, exec boil.ContextExecutor, related ...*PollsDimensionsDirection) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.DesignPatternID, nil)
+		if rel.R != nil {
+			rel.R.DesignPattern = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("design_pattern_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.PollsDimensionsDirections {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.PollsDimensionsDirections)
+			if ln > 1 && i < ln-1 {
+				o.R.PollsDimensionsDirections[i] = o.R.PollsDimensionsDirections[ln-1]
+			}
+			o.R.PollsDimensionsDirections = o.R.PollsDimensionsDirections[:ln-1]
+			break
+		}
+	}
+
+	return nil
+}
+
 // DesignPatterns retrieves all the records using an executor.
 func DesignPatterns(mods ...qm.QueryMod) designPatternQuery {
 	mods = append(mods, qm.From("\"design_patterns\""))
 	return designPatternQuery{NewQuery(mods...)}
-}
-
-// FindDesignPatternG retrieves a single record by ID.
-func FindDesignPatternG(ctx context.Context, designPatternID int64, selectCols ...string) (*DesignPattern, error) {
-	return FindDesignPattern(ctx, boil.GetContextDB(), designPatternID, selectCols...)
 }
 
 // FindDesignPattern retrieves a single record by ID with an executor.
@@ -705,11 +802,6 @@ func FindDesignPattern(ctx context.Context, exec boil.ContextExecutor, designPat
 	}
 
 	return designPatternObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *DesignPattern) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -788,12 +880,6 @@ func (o *DesignPattern) Insert(ctx context.Context, exec boil.ContextExecutor, c
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single DesignPattern record using the global executor.
-// See Update for more documentation.
-func (o *DesignPattern) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the DesignPattern.
@@ -876,11 +962,6 @@ func (q designPatternQuery) UpdateAll(ctx context.Context, exec boil.ContextExec
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o DesignPatternSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o DesignPatternSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -927,11 +1008,6 @@ func (o DesignPatternSlice) UpdateAll(ctx context.Context, exec boil.ContextExec
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all designPattern")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *DesignPattern) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1049,12 +1125,6 @@ func (o *DesignPattern) Upsert(ctx context.Context, exec boil.ContextExecutor, u
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single DesignPattern record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *DesignPattern) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single DesignPattern record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *DesignPattern) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1112,11 +1182,6 @@ func (q designPatternQuery) DeleteAll(ctx context.Context, exec boil.ContextExec
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o DesignPatternSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o DesignPatternSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1170,15 +1235,6 @@ func (o DesignPatternSlice) DeleteAll(ctx context.Context, exec boil.ContextExec
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *DesignPattern) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no DesignPattern provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *DesignPattern) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1189,16 +1245,6 @@ func (o *DesignPattern) Reload(ctx context.Context, exec boil.ContextExecutor) e
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *DesignPatternSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty DesignPatternSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1228,11 +1274,6 @@ func (o *DesignPatternSlice) ReloadAll(ctx context.Context, exec boil.ContextExe
 	*o = slice
 
 	return nil
-}
-
-// DesignPatternExistsG checks if the DesignPattern row exists.
-func DesignPatternExistsG(ctx context.Context, designPatternID int64) (bool, error) {
-	return DesignPatternExists(ctx, boil.GetContextDB(), designPatternID)
 }
 
 // DesignPatternExists checks if the DesignPattern row exists.

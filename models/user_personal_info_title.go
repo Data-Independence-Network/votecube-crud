@@ -237,11 +237,6 @@ func AddUserPersonalInfoTitleHook(hookPoint boil.HookPoint, userPersonalInfoTitl
 	}
 }
 
-// OneG returns a single userPersonalInfoTitle record from the query using the global executor.
-func (q userPersonalInfoTitleQuery) OneG(ctx context.Context) (*UserPersonalInfoTitle, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single userPersonalInfoTitle record from the query.
 func (q userPersonalInfoTitleQuery) One(ctx context.Context, exec boil.ContextExecutor) (*UserPersonalInfoTitle, error) {
 	o := &UserPersonalInfoTitle{}
@@ -261,11 +256,6 @@ func (q userPersonalInfoTitleQuery) One(ctx context.Context, exec boil.ContextEx
 	}
 
 	return o, nil
-}
-
-// AllG returns all UserPersonalInfoTitle records from the query using the global executor.
-func (q userPersonalInfoTitleQuery) AllG(ctx context.Context) (UserPersonalInfoTitleSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all UserPersonalInfoTitle records from the query.
@@ -288,11 +278,6 @@ func (q userPersonalInfoTitleQuery) All(ctx context.Context, exec boil.ContextEx
 	return o, nil
 }
 
-// CountG returns the count of all UserPersonalInfoTitle records in the query, and panics on error.
-func (q userPersonalInfoTitleQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all UserPersonalInfoTitle records in the query.
 func (q userPersonalInfoTitleQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -306,11 +291,6 @@ func (q userPersonalInfoTitleQuery) Count(ctx context.Context, exec boil.Context
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q userPersonalInfoTitleQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -546,14 +526,6 @@ func (userPersonalInfoTitleL) LoadTitle(ctx context.Context, e boil.ContextExecu
 	return nil
 }
 
-// SetUserPersonalInfoG of the userPersonalInfoTitle to the related item.
-// Sets o.R.UserPersonalInfo to related.
-// Adds o to related.R.UserPersonalInfoTitles.
-// Uses the global database handle.
-func (o *UserPersonalInfoTitle) SetUserPersonalInfoG(ctx context.Context, insert bool, related *UserPersonalInfo) error {
-	return o.SetUserPersonalInfo(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserPersonalInfo of the userPersonalInfoTitle to the related item.
 // Sets o.R.UserPersonalInfo to related.
 // Adds o to related.R.UserPersonalInfoTitles.
@@ -599,14 +571,6 @@ func (o *UserPersonalInfoTitle) SetUserPersonalInfo(ctx context.Context, exec bo
 	}
 
 	return nil
-}
-
-// SetTitleG of the userPersonalInfoTitle to the related item.
-// Sets o.R.Title to related.
-// Adds o to related.R.UserPersonalInfoTitles.
-// Uses the global database handle.
-func (o *UserPersonalInfoTitle) SetTitleG(ctx context.Context, insert bool, related *Title) error {
-	return o.SetTitle(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetTitle of the userPersonalInfoTitle to the related item.
@@ -662,11 +626,6 @@ func UserPersonalInfoTitles(mods ...qm.QueryMod) userPersonalInfoTitleQuery {
 	return userPersonalInfoTitleQuery{NewQuery(mods...)}
 }
 
-// FindUserPersonalInfoTitleG retrieves a single record by ID.
-func FindUserPersonalInfoTitleG(ctx context.Context, userPersonalInfoTitleID int64, selectCols ...string) (*UserPersonalInfoTitle, error) {
-	return FindUserPersonalInfoTitle(ctx, boil.GetContextDB(), userPersonalInfoTitleID, selectCols...)
-}
-
 // FindUserPersonalInfoTitle retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUserPersonalInfoTitle(ctx context.Context, exec boil.ContextExecutor, userPersonalInfoTitleID int64, selectCols ...string) (*UserPersonalInfoTitle, error) {
@@ -691,11 +650,6 @@ func FindUserPersonalInfoTitle(ctx context.Context, exec boil.ContextExecutor, u
 	}
 
 	return userPersonalInfoTitleObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *UserPersonalInfoTitle) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -774,12 +728,6 @@ func (o *UserPersonalInfoTitle) Insert(ctx context.Context, exec boil.ContextExe
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single UserPersonalInfoTitle record using the global executor.
-// See Update for more documentation.
-func (o *UserPersonalInfoTitle) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the UserPersonalInfoTitle.
@@ -862,11 +810,6 @@ func (q userPersonalInfoTitleQuery) UpdateAll(ctx context.Context, exec boil.Con
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o UserPersonalInfoTitleSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o UserPersonalInfoTitleSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -913,11 +856,6 @@ func (o UserPersonalInfoTitleSlice) UpdateAll(ctx context.Context, exec boil.Con
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all userPersonalInfoTitle")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *UserPersonalInfoTitle) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1035,12 +973,6 @@ func (o *UserPersonalInfoTitle) Upsert(ctx context.Context, exec boil.ContextExe
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single UserPersonalInfoTitle record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *UserPersonalInfoTitle) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single UserPersonalInfoTitle record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *UserPersonalInfoTitle) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1098,11 +1030,6 @@ func (q userPersonalInfoTitleQuery) DeleteAll(ctx context.Context, exec boil.Con
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o UserPersonalInfoTitleSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o UserPersonalInfoTitleSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1156,15 +1083,6 @@ func (o UserPersonalInfoTitleSlice) DeleteAll(ctx context.Context, exec boil.Con
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *UserPersonalInfoTitle) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no UserPersonalInfoTitle provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserPersonalInfoTitle) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1175,16 +1093,6 @@ func (o *UserPersonalInfoTitle) Reload(ctx context.Context, exec boil.ContextExe
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *UserPersonalInfoTitleSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty UserPersonalInfoTitleSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1214,11 +1122,6 @@ func (o *UserPersonalInfoTitleSlice) ReloadAll(ctx context.Context, exec boil.Co
 	*o = slice
 
 	return nil
-}
-
-// UserPersonalInfoTitleExistsG checks if the UserPersonalInfoTitle row exists.
-func UserPersonalInfoTitleExistsG(ctx context.Context, userPersonalInfoTitleID int64) (bool, error) {
-	return UserPersonalInfoTitleExists(ctx, boil.GetContextDB(), userPersonalInfoTitleID)
 }
 
 // UserPersonalInfoTitleExists checks if the UserPersonalInfoTitle row exists.

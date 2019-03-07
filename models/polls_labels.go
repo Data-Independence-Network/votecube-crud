@@ -243,11 +243,6 @@ func AddPollsLabelHook(hookPoint boil.HookPoint, pollsLabelHook PollsLabelHook) 
 	}
 }
 
-// OneG returns a single pollsLabel record from the query using the global executor.
-func (q pollsLabelQuery) OneG(ctx context.Context) (*PollsLabel, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsLabel record from the query.
 func (q pollsLabelQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsLabel, error) {
 	o := &PollsLabel{}
@@ -267,11 +262,6 @@ func (q pollsLabelQuery) One(ctx context.Context, exec boil.ContextExecutor) (*P
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsLabel records from the query using the global executor.
-func (q pollsLabelQuery) AllG(ctx context.Context) (PollsLabelSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsLabel records from the query.
@@ -294,11 +284,6 @@ func (q pollsLabelQuery) All(ctx context.Context, exec boil.ContextExecutor) (Po
 	return o, nil
 }
 
-// CountG returns the count of all PollsLabel records in the query, and panics on error.
-func (q pollsLabelQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsLabel records in the query.
 func (q pollsLabelQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -312,11 +297,6 @@ func (q pollsLabelQuery) Count(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsLabelQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -661,14 +641,6 @@ func (pollsLabelL) LoadLabel(ctx context.Context, e boil.ContextExecutor, singul
 	return nil
 }
 
-// SetUserAccountG of the pollsLabel to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.PollsLabels.
-// Uses the global database handle.
-func (o *PollsLabel) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the pollsLabel to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.PollsLabels.
@@ -716,14 +688,6 @@ func (o *PollsLabel) SetUserAccount(ctx context.Context, exec boil.ContextExecut
 	return nil
 }
 
-// SetPollG of the pollsLabel to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.PollsLabels.
-// Uses the global database handle.
-func (o *PollsLabel) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetPoll of the pollsLabel to the related item.
 // Sets o.R.Poll to related.
 // Adds o to related.R.PollsLabels.
@@ -769,14 +733,6 @@ func (o *PollsLabel) SetPoll(ctx context.Context, exec boil.ContextExecutor, ins
 	}
 
 	return nil
-}
-
-// SetLabelG of the pollsLabel to the related item.
-// Sets o.R.Label to related.
-// Adds o to related.R.PollsLabels.
-// Uses the global database handle.
-func (o *PollsLabel) SetLabelG(ctx context.Context, insert bool, related *Label) error {
-	return o.SetLabel(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetLabel of the pollsLabel to the related item.
@@ -832,11 +788,6 @@ func PollsLabels(mods ...qm.QueryMod) pollsLabelQuery {
 	return pollsLabelQuery{NewQuery(mods...)}
 }
 
-// FindPollsLabelG retrieves a single record by ID.
-func FindPollsLabelG(ctx context.Context, pollLabelID int64, selectCols ...string) (*PollsLabel, error) {
-	return FindPollsLabel(ctx, boil.GetContextDB(), pollLabelID, selectCols...)
-}
-
 // FindPollsLabel retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPollsLabel(ctx context.Context, exec boil.ContextExecutor, pollLabelID int64, selectCols ...string) (*PollsLabel, error) {
@@ -861,11 +812,6 @@ func FindPollsLabel(ctx context.Context, exec boil.ContextExecutor, pollLabelID 
 	}
 
 	return pollsLabelObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsLabel) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -951,12 +897,6 @@ func (o *PollsLabel) Insert(ctx context.Context, exec boil.ContextExecutor, colu
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single PollsLabel record using the global executor.
-// See Update for more documentation.
-func (o *PollsLabel) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the PollsLabel.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1037,11 +977,6 @@ func (q pollsLabelQuery) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsLabelSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsLabelSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1088,11 +1023,6 @@ func (o PollsLabelSlice) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsLabel")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsLabel) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1215,12 +1145,6 @@ func (o *PollsLabel) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsLabel record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsLabel) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsLabel record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsLabel) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1278,11 +1202,6 @@ func (q pollsLabelQuery) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsLabelSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsLabelSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1336,15 +1255,6 @@ func (o PollsLabelSlice) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsLabel) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsLabel provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsLabel) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1355,16 +1265,6 @@ func (o *PollsLabel) Reload(ctx context.Context, exec boil.ContextExecutor) erro
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsLabelSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsLabelSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1394,11 +1294,6 @@ func (o *PollsLabelSlice) ReloadAll(ctx context.Context, exec boil.ContextExecut
 	*o = slice
 
 	return nil
-}
-
-// PollsLabelExistsG checks if the PollsLabel row exists.
-func PollsLabelExistsG(ctx context.Context, pollLabelID int64) (bool, error) {
-	return PollsLabelExists(ctx, boil.GetContextDB(), pollLabelID)
 }
 
 // PollsLabelExists checks if the PollsLabel row exists.

@@ -233,11 +233,6 @@ func AddPollsGroupsLinkHook(hookPoint boil.HookPoint, pollsGroupsLinkHook PollsG
 	}
 }
 
-// OneG returns a single pollsGroupsLink record from the query using the global executor.
-func (q pollsGroupsLinkQuery) OneG(ctx context.Context) (*PollsGroupsLink, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsGroupsLink record from the query.
 func (q pollsGroupsLinkQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsGroupsLink, error) {
 	o := &PollsGroupsLink{}
@@ -257,11 +252,6 @@ func (q pollsGroupsLinkQuery) One(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsGroupsLink records from the query using the global executor.
-func (q pollsGroupsLinkQuery) AllG(ctx context.Context) (PollsGroupsLinkSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsGroupsLink records from the query.
@@ -284,11 +274,6 @@ func (q pollsGroupsLinkQuery) All(ctx context.Context, exec boil.ContextExecutor
 	return o, nil
 }
 
-// CountG returns the count of all PollsGroupsLink records in the query, and panics on error.
-func (q pollsGroupsLinkQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsGroupsLink records in the query.
 func (q pollsGroupsLinkQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -302,11 +287,6 @@ func (q pollsGroupsLinkQuery) Count(ctx context.Context, exec boil.ContextExecut
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsGroupsLinkQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -328,11 +308,6 @@ func (q pollsGroupsLinkQuery) Exists(ctx context.Context, exec boil.ContextExecu
 func PollsGroupsLinks(mods ...qm.QueryMod) pollsGroupsLinkQuery {
 	mods = append(mods, qm.From("\"polls_groups_links\""))
 	return pollsGroupsLinkQuery{NewQuery(mods...)}
-}
-
-// FindPollsGroupsLinkG retrieves a single record by ID.
-func FindPollsGroupsLinkG(ctx context.Context, pollGroupLinkID int64, selectCols ...string) (*PollsGroupsLink, error) {
-	return FindPollsGroupsLink(ctx, boil.GetContextDB(), pollGroupLinkID, selectCols...)
 }
 
 // FindPollsGroupsLink retrieves a single record by ID with an executor.
@@ -359,11 +334,6 @@ func FindPollsGroupsLink(ctx context.Context, exec boil.ContextExecutor, pollGro
 	}
 
 	return pollsGroupsLinkObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsGroupsLink) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -449,12 +419,6 @@ func (o *PollsGroupsLink) Insert(ctx context.Context, exec boil.ContextExecutor,
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single PollsGroupsLink record using the global executor.
-// See Update for more documentation.
-func (o *PollsGroupsLink) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the PollsGroupsLink.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -535,11 +499,6 @@ func (q pollsGroupsLinkQuery) UpdateAll(ctx context.Context, exec boil.ContextEx
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsGroupsLinkSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsGroupsLinkSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -586,11 +545,6 @@ func (o PollsGroupsLinkSlice) UpdateAll(ctx context.Context, exec boil.ContextEx
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsGroupsLink")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsGroupsLink) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -713,12 +667,6 @@ func (o *PollsGroupsLink) Upsert(ctx context.Context, exec boil.ContextExecutor,
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsGroupsLink record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsGroupsLink) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsGroupsLink record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsGroupsLink) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -776,11 +724,6 @@ func (q pollsGroupsLinkQuery) DeleteAll(ctx context.Context, exec boil.ContextEx
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsGroupsLinkSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsGroupsLinkSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -834,15 +777,6 @@ func (o PollsGroupsLinkSlice) DeleteAll(ctx context.Context, exec boil.ContextEx
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsGroupsLink) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsGroupsLink provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsGroupsLink) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -853,16 +787,6 @@ func (o *PollsGroupsLink) Reload(ctx context.Context, exec boil.ContextExecutor)
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsGroupsLinkSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsGroupsLinkSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -892,11 +816,6 @@ func (o *PollsGroupsLinkSlice) ReloadAll(ctx context.Context, exec boil.ContextE
 	*o = slice
 
 	return nil
-}
-
-// PollsGroupsLinkExistsG checks if the PollsGroupsLink row exists.
-func PollsGroupsLinkExistsG(ctx context.Context, pollGroupLinkID int64) (bool, error) {
-	return PollsGroupsLinkExists(ctx, boil.GetContextDB(), pollGroupLinkID)
 }
 
 // PollsGroupsLinkExists checks if the PollsGroupsLink row exists.

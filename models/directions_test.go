@@ -707,7 +707,7 @@ func testDirectionToOneEmojiUsingEmoji(t *testing.T) {
 	var foreign Emoji
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
+	if err := randomize.Struct(seed, &local, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Direction struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, emojiDBTypes, false, emojiColumnsWithDefault...); err != nil {
@@ -718,7 +718,7 @@ func testDirectionToOneEmojiUsingEmoji(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	local.EmojiID = foreign.EmojiID
+	queries.Assign(&local.EmojiID, foreign.EmojiID)
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -728,7 +728,7 @@ func testDirectionToOneEmojiUsingEmoji(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if check.EmojiID != foreign.EmojiID {
+	if !queries.Equal(check.EmojiID, foreign.EmojiID) {
 		t.Errorf("want: %v, got %v", foreign.EmojiID, check.EmojiID)
 	}
 
@@ -758,7 +758,7 @@ func testDirectionToOneDesignPatternUsingDesignPattern(t *testing.T) {
 	var foreign DesignPattern
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
+	if err := randomize.Struct(seed, &local, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Direction struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, designPatternDBTypes, false, designPatternColumnsWithDefault...); err != nil {
@@ -769,7 +769,7 @@ func testDirectionToOneDesignPatternUsingDesignPattern(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	local.DesignPatternID = foreign.DesignPatternID
+	queries.Assign(&local.DesignPatternID, foreign.DesignPatternID)
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -779,7 +779,7 @@ func testDirectionToOneDesignPatternUsingDesignPattern(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if check.DesignPatternID != foreign.DesignPatternID {
+	if !queries.Equal(check.DesignPatternID, foreign.DesignPatternID) {
 		t.Errorf("want: %v, got %v", foreign.DesignPatternID, check.DesignPatternID)
 	}
 
@@ -898,7 +898,7 @@ func testDirectionToOneSetOpEmojiUsingEmoji(t *testing.T) {
 		if x.R.Directions[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.EmojiID != x.EmojiID {
+		if !queries.Equal(a.EmojiID, x.EmojiID) {
 			t.Error("foreign key was wrong value", a.EmojiID)
 		}
 
@@ -909,11 +909,63 @@ func testDirectionToOneSetOpEmojiUsingEmoji(t *testing.T) {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.EmojiID != x.EmojiID {
+		if !queries.Equal(a.EmojiID, x.EmojiID) {
 			t.Error("foreign key was wrong value", a.EmojiID, x.EmojiID)
 		}
 	}
 }
+
+func testDirectionToOneRemoveOpEmojiUsingEmoji(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Direction
+	var b Emoji
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetEmoji(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveEmoji(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.Emoji().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.Emoji != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.EmojiID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.Directions) != 0 {
+		t.Error("failed to remove a from b's relationships")
+	}
+}
+
 func testDirectionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
 	var err error
 
@@ -955,7 +1007,7 @@ func testDirectionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
 		if x.R.Directions[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.DesignPatternID != x.DesignPatternID {
+		if !queries.Equal(a.DesignPatternID, x.DesignPatternID) {
 			t.Error("foreign key was wrong value", a.DesignPatternID)
 		}
 
@@ -966,9 +1018,60 @@ func testDirectionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.DesignPatternID != x.DesignPatternID {
+		if !queries.Equal(a.DesignPatternID, x.DesignPatternID) {
 			t.Error("foreign key was wrong value", a.DesignPatternID, x.DesignPatternID)
 		}
+	}
+}
+
+func testDirectionToOneRemoveOpDesignPatternUsingDesignPattern(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Direction
+	var b DesignPattern
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetDesignPattern(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveDesignPattern(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.DesignPattern().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.DesignPattern != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.DesignPatternID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.Directions) != 0 {
+		t.Error("failed to remove a from b's relationships")
 	}
 }
 

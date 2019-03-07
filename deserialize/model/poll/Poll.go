@@ -4,14 +4,19 @@ import (
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/deserialize/model/location"
 	"github.com/diapco/votecube-crud/models"
+	"github.com/valyala/fasthttp"
 )
 
 /**
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func deserializePoll(data []byte, cursor *int64, dataLen int64, err error) (models.Poll, error) {
+func deserializePoll(data []byte, cursor *int64, dataLen int64, err error, ctx *fasthttp.RequestCtx) (models.Poll, error) {
 	var poll models.Poll
+
+	if err != nil {
+		return poll, err
+	}
 
 	poll.EndDate, err = deserialize.RTime(data, cursor, dataLen, err)
 	poll.PollTitle, err = deserialize.RStr(data, cursor, dataLen, err)

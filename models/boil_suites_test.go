@@ -785,7 +785,6 @@ func TestToOne(t *testing.T) {
 	t.Run("DimensionDirectionToDimensionUsingDimension", testDimensionDirectionToOneDimensionUsingDimension)
 	t.Run("DimensionToUserAccountUsingUserAccount", testDimensionToOneUserAccountUsingUserAccount)
 	t.Run("DimensionToDimensionUsingParentDimension", testDimensionToOneDimensionUsingParentDimension)
-	t.Run("DimensionToColorUsingColor", testDimensionToOneColorUsingColor)
 	t.Run("DimensionsLinkToUserAccountUsingUserAccount", testDimensionsLinkToOneUserAccountUsingUserAccount)
 	t.Run("DimensionsLinkToLinkUsingLink", testDimensionsLinkToOneLinkUsingLink)
 	t.Run("DimensionsLinkToDimensionUsingDimension", testDimensionsLinkToOneDimensionUsingDimension)
@@ -875,7 +874,6 @@ func TestOneToOne(t *testing.T) {
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
 	t.Run("AddressToUserPersonalInfos", testAddressToManyUserPersonalInfos)
-	t.Run("ColorToDimensions", testColorToManyDimensions)
 	t.Run("ColorToPollsDimensionsDirections", testColorToManyPollsDimensionsDirections)
 	t.Run("ContinentToCountries", testContinentToManyCountries)
 	t.Run("ContinentToPollsContinents", testContinentToManyPollsContinents)
@@ -968,7 +966,6 @@ func TestToOneSet(t *testing.T) {
 	t.Run("DimensionDirectionToDimensionUsingDimensionDirections", testDimensionDirectionToOneSetOpDimensionUsingDimension)
 	t.Run("DimensionToUserAccountUsingDimensions", testDimensionToOneSetOpUserAccountUsingUserAccount)
 	t.Run("DimensionToDimensionUsingParentDimensionDimensions", testDimensionToOneSetOpDimensionUsingParentDimension)
-	t.Run("DimensionToColorUsingDimensions", testDimensionToOneSetOpColorUsingColor)
 	t.Run("DimensionsLinkToUserAccountUsingDimensionsLinks", testDimensionsLinkToOneSetOpUserAccountUsingUserAccount)
 	t.Run("DimensionsLinkToLinkUsingDimensionsLinks", testDimensionsLinkToOneSetOpLinkUsingLink)
 	t.Run("DimensionsLinkToDimensionUsingDimensionsLinks", testDimensionsLinkToOneSetOpDimensionUsingDimension)
@@ -1051,6 +1048,12 @@ func TestToOneSet(t *testing.T) {
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
 	t.Run("DimensionToDimensionUsingParentDimensionDimensions", testDimensionToOneRemoveOpDimensionUsingParentDimension)
+	t.Run("DirectionToEmojiUsingDirections", testDirectionToOneRemoveOpEmojiUsingEmoji)
+	t.Run("DirectionToDesignPatternUsingDirections", testDirectionToOneRemoveOpDesignPatternUsingDesignPattern)
+	t.Run("PollsDimensionsDirectionToEmojiUsingPollsDimensionsDirections", testPollsDimensionsDirectionToOneRemoveOpEmojiUsingEmoji)
+	t.Run("PollsDimensionsDirectionToDesignPatternUsingPollsDimensionsDirections", testPollsDimensionsDirectionToOneRemoveOpDesignPatternUsingDesignPattern)
+	t.Run("UserAccountToPrefixLastNameUsingUserAccounts", testUserAccountToOneRemoveOpPrefixLastNameUsingPrefixLastName)
+	t.Run("UserAccountToNameAfterLastNameUsingUserAccounts", testUserAccountToOneRemoveOpNameAfterLastNameUsingNameAfterLastName)
 }
 
 // TestOneToOneSet tests cannot be run in parallel
@@ -1068,7 +1071,6 @@ func TestOneToOneRemove(t *testing.T) {}
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
 	t.Run("AddressToUserPersonalInfos", testAddressToManyAddOpUserPersonalInfos)
-	t.Run("ColorToDimensions", testColorToManyAddOpDimensions)
 	t.Run("ColorToPollsDimensionsDirections", testColorToManyAddOpPollsDimensionsDirections)
 	t.Run("ContinentToCountries", testContinentToManyAddOpCountries)
 	t.Run("ContinentToPollsContinents", testContinentToManyAddOpPollsContinents)
@@ -1154,13 +1156,25 @@ func TestToManyAdd(t *testing.T) {
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManySet(t *testing.T) {
+	t.Run("DesignPatternToDirections", testDesignPatternToManySetOpDirections)
+	t.Run("DesignPatternToPollsDimensionsDirections", testDesignPatternToManySetOpPollsDimensionsDirections)
 	t.Run("DimensionToParentDimensionDimensions", testDimensionToManySetOpParentDimensionDimensions)
+	t.Run("EmojiToDirections", testEmojiToManySetOpDirections)
+	t.Run("EmojiToPollsDimensionsDirections", testEmojiToManySetOpPollsDimensionsDirections)
+	t.Run("NameAfterLastNameToUserAccounts", testNameAfterLastNameToManySetOpUserAccounts)
+	t.Run("PrefixLastNameToUserAccounts", testPrefixLastNameToManySetOpUserAccounts)
 }
 
 // TestToManyRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyRemove(t *testing.T) {
+	t.Run("DesignPatternToDirections", testDesignPatternToManyRemoveOpDirections)
+	t.Run("DesignPatternToPollsDimensionsDirections", testDesignPatternToManyRemoveOpPollsDimensionsDirections)
 	t.Run("DimensionToParentDimensionDimensions", testDimensionToManyRemoveOpParentDimensionDimensions)
+	t.Run("EmojiToDirections", testEmojiToManyRemoveOpDirections)
+	t.Run("EmojiToPollsDimensionsDirections", testEmojiToManyRemoveOpPollsDimensionsDirections)
+	t.Run("NameAfterLastNameToUserAccounts", testNameAfterLastNameToManyRemoveOpUserAccounts)
+	t.Run("PrefixLastNameToUserAccounts", testPrefixLastNameToManyRemoveOpUserAccounts)
 }
 
 func TestReload(t *testing.T) {

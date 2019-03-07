@@ -29,6 +29,9 @@ func DeserializePollLabels(data []byte, cursor *int64, dataLen int64, err error)
 		var objectType byte
 		objectType, err = deserialize.RByte(data, cursor, dataLen, err)
 
+		var dimDirId int64
+		dimDirId, err = deserialize.RNum(data, cursor, dataLen, err)
+
 		if objectType == deserialize.REFERENCE {
 			var labelId int64
 			labelId, err = deserialize.RNum(data, cursor, dataLen, err)
@@ -40,6 +43,8 @@ func DeserializePollLabels(data []byte, cursor *int64, dataLen int64, err error)
 			pollsLabels[i] = &models.PollsLabel{
 				LabelID: labelId,
 			}
+		} else {
+
 		}
 
 	}

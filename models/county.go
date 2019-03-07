@@ -240,11 +240,6 @@ func AddCountyHook(hookPoint boil.HookPoint, countyHook CountyHook) {
 	}
 }
 
-// OneG returns a single county record from the query using the global executor.
-func (q countyQuery) OneG(ctx context.Context) (*County, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single county record from the query.
 func (q countyQuery) One(ctx context.Context, exec boil.ContextExecutor) (*County, error) {
 	o := &County{}
@@ -264,11 +259,6 @@ func (q countyQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Count
 	}
 
 	return o, nil
-}
-
-// AllG returns all County records from the query using the global executor.
-func (q countyQuery) AllG(ctx context.Context) (CountySlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all County records from the query.
@@ -291,11 +281,6 @@ func (q countyQuery) All(ctx context.Context, exec boil.ContextExecutor) (County
 	return o, nil
 }
 
-// CountG returns the count of all County records in the query, and panics on error.
-func (q countyQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all County records in the query.
 func (q countyQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -309,11 +294,6 @@ func (q countyQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q countyQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -664,14 +644,6 @@ func (countyL) LoadTowns(ctx context.Context, e boil.ContextExecutor, singular b
 	return nil
 }
 
-// SetStateG of the county to the related item.
-// Sets o.R.State to related.
-// Adds o to related.R.Counties.
-// Uses the global database handle.
-func (o *County) SetStateG(ctx context.Context, insert bool, related *State) error {
-	return o.SetState(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetState of the county to the related item.
 // Sets o.R.State to related.
 // Adds o to related.R.Counties.
@@ -717,15 +689,6 @@ func (o *County) SetState(ctx context.Context, exec boil.ContextExecutor, insert
 	}
 
 	return nil
-}
-
-// AddPollsCountiesG adds the given related objects to the existing relationships
-// of the county, optionally inserting them as new records.
-// Appends related to o.R.PollsCounties.
-// Sets related.R.County appropriately.
-// Uses the global database handle.
-func (o *County) AddPollsCountiesG(ctx context.Context, insert bool, related ...*PollsCounty) error {
-	return o.AddPollsCounties(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsCounties adds the given related objects to the existing relationships
@@ -779,15 +742,6 @@ func (o *County) AddPollsCounties(ctx context.Context, exec boil.ContextExecutor
 		}
 	}
 	return nil
-}
-
-// AddTownsG adds the given related objects to the existing relationships
-// of the county, optionally inserting them as new records.
-// Appends related to o.R.Towns.
-// Sets related.R.County appropriately.
-// Uses the global database handle.
-func (o *County) AddTownsG(ctx context.Context, insert bool, related ...*Town) error {
-	return o.AddTowns(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddTowns adds the given related objects to the existing relationships
@@ -849,11 +803,6 @@ func Counties(mods ...qm.QueryMod) countyQuery {
 	return countyQuery{NewQuery(mods...)}
 }
 
-// FindCountyG retrieves a single record by ID.
-func FindCountyG(ctx context.Context, countyID int64, selectCols ...string) (*County, error) {
-	return FindCounty(ctx, boil.GetContextDB(), countyID, selectCols...)
-}
-
 // FindCounty retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindCounty(ctx context.Context, exec boil.ContextExecutor, countyID int64, selectCols ...string) (*County, error) {
@@ -878,11 +827,6 @@ func FindCounty(ctx context.Context, exec boil.ContextExecutor, countyID int64, 
 	}
 
 	return countyObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *County) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -961,12 +905,6 @@ func (o *County) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single County record using the global executor.
-// See Update for more documentation.
-func (o *County) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the County.
@@ -1049,11 +987,6 @@ func (q countyQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o CountySlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o CountySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1100,11 +1033,6 @@ func (o CountySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all county")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *County) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1222,12 +1150,6 @@ func (o *County) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single County record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *County) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single County record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *County) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1285,11 +1207,6 @@ func (q countyQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o CountySlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o CountySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1343,15 +1260,6 @@ func (o CountySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *County) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no County provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *County) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1362,16 +1270,6 @@ func (o *County) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *CountySlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty CountySlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1401,11 +1299,6 @@ func (o *CountySlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 	*o = slice
 
 	return nil
-}
-
-// CountyExistsG checks if the County row exists.
-func CountyExistsG(ctx context.Context, countyID int64) (bool, error) {
-	return CountyExists(ctx, boil.GetContextDB(), countyID)
 }
 
 // CountyExists checks if the County row exists.

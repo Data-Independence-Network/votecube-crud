@@ -228,11 +228,6 @@ func AddStreetTypeHook(hookPoint boil.HookPoint, streetTypeHook StreetTypeHook) 
 	}
 }
 
-// OneG returns a single streetType record from the query using the global executor.
-func (q streetTypeQuery) OneG(ctx context.Context) (*StreetType, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single streetType record from the query.
 func (q streetTypeQuery) One(ctx context.Context, exec boil.ContextExecutor) (*StreetType, error) {
 	o := &StreetType{}
@@ -252,11 +247,6 @@ func (q streetTypeQuery) One(ctx context.Context, exec boil.ContextExecutor) (*S
 	}
 
 	return o, nil
-}
-
-// AllG returns all StreetType records from the query using the global executor.
-func (q streetTypeQuery) AllG(ctx context.Context) (StreetTypeSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all StreetType records from the query.
@@ -279,11 +269,6 @@ func (q streetTypeQuery) All(ctx context.Context, exec boil.ContextExecutor) (St
 	return o, nil
 }
 
-// CountG returns the count of all StreetType records in the query, and panics on error.
-func (q streetTypeQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all StreetType records in the query.
 func (q streetTypeQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -297,11 +282,6 @@ func (q streetTypeQuery) Count(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q streetTypeQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -431,15 +411,6 @@ func (streetTypeL) LoadStreets(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
-// AddStreetsG adds the given related objects to the existing relationships
-// of the street_type, optionally inserting them as new records.
-// Appends related to o.R.Streets.
-// Sets related.R.StreetType appropriately.
-// Uses the global database handle.
-func (o *StreetType) AddStreetsG(ctx context.Context, insert bool, related ...*Street) error {
-	return o.AddStreets(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddStreets adds the given related objects to the existing relationships
 // of the street_type, optionally inserting them as new records.
 // Appends related to o.R.Streets.
@@ -499,11 +470,6 @@ func StreetTypes(mods ...qm.QueryMod) streetTypeQuery {
 	return streetTypeQuery{NewQuery(mods...)}
 }
 
-// FindStreetTypeG retrieves a single record by ID.
-func FindStreetTypeG(ctx context.Context, streetTypeID int64, selectCols ...string) (*StreetType, error) {
-	return FindStreetType(ctx, boil.GetContextDB(), streetTypeID, selectCols...)
-}
-
 // FindStreetType retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindStreetType(ctx context.Context, exec boil.ContextExecutor, streetTypeID int64, selectCols ...string) (*StreetType, error) {
@@ -528,11 +494,6 @@ func FindStreetType(ctx context.Context, exec boil.ContextExecutor, streetTypeID
 	}
 
 	return streetTypeObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *StreetType) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -611,12 +572,6 @@ func (o *StreetType) Insert(ctx context.Context, exec boil.ContextExecutor, colu
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single StreetType record using the global executor.
-// See Update for more documentation.
-func (o *StreetType) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the StreetType.
@@ -699,11 +654,6 @@ func (q streetTypeQuery) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o StreetTypeSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o StreetTypeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -750,11 +700,6 @@ func (o StreetTypeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all streetType")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *StreetType) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -872,12 +817,6 @@ func (o *StreetType) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single StreetType record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *StreetType) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single StreetType record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *StreetType) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -935,11 +874,6 @@ func (q streetTypeQuery) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o StreetTypeSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o StreetTypeSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -993,15 +927,6 @@ func (o StreetTypeSlice) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *StreetType) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no StreetType provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *StreetType) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1012,16 +937,6 @@ func (o *StreetType) Reload(ctx context.Context, exec boil.ContextExecutor) erro
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *StreetTypeSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty StreetTypeSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1051,11 +966,6 @@ func (o *StreetTypeSlice) ReloadAll(ctx context.Context, exec boil.ContextExecut
 	*o = slice
 
 	return nil
-}
-
-// StreetTypeExistsG checks if the StreetType row exists.
-func StreetTypeExistsG(ctx context.Context, streetTypeID int64) (bool, error) {
-	return StreetTypeExists(ctx, boil.GetContextDB(), streetTypeID)
 }
 
 // StreetTypeExists checks if the StreetType row exists.

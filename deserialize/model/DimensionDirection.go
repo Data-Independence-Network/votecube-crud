@@ -23,12 +23,12 @@ func DeserializeDimDir(data []byte, cursor *int64, dataLen int64, err error) (mo
 	}
 
 	var dimension models.Dimension
-	var dimIsRef bool
-	dimension, dimIsRef, err = DeserializeDimension(data, cursor, dataLen, err)
+	var dimId int64
+	dimension, dimId, err = DeserializeDimension(data, cursor, dataLen, err)
 
 	var direction models.Direction
-	var dirIsRef bool
-	direction, dirIsRef, err = DeserializeDirection(data, cursor, dataLen, err)
+	var dirId int64
+	direction, dirId, err = DeserializeDirection(data, cursor, dataLen, err)
 
 	if err != nil {
 		return dimensionDirection, 0, err
@@ -36,18 +36,17 @@ func DeserializeDimDir(data []byte, cursor *int64, dataLen int64, err error) (mo
 
 	dimensionDirection = models.DimensionDirection{}
 
-	if dimIsRef {
-		dimensionDirection.DimensionID = dimension.DimensionID
+	if dimId != 0 {
+		dimensionDirection.DimensionID = dimId
 	} else {
 		dimensionDirection.R.Dimension = &dimension
 	}
 
-	if dirIsRef {
-		dimensionDirection.DirectionID = direction.DirectionID
+	if dirId != 0 {
+		dimensionDirection.DirectionID = dirId
 	} else {
 		dimensionDirection.R.Direction = &direction
 	}
 
 	return dimensionDirection, 0, nil
-
 }

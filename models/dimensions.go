@@ -23,13 +23,12 @@ import (
 
 // Dimension is an object representing the database table.
 type Dimension struct {
-	DimensionID          int64      `boil:"dimension_id" json:"dimension_id" toml:"dimension_id" yaml:"dimension_id"`
-	ParentDimensionID    null.Int64 `boil:"parent_dimension_id" json:"parent_dimension_id,omitempty" toml:"parent_dimension_id" yaml:"parent_dimension_id,omitempty"`
-	UserAccountID        int64      `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
-	DimensionName        string     `boil:"dimension_name" json:"dimension_name" toml:"dimension_name" yaml:"dimension_name"`
-	DimensionDescription string     `boil:"dimension_description" json:"dimension_description" toml:"dimension_description" yaml:"dimension_description"`
-	ColorID              int64      `boil:"color_id" json:"color_id" toml:"color_id" yaml:"color_id"`
-	CreatedAt            time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	DimensionID          int64       `boil:"dimension_id" json:"dimension_id" toml:"dimension_id" yaml:"dimension_id"`
+	ParentDimensionID    null.Int64  `boil:"parent_dimension_id" json:"parent_dimension_id,omitempty" toml:"parent_dimension_id" yaml:"parent_dimension_id,omitempty"`
+	UserAccountID        int64       `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
+	DimensionName        string      `boil:"dimension_name" json:"dimension_name" toml:"dimension_name" yaml:"dimension_name"`
+	DimensionDescription null.String `boil:"dimension_description" json:"dimension_description,omitempty" toml:"dimension_description" yaml:"dimension_description,omitempty"`
+	CreatedAt            time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *dimensionR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L dimensionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -41,7 +40,6 @@ var DimensionColumns = struct {
 	UserAccountID        string
 	DimensionName        string
 	DimensionDescription string
-	ColorID              string
 	CreatedAt            string
 }{
 	DimensionID:          "dimension_id",
@@ -49,7 +47,6 @@ var DimensionColumns = struct {
 	UserAccountID:        "user_account_id",
 	DimensionName:        "dimension_name",
 	DimensionDescription: "dimension_description",
-	ColorID:              "color_id",
 	CreatedAt:            "created_at",
 }
 
@@ -57,14 +54,12 @@ var DimensionColumns = struct {
 var DimensionRels = struct {
 	UserAccount               string
 	ParentDimension           string
-	Color                     string
 	DimensionDirections       string
 	ParentDimensionDimensions string
 	DimensionsLinks           string
 }{
 	UserAccount:               "UserAccount",
 	ParentDimension:           "ParentDimension",
-	Color:                     "Color",
 	DimensionDirections:       "DimensionDirections",
 	ParentDimensionDimensions: "ParentDimensionDimensions",
 	DimensionsLinks:           "DimensionsLinks",
@@ -74,7 +69,6 @@ var DimensionRels = struct {
 type dimensionR struct {
 	UserAccount               *UserAccount
 	ParentDimension           *Dimension
-	Color                     *Color
 	DimensionDirections       DimensionDirectionSlice
 	ParentDimensionDimensions DimensionSlice
 	DimensionsLinks           DimensionsLinkSlice
@@ -89,8 +83,8 @@ func (*dimensionR) NewStruct() *dimensionR {
 type dimensionL struct{}
 
 var (
-	dimensionColumns               = []string{"dimension_id", "parent_dimension_id", "user_account_id", "dimension_name", "dimension_description", "color_id", "created_at"}
-	dimensionColumnsWithoutDefault = []string{"dimension_id", "parent_dimension_id", "user_account_id", "dimension_name", "dimension_description", "color_id", "created_at"}
+	dimensionColumns               = []string{"dimension_id", "parent_dimension_id", "user_account_id", "dimension_name", "dimension_description", "created_at"}
+	dimensionColumnsWithoutDefault = []string{"dimension_id", "parent_dimension_id", "user_account_id", "dimension_name", "dimension_description", "created_at"}
 	dimensionColumnsWithDefault    = []string{}
 	dimensionPrimaryKeyColumns     = []string{"dimension_id"}
 )
@@ -259,11 +253,6 @@ func AddDimensionHook(hookPoint boil.HookPoint, dimensionHook DimensionHook) {
 	}
 }
 
-// OneG returns a single dimension record from the query using the global executor.
-func (q dimensionQuery) OneG(ctx context.Context) (*Dimension, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single dimension record from the query.
 func (q dimensionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Dimension, error) {
 	o := &Dimension{}
@@ -283,11 +272,6 @@ func (q dimensionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Di
 	}
 
 	return o, nil
-}
-
-// AllG returns all Dimension records from the query using the global executor.
-func (q dimensionQuery) AllG(ctx context.Context) (DimensionSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Dimension records from the query.
@@ -310,11 +294,6 @@ func (q dimensionQuery) All(ctx context.Context, exec boil.ContextExecutor) (Dim
 	return o, nil
 }
 
-// CountG returns the count of all Dimension records in the query, and panics on error.
-func (q dimensionQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Dimension records in the query.
 func (q dimensionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -328,11 +307,6 @@ func (q dimensionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (i
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q dimensionQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -374,20 +348,6 @@ func (o *Dimension) ParentDimension(mods ...qm.QueryMod) dimensionQuery {
 
 	query := Dimensions(queryMods...)
 	queries.SetFrom(query.Query, "\"dimensions\"")
-
-	return query
-}
-
-// Color pointed to by the foreign key.
-func (o *Dimension) Color(mods ...qm.QueryMod) colorQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("color_id=?", o.ColorID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	query := Colors(queryMods...)
-	queries.SetFrom(query.Query, "\"colors\"")
 
 	return query
 }
@@ -637,101 +597,6 @@ func (dimensionL) LoadParentDimension(ctx context.Context, e boil.ContextExecuto
 					foreign.R = &dimensionR{}
 				}
 				foreign.R.ParentDimensionDimensions = append(foreign.R.ParentDimensionDimensions, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadColor allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (dimensionL) LoadColor(ctx context.Context, e boil.ContextExecutor, singular bool, maybeDimension interface{}, mods queries.Applicator) error {
-	var slice []*Dimension
-	var object *Dimension
-
-	if singular {
-		object = maybeDimension.(*Dimension)
-	} else {
-		slice = *maybeDimension.(*[]*Dimension)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &dimensionR{}
-		}
-		args = append(args, object.ColorID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &dimensionR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ColorID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ColorID)
-		}
-	}
-
-	query := NewQuery(qm.From(`colors`), qm.WhereIn(`color_id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Color")
-	}
-
-	var resultSlice []*Color
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Color")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for colors")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for colors")
-	}
-
-	if len(dimensionAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Color = foreign
-		if foreign.R == nil {
-			foreign.R = &colorR{}
-		}
-		foreign.R.Dimensions = append(foreign.R.Dimensions, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.ColorID == foreign.ColorID {
-				local.R.Color = foreign
-				if foreign.R == nil {
-					foreign.R = &colorR{}
-				}
-				foreign.R.Dimensions = append(foreign.R.Dimensions, local)
 				break
 			}
 		}
@@ -1013,14 +878,6 @@ func (dimensionL) LoadDimensionsLinks(ctx context.Context, e boil.ContextExecuto
 	return nil
 }
 
-// SetUserAccountG of the dimension to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Dimensions.
-// Uses the global database handle.
-func (o *Dimension) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the dimension to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Dimensions.
@@ -1066,14 +923,6 @@ func (o *Dimension) SetUserAccount(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	return nil
-}
-
-// SetParentDimensionG of the dimension to the related item.
-// Sets o.R.ParentDimension to related.
-// Adds o to related.R.ParentDimensionDimensions.
-// Uses the global database handle.
-func (o *Dimension) SetParentDimensionG(ctx context.Context, insert bool, related *Dimension) error {
-	return o.SetParentDimension(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetParentDimension of the dimension to the related item.
@@ -1123,14 +972,6 @@ func (o *Dimension) SetParentDimension(ctx context.Context, exec boil.ContextExe
 	return nil
 }
 
-// RemoveParentDimensionG relationship.
-// Sets o.R.ParentDimension to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-// Uses the global database handle.
-func (o *Dimension) RemoveParentDimensionG(ctx context.Context, related *Dimension) error {
-	return o.RemoveParentDimension(ctx, boil.GetContextDB(), related)
-}
-
 // RemoveParentDimension relationship.
 // Sets o.R.ParentDimension to nil.
 // Removes o from all passed in related items' relationships struct (Optional).
@@ -1160,70 +1001,6 @@ func (o *Dimension) RemoveParentDimension(ctx context.Context, exec boil.Context
 		break
 	}
 	return nil
-}
-
-// SetColorG of the dimension to the related item.
-// Sets o.R.Color to related.
-// Adds o to related.R.Dimensions.
-// Uses the global database handle.
-func (o *Dimension) SetColorG(ctx context.Context, insert bool, related *Color) error {
-	return o.SetColor(ctx, boil.GetContextDB(), insert, related)
-}
-
-// SetColor of the dimension to the related item.
-// Sets o.R.Color to related.
-// Adds o to related.R.Dimensions.
-func (o *Dimension) SetColor(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Color) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"dimensions\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"color_id"}),
-		strmangle.WhereClause("\"", "\"", 2, dimensionPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ColorID, o.DimensionID}
-
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, updateQuery)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.ColorID = related.ColorID
-	if o.R == nil {
-		o.R = &dimensionR{
-			Color: related,
-		}
-	} else {
-		o.R.Color = related
-	}
-
-	if related.R == nil {
-		related.R = &colorR{
-			Dimensions: DimensionSlice{o},
-		}
-	} else {
-		related.R.Dimensions = append(related.R.Dimensions, o)
-	}
-
-	return nil
-}
-
-// AddDimensionDirectionsG adds the given related objects to the existing relationships
-// of the dimension, optionally inserting them as new records.
-// Appends related to o.R.DimensionDirections.
-// Sets related.R.Dimension appropriately.
-// Uses the global database handle.
-func (o *Dimension) AddDimensionDirectionsG(ctx context.Context, insert bool, related ...*DimensionDirection) error {
-	return o.AddDimensionDirections(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddDimensionDirections adds the given related objects to the existing relationships
@@ -1279,15 +1056,6 @@ func (o *Dimension) AddDimensionDirections(ctx context.Context, exec boil.Contex
 	return nil
 }
 
-// AddParentDimensionDimensionsG adds the given related objects to the existing relationships
-// of the dimension, optionally inserting them as new records.
-// Appends related to o.R.ParentDimensionDimensions.
-// Sets related.R.ParentDimension appropriately.
-// Uses the global database handle.
-func (o *Dimension) AddParentDimensionDimensionsG(ctx context.Context, insert bool, related ...*Dimension) error {
-	return o.AddParentDimensionDimensions(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddParentDimensionDimensions adds the given related objects to the existing relationships
 // of the dimension, optionally inserting them as new records.
 // Appends related to o.R.ParentDimensionDimensions.
@@ -1341,17 +1109,6 @@ func (o *Dimension) AddParentDimensionDimensions(ctx context.Context, exec boil.
 	return nil
 }
 
-// SetParentDimensionDimensionsG removes all previously related items of the
-// dimension replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.ParentDimension's ParentDimensionDimensions accordingly.
-// Replaces o.R.ParentDimensionDimensions with related.
-// Sets related.R.ParentDimension's ParentDimensionDimensions accordingly.
-// Uses the global database handle.
-func (o *Dimension) SetParentDimensionDimensionsG(ctx context.Context, insert bool, related ...*Dimension) error {
-	return o.SetParentDimensionDimensions(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // SetParentDimensionDimensions removes all previously related items of the
 // dimension replacing them completely with the passed
 // in related items, optionally inserting them as new records.
@@ -1384,14 +1141,6 @@ func (o *Dimension) SetParentDimensionDimensions(ctx context.Context, exec boil.
 		o.R.ParentDimensionDimensions = nil
 	}
 	return o.AddParentDimensionDimensions(ctx, exec, insert, related...)
-}
-
-// RemoveParentDimensionDimensionsG relationships from objects passed in.
-// Removes related items from R.ParentDimensionDimensions (uses pointer comparison, removal does not keep order)
-// Sets related.R.ParentDimension.
-// Uses the global database handle.
-func (o *Dimension) RemoveParentDimensionDimensionsG(ctx context.Context, related ...*Dimension) error {
-	return o.RemoveParentDimensionDimensions(ctx, boil.GetContextDB(), related...)
 }
 
 // RemoveParentDimensionDimensions relationships from objects passed in.
@@ -1428,15 +1177,6 @@ func (o *Dimension) RemoveParentDimensionDimensions(ctx context.Context, exec bo
 	}
 
 	return nil
-}
-
-// AddDimensionsLinksG adds the given related objects to the existing relationships
-// of the dimension, optionally inserting them as new records.
-// Appends related to o.R.DimensionsLinks.
-// Sets related.R.Dimension appropriately.
-// Uses the global database handle.
-func (o *Dimension) AddDimensionsLinksG(ctx context.Context, insert bool, related ...*DimensionsLink) error {
-	return o.AddDimensionsLinks(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddDimensionsLinks adds the given related objects to the existing relationships
@@ -1498,11 +1238,6 @@ func Dimensions(mods ...qm.QueryMod) dimensionQuery {
 	return dimensionQuery{NewQuery(mods...)}
 }
 
-// FindDimensionG retrieves a single record by ID.
-func FindDimensionG(ctx context.Context, dimensionID int64, selectCols ...string) (*Dimension, error) {
-	return FindDimension(ctx, boil.GetContextDB(), dimensionID, selectCols...)
-}
-
 // FindDimension retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindDimension(ctx context.Context, exec boil.ContextExecutor, dimensionID int64, selectCols ...string) (*Dimension, error) {
@@ -1527,11 +1262,6 @@ func FindDimension(ctx context.Context, exec boil.ContextExecutor, dimensionID i
 	}
 
 	return dimensionObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Dimension) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1617,12 +1347,6 @@ func (o *Dimension) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Dimension record using the global executor.
-// See Update for more documentation.
-func (o *Dimension) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Dimension.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -1703,11 +1427,6 @@ func (q dimensionQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o DimensionSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o DimensionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1754,11 +1473,6 @@ func (o DimensionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all dimension")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Dimension) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1881,12 +1595,6 @@ func (o *Dimension) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Dimension record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Dimension) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Dimension record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Dimension) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1944,11 +1652,6 @@ func (q dimensionQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o DimensionSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o DimensionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -2002,15 +1705,6 @@ func (o DimensionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Dimension) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Dimension provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Dimension) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -2021,16 +1715,6 @@ func (o *Dimension) Reload(ctx context.Context, exec boil.ContextExecutor) error
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *DimensionSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty DimensionSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -2060,11 +1744,6 @@ func (o *DimensionSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 	*o = slice
 
 	return nil
-}
-
-// DimensionExistsG checks if the Dimension row exists.
-func DimensionExistsG(ctx context.Context, dimensionID int64) (bool, error) {
-	return DimensionExists(ctx, boil.GetContextDB(), dimensionID)
 }
 
 // DimensionExists checks if the Dimension row exists.

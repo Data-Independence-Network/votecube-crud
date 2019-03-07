@@ -237,11 +237,6 @@ func AddThemeHook(hookPoint boil.HookPoint, themeHook ThemeHook) {
 	}
 }
 
-// OneG returns a single theme record from the query using the global executor.
-func (q themeQuery) OneG(ctx context.Context) (*Theme, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single theme record from the query.
 func (q themeQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Theme, error) {
 	o := &Theme{}
@@ -261,11 +256,6 @@ func (q themeQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Theme,
 	}
 
 	return o, nil
-}
-
-// AllG returns all Theme records from the query using the global executor.
-func (q themeQuery) AllG(ctx context.Context) (ThemeSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Theme records from the query.
@@ -288,11 +278,6 @@ func (q themeQuery) All(ctx context.Context, exec boil.ContextExecutor) (ThemeSl
 	return o, nil
 }
 
-// CountG returns the count of all Theme records in the query, and panics on error.
-func (q themeQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Theme records in the query.
 func (q themeQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -306,11 +291,6 @@ func (q themeQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q themeQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -552,15 +532,6 @@ func (themeL) LoadPollsGroups(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
-// AddPollsG adds the given related objects to the existing relationships
-// of the theme, optionally inserting them as new records.
-// Appends related to o.R.Polls.
-// Sets related.R.Theme appropriately.
-// Uses the global database handle.
-func (o *Theme) AddPollsG(ctx context.Context, insert bool, related ...*Poll) error {
-	return o.AddPolls(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPolls adds the given related objects to the existing relationships
 // of the theme, optionally inserting them as new records.
 // Appends related to o.R.Polls.
@@ -612,15 +583,6 @@ func (o *Theme) AddPolls(ctx context.Context, exec boil.ContextExecutor, insert 
 		}
 	}
 	return nil
-}
-
-// AddPollsGroupsG adds the given related objects to the existing relationships
-// of the theme, optionally inserting them as new records.
-// Appends related to o.R.PollsGroups.
-// Sets related.R.Theme appropriately.
-// Uses the global database handle.
-func (o *Theme) AddPollsGroupsG(ctx context.Context, insert bool, related ...*PollsGroup) error {
-	return o.AddPollsGroups(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsGroups adds the given related objects to the existing relationships
@@ -682,11 +644,6 @@ func Themes(mods ...qm.QueryMod) themeQuery {
 	return themeQuery{NewQuery(mods...)}
 }
 
-// FindThemeG retrieves a single record by ID.
-func FindThemeG(ctx context.Context, themeID int64, selectCols ...string) (*Theme, error) {
-	return FindTheme(ctx, boil.GetContextDB(), themeID, selectCols...)
-}
-
 // FindTheme retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindTheme(ctx context.Context, exec boil.ContextExecutor, themeID int64, selectCols ...string) (*Theme, error) {
@@ -711,11 +668,6 @@ func FindTheme(ctx context.Context, exec boil.ContextExecutor, themeID int64, se
 	}
 
 	return themeObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Theme) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -801,12 +753,6 @@ func (o *Theme) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Theme record using the global executor.
-// See Update for more documentation.
-func (o *Theme) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Theme.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -887,11 +833,6 @@ func (q themeQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o ThemeSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o ThemeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -938,11 +879,6 @@ func (o ThemeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all theme")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Theme) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1065,12 +1001,6 @@ func (o *Theme) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnC
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Theme record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Theme) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Theme record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Theme) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1128,11 +1058,6 @@ func (q themeQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o ThemeSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o ThemeSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1186,15 +1111,6 @@ func (o ThemeSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Theme) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Theme provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Theme) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1205,16 +1121,6 @@ func (o *Theme) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *ThemeSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty ThemeSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1244,11 +1150,6 @@ func (o *ThemeSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 	*o = slice
 
 	return nil
-}
-
-// ThemeExistsG checks if the Theme row exists.
-func ThemeExistsG(ctx context.Context, themeID int64) (bool, error) {
-	return ThemeExists(ctx, boil.GetContextDB(), themeID)
 }
 
 // ThemeExists checks if the Theme row exists.

@@ -243,11 +243,6 @@ func AddContinentHook(hookPoint boil.HookPoint, continentHook ContinentHook) {
 	}
 }
 
-// OneG returns a single continent record from the query using the global executor.
-func (q continentQuery) OneG(ctx context.Context) (*Continent, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single continent record from the query.
 func (q continentQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Continent, error) {
 	o := &Continent{}
@@ -267,11 +262,6 @@ func (q continentQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Co
 	}
 
 	return o, nil
-}
-
-// AllG returns all Continent records from the query using the global executor.
-func (q continentQuery) AllG(ctx context.Context) (ContinentSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Continent records from the query.
@@ -294,11 +284,6 @@ func (q continentQuery) All(ctx context.Context, exec boil.ContextExecutor) (Con
 	return o, nil
 }
 
-// CountG returns the count of all Continent records in the query, and panics on error.
-func (q continentQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Continent records in the query.
 func (q continentQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -312,11 +297,6 @@ func (q continentQuery) Count(ctx context.Context, exec boil.ContextExecutor) (i
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q continentQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -558,15 +538,6 @@ func (continentL) LoadPollsContinents(ctx context.Context, e boil.ContextExecuto
 	return nil
 }
 
-// AddCountriesG adds the given related objects to the existing relationships
-// of the continent, optionally inserting them as new records.
-// Appends related to o.R.Countries.
-// Sets related.R.Continent appropriately.
-// Uses the global database handle.
-func (o *Continent) AddCountriesG(ctx context.Context, insert bool, related ...*Country) error {
-	return o.AddCountries(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddCountries adds the given related objects to the existing relationships
 // of the continent, optionally inserting them as new records.
 // Appends related to o.R.Countries.
@@ -618,15 +589,6 @@ func (o *Continent) AddCountries(ctx context.Context, exec boil.ContextExecutor,
 		}
 	}
 	return nil
-}
-
-// AddPollsContinentsG adds the given related objects to the existing relationships
-// of the continent, optionally inserting them as new records.
-// Appends related to o.R.PollsContinents.
-// Sets related.R.Continent appropriately.
-// Uses the global database handle.
-func (o *Continent) AddPollsContinentsG(ctx context.Context, insert bool, related ...*PollsContinent) error {
-	return o.AddPollsContinents(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsContinents adds the given related objects to the existing relationships
@@ -688,11 +650,6 @@ func Continents(mods ...qm.QueryMod) continentQuery {
 	return continentQuery{NewQuery(mods...)}
 }
 
-// FindContinentG retrieves a single record by ID.
-func FindContinentG(ctx context.Context, continentID2 int64, selectCols ...string) (*Continent, error) {
-	return FindContinent(ctx, boil.GetContextDB(), continentID2, selectCols...)
-}
-
 // FindContinent retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindContinent(ctx context.Context, exec boil.ContextExecutor, continentID2 int64, selectCols ...string) (*Continent, error) {
@@ -717,11 +674,6 @@ func FindContinent(ctx context.Context, exec boil.ContextExecutor, continentID2 
 	}
 
 	return continentObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Continent) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -800,12 +752,6 @@ func (o *Continent) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Continent record using the global executor.
-// See Update for more documentation.
-func (o *Continent) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Continent.
@@ -888,11 +834,6 @@ func (q continentQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o ContinentSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o ContinentSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -939,11 +880,6 @@ func (o ContinentSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all continent")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Continent) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1061,12 +997,6 @@ func (o *Continent) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Continent record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Continent) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Continent record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Continent) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1124,11 +1054,6 @@ func (q continentQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o ContinentSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o ContinentSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1182,15 +1107,6 @@ func (o ContinentSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Continent) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Continent provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Continent) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1201,16 +1117,6 @@ func (o *Continent) Reload(ctx context.Context, exec boil.ContextExecutor) error
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *ContinentSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty ContinentSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1240,11 +1146,6 @@ func (o *ContinentSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 	*o = slice
 
 	return nil
-}
-
-// ContinentExistsG checks if the Continent row exists.
-func ContinentExistsG(ctx context.Context, continentID2 int64) (bool, error) {
-	return ContinentExists(ctx, boil.GetContextDB(), continentID2)
 }
 
 // ContinentExists checks if the Continent row exists.

@@ -237,11 +237,6 @@ func AddUserPersonalInfoTitleAfterLastNameHook(hookPoint boil.HookPoint, userPer
 	}
 }
 
-// OneG returns a single userPersonalInfoTitleAfterLastName record from the query using the global executor.
-func (q userPersonalInfoTitleAfterLastNameQuery) OneG(ctx context.Context) (*UserPersonalInfoTitleAfterLastName, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single userPersonalInfoTitleAfterLastName record from the query.
 func (q userPersonalInfoTitleAfterLastNameQuery) One(ctx context.Context, exec boil.ContextExecutor) (*UserPersonalInfoTitleAfterLastName, error) {
 	o := &UserPersonalInfoTitleAfterLastName{}
@@ -261,11 +256,6 @@ func (q userPersonalInfoTitleAfterLastNameQuery) One(ctx context.Context, exec b
 	}
 
 	return o, nil
-}
-
-// AllG returns all UserPersonalInfoTitleAfterLastName records from the query using the global executor.
-func (q userPersonalInfoTitleAfterLastNameQuery) AllG(ctx context.Context) (UserPersonalInfoTitleAfterLastNameSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all UserPersonalInfoTitleAfterLastName records from the query.
@@ -288,11 +278,6 @@ func (q userPersonalInfoTitleAfterLastNameQuery) All(ctx context.Context, exec b
 	return o, nil
 }
 
-// CountG returns the count of all UserPersonalInfoTitleAfterLastName records in the query, and panics on error.
-func (q userPersonalInfoTitleAfterLastNameQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all UserPersonalInfoTitleAfterLastName records in the query.
 func (q userPersonalInfoTitleAfterLastNameQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -306,11 +291,6 @@ func (q userPersonalInfoTitleAfterLastNameQuery) Count(ctx context.Context, exec
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q userPersonalInfoTitleAfterLastNameQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -546,14 +526,6 @@ func (userPersonalInfoTitleAfterLastNameL) LoadTitleAfterLastName(ctx context.Co
 	return nil
 }
 
-// SetUserPersonalInfoG of the userPersonalInfoTitleAfterLastName to the related item.
-// Sets o.R.UserPersonalInfo to related.
-// Adds o to related.R.UserPersonalInfoTitleAfterLastNames.
-// Uses the global database handle.
-func (o *UserPersonalInfoTitleAfterLastName) SetUserPersonalInfoG(ctx context.Context, insert bool, related *UserPersonalInfo) error {
-	return o.SetUserPersonalInfo(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserPersonalInfo of the userPersonalInfoTitleAfterLastName to the related item.
 // Sets o.R.UserPersonalInfo to related.
 // Adds o to related.R.UserPersonalInfoTitleAfterLastNames.
@@ -599,14 +571,6 @@ func (o *UserPersonalInfoTitleAfterLastName) SetUserPersonalInfo(ctx context.Con
 	}
 
 	return nil
-}
-
-// SetTitleAfterLastNameG of the userPersonalInfoTitleAfterLastName to the related item.
-// Sets o.R.TitleAfterLastName to related.
-// Adds o to related.R.UserPersonalInfoTitleAfterLastNames.
-// Uses the global database handle.
-func (o *UserPersonalInfoTitleAfterLastName) SetTitleAfterLastNameG(ctx context.Context, insert bool, related *TitleAfterLastName) error {
-	return o.SetTitleAfterLastName(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetTitleAfterLastName of the userPersonalInfoTitleAfterLastName to the related item.
@@ -662,11 +626,6 @@ func UserPersonalInfoTitleAfterLastNames(mods ...qm.QueryMod) userPersonalInfoTi
 	return userPersonalInfoTitleAfterLastNameQuery{NewQuery(mods...)}
 }
 
-// FindUserPersonalInfoTitleAfterLastNameG retrieves a single record by ID.
-func FindUserPersonalInfoTitleAfterLastNameG(ctx context.Context, userPersonalInfoTitleAfterLastNameID int64, selectCols ...string) (*UserPersonalInfoTitleAfterLastName, error) {
-	return FindUserPersonalInfoTitleAfterLastName(ctx, boil.GetContextDB(), userPersonalInfoTitleAfterLastNameID, selectCols...)
-}
-
 // FindUserPersonalInfoTitleAfterLastName retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUserPersonalInfoTitleAfterLastName(ctx context.Context, exec boil.ContextExecutor, userPersonalInfoTitleAfterLastNameID int64, selectCols ...string) (*UserPersonalInfoTitleAfterLastName, error) {
@@ -691,11 +650,6 @@ func FindUserPersonalInfoTitleAfterLastName(ctx context.Context, exec boil.Conte
 	}
 
 	return userPersonalInfoTitleAfterLastNameObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *UserPersonalInfoTitleAfterLastName) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -774,12 +728,6 @@ func (o *UserPersonalInfoTitleAfterLastName) Insert(ctx context.Context, exec bo
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single UserPersonalInfoTitleAfterLastName record using the global executor.
-// See Update for more documentation.
-func (o *UserPersonalInfoTitleAfterLastName) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the UserPersonalInfoTitleAfterLastName.
@@ -862,11 +810,6 @@ func (q userPersonalInfoTitleAfterLastNameQuery) UpdateAll(ctx context.Context, 
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o UserPersonalInfoTitleAfterLastNameSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o UserPersonalInfoTitleAfterLastNameSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -913,11 +856,6 @@ func (o UserPersonalInfoTitleAfterLastNameSlice) UpdateAll(ctx context.Context, 
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all userPersonalInfoTitleAfterLastName")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *UserPersonalInfoTitleAfterLastName) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1035,12 +973,6 @@ func (o *UserPersonalInfoTitleAfterLastName) Upsert(ctx context.Context, exec bo
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single UserPersonalInfoTitleAfterLastName record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *UserPersonalInfoTitleAfterLastName) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single UserPersonalInfoTitleAfterLastName record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *UserPersonalInfoTitleAfterLastName) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1098,11 +1030,6 @@ func (q userPersonalInfoTitleAfterLastNameQuery) DeleteAll(ctx context.Context, 
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o UserPersonalInfoTitleAfterLastNameSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o UserPersonalInfoTitleAfterLastNameSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1156,15 +1083,6 @@ func (o UserPersonalInfoTitleAfterLastNameSlice) DeleteAll(ctx context.Context, 
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *UserPersonalInfoTitleAfterLastName) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no UserPersonalInfoTitleAfterLastName provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserPersonalInfoTitleAfterLastName) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1175,16 +1093,6 @@ func (o *UserPersonalInfoTitleAfterLastName) Reload(ctx context.Context, exec bo
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *UserPersonalInfoTitleAfterLastNameSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty UserPersonalInfoTitleAfterLastNameSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1214,11 +1122,6 @@ func (o *UserPersonalInfoTitleAfterLastNameSlice) ReloadAll(ctx context.Context,
 	*o = slice
 
 	return nil
-}
-
-// UserPersonalInfoTitleAfterLastNameExistsG checks if the UserPersonalInfoTitleAfterLastName row exists.
-func UserPersonalInfoTitleAfterLastNameExistsG(ctx context.Context, userPersonalInfoTitleAfterLastNameID int64) (bool, error) {
-	return UserPersonalInfoTitleAfterLastNameExists(ctx, boil.GetContextDB(), userPersonalInfoTitleAfterLastNameID)
 }
 
 // UserPersonalInfoTitleAfterLastNameExists checks if the UserPersonalInfoTitleAfterLastName row exists.

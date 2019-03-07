@@ -234,11 +234,6 @@ func AddPollsStateHook(hookPoint boil.HookPoint, pollsStateHook PollsStateHook) 
 	}
 }
 
-// OneG returns a single pollsState record from the query using the global executor.
-func (q pollsStateQuery) OneG(ctx context.Context) (*PollsState, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsState record from the query.
 func (q pollsStateQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsState, error) {
 	o := &PollsState{}
@@ -258,11 +253,6 @@ func (q pollsStateQuery) One(ctx context.Context, exec boil.ContextExecutor) (*P
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsState records from the query using the global executor.
-func (q pollsStateQuery) AllG(ctx context.Context) (PollsStateSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsState records from the query.
@@ -285,11 +275,6 @@ func (q pollsStateQuery) All(ctx context.Context, exec boil.ContextExecutor) (Po
 	return o, nil
 }
 
-// CountG returns the count of all PollsState records in the query, and panics on error.
-func (q pollsStateQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsState records in the query.
 func (q pollsStateQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -303,11 +288,6 @@ func (q pollsStateQuery) Count(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsStateQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -543,14 +523,6 @@ func (pollsStateL) LoadPoll(ctx context.Context, e boil.ContextExecutor, singula
 	return nil
 }
 
-// SetStateG of the pollsState to the related item.
-// Sets o.R.State to related.
-// Adds o to related.R.PollsStates.
-// Uses the global database handle.
-func (o *PollsState) SetStateG(ctx context.Context, insert bool, related *State) error {
-	return o.SetState(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetState of the pollsState to the related item.
 // Sets o.R.State to related.
 // Adds o to related.R.PollsStates.
@@ -596,14 +568,6 @@ func (o *PollsState) SetState(ctx context.Context, exec boil.ContextExecutor, in
 	}
 
 	return nil
-}
-
-// SetPollG of the pollsState to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.PollsStates.
-// Uses the global database handle.
-func (o *PollsState) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetPoll of the pollsState to the related item.
@@ -659,11 +623,6 @@ func PollsStates(mods ...qm.QueryMod) pollsStateQuery {
 	return pollsStateQuery{NewQuery(mods...)}
 }
 
-// FindPollsStateG retrieves a single record by ID.
-func FindPollsStateG(ctx context.Context, pollStateID int64, selectCols ...string) (*PollsState, error) {
-	return FindPollsState(ctx, boil.GetContextDB(), pollStateID, selectCols...)
-}
-
 // FindPollsState retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPollsState(ctx context.Context, exec boil.ContextExecutor, pollStateID int64, selectCols ...string) (*PollsState, error) {
@@ -688,11 +647,6 @@ func FindPollsState(ctx context.Context, exec boil.ContextExecutor, pollStateID 
 	}
 
 	return pollsStateObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsState) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -771,12 +725,6 @@ func (o *PollsState) Insert(ctx context.Context, exec boil.ContextExecutor, colu
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PollsState record using the global executor.
-// See Update for more documentation.
-func (o *PollsState) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PollsState.
@@ -859,11 +807,6 @@ func (q pollsStateQuery) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsStateSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsStateSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -910,11 +853,6 @@ func (o PollsStateSlice) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsState")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsState) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1032,12 +970,6 @@ func (o *PollsState) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsState record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsState) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsState record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsState) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1095,11 +1027,6 @@ func (q pollsStateQuery) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsStateSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsStateSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1153,15 +1080,6 @@ func (o PollsStateSlice) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsState) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsState provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsState) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1172,16 +1090,6 @@ func (o *PollsState) Reload(ctx context.Context, exec boil.ContextExecutor) erro
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsStateSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsStateSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1211,11 +1119,6 @@ func (o *PollsStateSlice) ReloadAll(ctx context.Context, exec boil.ContextExecut
 	*o = slice
 
 	return nil
-}
-
-// PollsStateExistsG checks if the PollsState row exists.
-func PollsStateExistsG(ctx context.Context, pollStateID int64) (bool, error) {
-	return PollsStateExists(ctx, boil.GetContextDB(), pollStateID)
 }
 
 // PollsStateExists checks if the PollsState row exists.

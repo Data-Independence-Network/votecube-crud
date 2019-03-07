@@ -244,11 +244,6 @@ func AddSuburbHook(hookPoint boil.HookPoint, suburbHook SuburbHook) {
 	}
 }
 
-// OneG returns a single suburb record from the query using the global executor.
-func (q suburbQuery) OneG(ctx context.Context) (*Suburb, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single suburb record from the query.
 func (q suburbQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Suburb, error) {
 	o := &Suburb{}
@@ -268,11 +263,6 @@ func (q suburbQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Subur
 	}
 
 	return o, nil
-}
-
-// AllG returns all Suburb records from the query using the global executor.
-func (q suburbQuery) AllG(ctx context.Context) (SuburbSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Suburb records from the query.
@@ -295,11 +285,6 @@ func (q suburbQuery) All(ctx context.Context, exec boil.ContextExecutor) (Suburb
 	return o, nil
 }
 
-// CountG returns the count of all Suburb records in the query, and panics on error.
-func (q suburbQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Suburb records in the query.
 func (q suburbQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -313,11 +298,6 @@ func (q suburbQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int6
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q suburbQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -556,14 +536,6 @@ func (suburbL) LoadStreets(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
-// SetTownG of the suburb to the related item.
-// Sets o.R.Town to related.
-// Adds o to related.R.Suburbs.
-// Uses the global database handle.
-func (o *Suburb) SetTownG(ctx context.Context, insert bool, related *Town) error {
-	return o.SetTown(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetTown of the suburb to the related item.
 // Sets o.R.Town to related.
 // Adds o to related.R.Suburbs.
@@ -609,15 +581,6 @@ func (o *Suburb) SetTown(ctx context.Context, exec boil.ContextExecutor, insert 
 	}
 
 	return nil
-}
-
-// AddStreetsG adds the given related objects to the existing relationships
-// of the suburb, optionally inserting them as new records.
-// Appends related to o.R.Streets.
-// Sets related.R.Suburb appropriately.
-// Uses the global database handle.
-func (o *Suburb) AddStreetsG(ctx context.Context, insert bool, related ...*Street) error {
-	return o.AddStreets(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddStreets adds the given related objects to the existing relationships
@@ -679,11 +642,6 @@ func Suburbs(mods ...qm.QueryMod) suburbQuery {
 	return suburbQuery{NewQuery(mods...)}
 }
 
-// FindSuburbG retrieves a single record by ID.
-func FindSuburbG(ctx context.Context, suburbID int64, selectCols ...string) (*Suburb, error) {
-	return FindSuburb(ctx, boil.GetContextDB(), suburbID, selectCols...)
-}
-
 // FindSuburb retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindSuburb(ctx context.Context, exec boil.ContextExecutor, suburbID int64, selectCols ...string) (*Suburb, error) {
@@ -708,11 +666,6 @@ func FindSuburb(ctx context.Context, exec boil.ContextExecutor, suburbID int64, 
 	}
 
 	return suburbObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Suburb) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -791,12 +744,6 @@ func (o *Suburb) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Suburb record using the global executor.
-// See Update for more documentation.
-func (o *Suburb) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Suburb.
@@ -879,11 +826,6 @@ func (q suburbQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o SuburbSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o SuburbSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -930,11 +872,6 @@ func (o SuburbSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all suburb")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Suburb) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1052,12 +989,6 @@ func (o *Suburb) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Suburb record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Suburb) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Suburb record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Suburb) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1115,11 +1046,6 @@ func (q suburbQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o SuburbSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o SuburbSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1173,15 +1099,6 @@ func (o SuburbSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Suburb) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Suburb provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Suburb) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1192,16 +1109,6 @@ func (o *Suburb) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *SuburbSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty SuburbSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1231,11 +1138,6 @@ func (o *SuburbSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 	*o = slice
 
 	return nil
-}
-
-// SuburbExistsG checks if the Suburb row exists.
-func SuburbExistsG(ctx context.Context, suburbID int64) (bool, error) {
-	return SuburbExists(ctx, boil.GetContextDB(), suburbID)
 }
 
 // SuburbExists checks if the Suburb row exists.

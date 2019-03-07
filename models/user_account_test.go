@@ -3104,7 +3104,7 @@ func testUserAccountToOnePrefixLastNameUsingPrefixLastName(t *testing.T) {
 	var foreign PrefixLastName
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, userAccountDBTypes, false, userAccountColumnsWithDefault...); err != nil {
+	if err := randomize.Struct(seed, &local, userAccountDBTypes, true, userAccountColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize UserAccount struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, prefixLastNameDBTypes, false, prefixLastNameColumnsWithDefault...); err != nil {
@@ -3115,7 +3115,7 @@ func testUserAccountToOnePrefixLastNameUsingPrefixLastName(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	local.PrefixLastNameID = foreign.PrefixLastNameID
+	queries.Assign(&local.PrefixLastNameID, foreign.PrefixLastNameID)
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -3125,7 +3125,7 @@ func testUserAccountToOnePrefixLastNameUsingPrefixLastName(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if check.PrefixLastNameID != foreign.PrefixLastNameID {
+	if !queries.Equal(check.PrefixLastNameID, foreign.PrefixLastNameID) {
 		t.Errorf("want: %v, got %v", foreign.PrefixLastNameID, check.PrefixLastNameID)
 	}
 
@@ -3155,7 +3155,7 @@ func testUserAccountToOneNameAfterLastNameUsingNameAfterLastName(t *testing.T) {
 	var foreign NameAfterLastName
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, userAccountDBTypes, false, userAccountColumnsWithDefault...); err != nil {
+	if err := randomize.Struct(seed, &local, userAccountDBTypes, true, userAccountColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize UserAccount struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, nameAfterLastNameDBTypes, false, nameAfterLastNameColumnsWithDefault...); err != nil {
@@ -3166,7 +3166,7 @@ func testUserAccountToOneNameAfterLastNameUsingNameAfterLastName(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	local.NameAfterLastNameID = foreign.NameAfterLastNameID
+	queries.Assign(&local.NameAfterLastNameID, foreign.NameAfterLastNameID)
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -3176,7 +3176,7 @@ func testUserAccountToOneNameAfterLastNameUsingNameAfterLastName(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if check.NameAfterLastNameID != foreign.NameAfterLastNameID {
+	if !queries.Equal(check.NameAfterLastNameID, foreign.NameAfterLastNameID) {
 		t.Errorf("want: %v, got %v", foreign.NameAfterLastNameID, check.NameAfterLastNameID)
 	}
 
@@ -3238,7 +3238,7 @@ func testUserAccountToOneSetOpPrefixLastNameUsingPrefixLastName(t *testing.T) {
 		if x.R.UserAccounts[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.PrefixLastNameID != x.PrefixLastNameID {
+		if !queries.Equal(a.PrefixLastNameID, x.PrefixLastNameID) {
 			t.Error("foreign key was wrong value", a.PrefixLastNameID)
 		}
 
@@ -3249,11 +3249,63 @@ func testUserAccountToOneSetOpPrefixLastNameUsingPrefixLastName(t *testing.T) {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.PrefixLastNameID != x.PrefixLastNameID {
+		if !queries.Equal(a.PrefixLastNameID, x.PrefixLastNameID) {
 			t.Error("foreign key was wrong value", a.PrefixLastNameID, x.PrefixLastNameID)
 		}
 	}
 }
+
+func testUserAccountToOneRemoveOpPrefixLastNameUsingPrefixLastName(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a UserAccount
+	var b PrefixLastName
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userAccountDBTypes, false, strmangle.SetComplement(userAccountPrimaryKeyColumns, userAccountColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, prefixLastNameDBTypes, false, strmangle.SetComplement(prefixLastNamePrimaryKeyColumns, prefixLastNameColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetPrefixLastName(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemovePrefixLastName(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.PrefixLastName().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.PrefixLastName != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.PrefixLastNameID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.UserAccounts) != 0 {
+		t.Error("failed to remove a from b's relationships")
+	}
+}
+
 func testUserAccountToOneSetOpNameAfterLastNameUsingNameAfterLastName(t *testing.T) {
 	var err error
 
@@ -3295,7 +3347,7 @@ func testUserAccountToOneSetOpNameAfterLastNameUsingNameAfterLastName(t *testing
 		if x.R.UserAccounts[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.NameAfterLastNameID != x.NameAfterLastNameID {
+		if !queries.Equal(a.NameAfterLastNameID, x.NameAfterLastNameID) {
 			t.Error("foreign key was wrong value", a.NameAfterLastNameID)
 		}
 
@@ -3306,9 +3358,60 @@ func testUserAccountToOneSetOpNameAfterLastNameUsingNameAfterLastName(t *testing
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.NameAfterLastNameID != x.NameAfterLastNameID {
+		if !queries.Equal(a.NameAfterLastNameID, x.NameAfterLastNameID) {
 			t.Error("foreign key was wrong value", a.NameAfterLastNameID, x.NameAfterLastNameID)
 		}
+	}
+}
+
+func testUserAccountToOneRemoveOpNameAfterLastNameUsingNameAfterLastName(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a UserAccount
+	var b NameAfterLastName
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, userAccountDBTypes, false, strmangle.SetComplement(userAccountPrimaryKeyColumns, userAccountColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, nameAfterLastNameDBTypes, false, strmangle.SetComplement(nameAfterLastNamePrimaryKeyColumns, nameAfterLastNameColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetNameAfterLastName(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveNameAfterLastName(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.NameAfterLastName().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.NameAfterLastName != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.NameAfterLastNameID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.UserAccounts) != 0 {
+		t.Error("failed to remove a from b's relationships")
 	}
 }
 

@@ -519,9 +519,8 @@ func testEmojiToManyDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	b.EmojiID = a.EmojiID
-	c.EmojiID = a.EmojiID
-
+	queries.Assign(&b.EmojiID, a.EmojiID)
+	queries.Assign(&c.EmojiID, a.EmojiID)
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -536,10 +535,10 @@ func testEmojiToManyDirections(t *testing.T) {
 
 	bFound, cFound := false, false
 	for _, v := range direction {
-		if v.EmojiID == b.EmojiID {
+		if queries.Equal(v.EmojiID, b.EmojiID) {
 			bFound = true
 		}
-		if v.EmojiID == c.EmojiID {
+		if queries.Equal(v.EmojiID, c.EmojiID) {
 			cFound = true
 		}
 	}
@@ -597,9 +596,8 @@ func testEmojiToManyPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	b.EmojiID = a.EmojiID
-	c.EmojiID = a.EmojiID
-
+	queries.Assign(&b.EmojiID, a.EmojiID)
+	queries.Assign(&c.EmojiID, a.EmojiID)
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -614,10 +612,10 @@ func testEmojiToManyPollsDimensionsDirections(t *testing.T) {
 
 	bFound, cFound := false, false
 	for _, v := range pollsDimensionsDirection {
-		if v.EmojiID == b.EmojiID {
+		if queries.Equal(v.EmojiID, b.EmojiID) {
 			bFound = true
 		}
-		if v.EmojiID == c.EmojiID {
+		if queries.Equal(v.EmojiID, c.EmojiID) {
 			cFound = true
 		}
 	}
@@ -695,10 +693,10 @@ func testEmojiToManyAddOpDirections(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.EmojiID != first.EmojiID {
+		if !queries.Equal(a.EmojiID, first.EmojiID) {
 			t.Error("foreign key was wrong value", a.EmojiID, first.EmojiID)
 		}
-		if a.EmojiID != second.EmojiID {
+		if !queries.Equal(a.EmojiID, second.EmojiID) {
 			t.Error("foreign key was wrong value", a.EmojiID, second.EmojiID)
 		}
 
@@ -725,6 +723,182 @@ func testEmojiToManyAddOpDirections(t *testing.T) {
 		}
 	}
 }
+
+func testEmojiToManySetOpDirections(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Emoji
+	var b, c, d, e Direction
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Direction{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.SetDirections(ctx, tx, false, &b, &c)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.Directions().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.SetDirections(ctx, tx, true, &d, &e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.Directions().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.EmojiID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.EmojiID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+	if !queries.Equal(a.EmojiID, d.EmojiID) {
+		t.Error("foreign key was wrong value", a.EmojiID, d.EmojiID)
+	}
+	if !queries.Equal(a.EmojiID, e.EmojiID) {
+		t.Error("foreign key was wrong value", a.EmojiID, e.EmojiID)
+	}
+
+	if b.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Emoji != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+	if e.R.Emoji != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+
+	if a.R.Directions[0] != &d {
+		t.Error("relationship struct slice not set to correct value")
+	}
+	if a.R.Directions[1] != &e {
+		t.Error("relationship struct slice not set to correct value")
+	}
+}
+
+func testEmojiToManyRemoveOpDirections(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Emoji
+	var b, c, d, e Direction
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Direction{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.AddDirections(ctx, tx, true, foreigners...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.Directions().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 4 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.RemoveDirections(ctx, tx, foreigners[:2]...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.Directions().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.EmojiID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.EmojiID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+
+	if b.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Emoji != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+	if e.R.Emoji != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+
+	if len(a.R.Directions) != 2 {
+		t.Error("should have preserved two relationships")
+	}
+
+	// Removal doesn't do a stable deletion for performance so we have to flip the order
+	if a.R.Directions[1] != &d {
+		t.Error("relationship to d should have been preserved")
+	}
+	if a.R.Directions[0] != &e {
+		t.Error("relationship to e should have been preserved")
+	}
+}
+
 func testEmojiToManyAddOpPollsDimensionsDirections(t *testing.T) {
 	var err error
 
@@ -770,10 +944,10 @@ func testEmojiToManyAddOpPollsDimensionsDirections(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.EmojiID != first.EmojiID {
+		if !queries.Equal(a.EmojiID, first.EmojiID) {
 			t.Error("foreign key was wrong value", a.EmojiID, first.EmojiID)
 		}
-		if a.EmojiID != second.EmojiID {
+		if !queries.Equal(a.EmojiID, second.EmojiID) {
 			t.Error("foreign key was wrong value", a.EmojiID, second.EmojiID)
 		}
 
@@ -798,6 +972,181 @@ func testEmojiToManyAddOpPollsDimensionsDirections(t *testing.T) {
 		if want := int64((i + 1) * 2); count != want {
 			t.Error("want", want, "got", count)
 		}
+	}
+}
+
+func testEmojiToManySetOpPollsDimensionsDirections(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Emoji
+	var b, c, d, e PollsDimensionsDirection
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*PollsDimensionsDirection{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.SetPollsDimensionsDirections(ctx, tx, false, &b, &c)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.PollsDimensionsDirections().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.SetPollsDimensionsDirections(ctx, tx, true, &d, &e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.PollsDimensionsDirections().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.EmojiID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.EmojiID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+	if !queries.Equal(a.EmojiID, d.EmojiID) {
+		t.Error("foreign key was wrong value", a.EmojiID, d.EmojiID)
+	}
+	if !queries.Equal(a.EmojiID, e.EmojiID) {
+		t.Error("foreign key was wrong value", a.EmojiID, e.EmojiID)
+	}
+
+	if b.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Emoji != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+	if e.R.Emoji != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+
+	if a.R.PollsDimensionsDirections[0] != &d {
+		t.Error("relationship struct slice not set to correct value")
+	}
+	if a.R.PollsDimensionsDirections[1] != &e {
+		t.Error("relationship struct slice not set to correct value")
+	}
+}
+
+func testEmojiToManyRemoveOpPollsDimensionsDirections(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Emoji
+	var b, c, d, e PollsDimensionsDirection
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*PollsDimensionsDirection{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.AddPollsDimensionsDirections(ctx, tx, true, foreigners...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.PollsDimensionsDirections().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 4 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.RemovePollsDimensionsDirections(ctx, tx, foreigners[:2]...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.PollsDimensionsDirections().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.EmojiID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.EmojiID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+
+	if b.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Emoji != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Emoji != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+	if e.R.Emoji != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+
+	if len(a.R.PollsDimensionsDirections) != 2 {
+		t.Error("should have preserved two relationships")
+	}
+
+	// Removal doesn't do a stable deletion for performance so we have to flip the order
+	if a.R.PollsDimensionsDirections[1] != &d {
+		t.Error("relationship to d should have been preserved")
+	}
+	if a.R.PollsDimensionsDirections[0] != &e {
+		t.Error("relationship to e should have been preserved")
 	}
 }
 

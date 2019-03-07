@@ -234,11 +234,6 @@ func AddPollsMessageHook(hookPoint boil.HookPoint, pollsMessageHook PollsMessage
 	}
 }
 
-// OneG returns a single pollsMessage record from the query using the global executor.
-func (q pollsMessageQuery) OneG(ctx context.Context) (*PollsMessage, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsMessage record from the query.
 func (q pollsMessageQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsMessage, error) {
 	o := &PollsMessage{}
@@ -258,11 +253,6 @@ func (q pollsMessageQuery) One(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsMessage records from the query using the global executor.
-func (q pollsMessageQuery) AllG(ctx context.Context) (PollsMessageSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsMessage records from the query.
@@ -285,11 +275,6 @@ func (q pollsMessageQuery) All(ctx context.Context, exec boil.ContextExecutor) (
 	return o, nil
 }
 
-// CountG returns the count of all PollsMessage records in the query, and panics on error.
-func (q pollsMessageQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsMessage records in the query.
 func (q pollsMessageQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -303,11 +288,6 @@ func (q pollsMessageQuery) Count(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsMessageQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -543,14 +523,6 @@ func (pollsMessageL) LoadMessage(ctx context.Context, e boil.ContextExecutor, si
 	return nil
 }
 
-// SetPollG of the pollsMessage to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.PollsMessages.
-// Uses the global database handle.
-func (o *PollsMessage) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetPoll of the pollsMessage to the related item.
 // Sets o.R.Poll to related.
 // Adds o to related.R.PollsMessages.
@@ -596,14 +568,6 @@ func (o *PollsMessage) SetPoll(ctx context.Context, exec boil.ContextExecutor, i
 	}
 
 	return nil
-}
-
-// SetMessageG of the pollsMessage to the related item.
-// Sets o.R.Message to related.
-// Adds o to related.R.PollsMessages.
-// Uses the global database handle.
-func (o *PollsMessage) SetMessageG(ctx context.Context, insert bool, related *Message) error {
-	return o.SetMessage(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetMessage of the pollsMessage to the related item.
@@ -659,11 +623,6 @@ func PollsMessages(mods ...qm.QueryMod) pollsMessageQuery {
 	return pollsMessageQuery{NewQuery(mods...)}
 }
 
-// FindPollsMessageG retrieves a single record by ID.
-func FindPollsMessageG(ctx context.Context, pollMessageID int64, selectCols ...string) (*PollsMessage, error) {
-	return FindPollsMessage(ctx, boil.GetContextDB(), pollMessageID, selectCols...)
-}
-
 // FindPollsMessage retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPollsMessage(ctx context.Context, exec boil.ContextExecutor, pollMessageID int64, selectCols ...string) (*PollsMessage, error) {
@@ -688,11 +647,6 @@ func FindPollsMessage(ctx context.Context, exec boil.ContextExecutor, pollMessag
 	}
 
 	return pollsMessageObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsMessage) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -771,12 +725,6 @@ func (o *PollsMessage) Insert(ctx context.Context, exec boil.ContextExecutor, co
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PollsMessage record using the global executor.
-// See Update for more documentation.
-func (o *PollsMessage) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PollsMessage.
@@ -859,11 +807,6 @@ func (q pollsMessageQuery) UpdateAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsMessageSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsMessageSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -910,11 +853,6 @@ func (o PollsMessageSlice) UpdateAll(ctx context.Context, exec boil.ContextExecu
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsMessage")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsMessage) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1032,12 +970,6 @@ func (o *PollsMessage) Upsert(ctx context.Context, exec boil.ContextExecutor, up
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsMessage record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsMessage) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsMessage record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsMessage) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1095,11 +1027,6 @@ func (q pollsMessageQuery) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsMessageSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsMessageSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1153,15 +1080,6 @@ func (o PollsMessageSlice) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsMessage) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsMessage provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsMessage) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1172,16 +1090,6 @@ func (o *PollsMessage) Reload(ctx context.Context, exec boil.ContextExecutor) er
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsMessageSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsMessageSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1211,11 +1119,6 @@ func (o *PollsMessageSlice) ReloadAll(ctx context.Context, exec boil.ContextExec
 	*o = slice
 
 	return nil
-}
-
-// PollsMessageExistsG checks if the PollsMessage row exists.
-func PollsMessageExistsG(ctx context.Context, pollMessageID int64) (bool, error) {
-	return PollsMessageExists(ctx, boil.GetContextDB(), pollMessageID)
 }
 
 // PollsMessageExists checks if the PollsMessage row exists.

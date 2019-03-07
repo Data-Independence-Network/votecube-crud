@@ -255,11 +255,6 @@ func AddCountryHook(hookPoint boil.HookPoint, countryHook CountryHook) {
 	}
 }
 
-// OneG returns a single country record from the query using the global executor.
-func (q countryQuery) OneG(ctx context.Context) (*Country, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single country record from the query.
 func (q countryQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Country, error) {
 	o := &Country{}
@@ -279,11 +274,6 @@ func (q countryQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Coun
 	}
 
 	return o, nil
-}
-
-// AllG returns all Country records from the query using the global executor.
-func (q countryQuery) AllG(ctx context.Context) (CountrySlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Country records from the query.
@@ -306,11 +296,6 @@ func (q countryQuery) All(ctx context.Context, exec boil.ContextExecutor) (Count
 	return o, nil
 }
 
-// CountG returns the count of all Country records in the query, and panics on error.
-func (q countryQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Country records in the query.
 func (q countryQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -324,11 +309,6 @@ func (q countryQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q countryQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -791,14 +771,6 @@ func (countryL) LoadStates(ctx context.Context, e boil.ContextExecutor, singular
 	return nil
 }
 
-// SetContinentG of the country to the related item.
-// Sets o.R.Continent to related.
-// Adds o to related.R.Countries.
-// Uses the global database handle.
-func (o *Country) SetContinentG(ctx context.Context, insert bool, related *Continent) error {
-	return o.SetContinent(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetContinent of the country to the related item.
 // Sets o.R.Continent to related.
 // Adds o to related.R.Countries.
@@ -844,15 +816,6 @@ func (o *Country) SetContinent(ctx context.Context, exec boil.ContextExecutor, i
 	}
 
 	return nil
-}
-
-// AddEthnicGroupCountriesG adds the given related objects to the existing relationships
-// of the country, optionally inserting them as new records.
-// Appends related to o.R.EthnicGroupCountries.
-// Sets related.R.Country appropriately.
-// Uses the global database handle.
-func (o *Country) AddEthnicGroupCountriesG(ctx context.Context, insert bool, related ...*EthnicGroupCountry) error {
-	return o.AddEthnicGroupCountries(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddEthnicGroupCountries adds the given related objects to the existing relationships
@@ -908,15 +871,6 @@ func (o *Country) AddEthnicGroupCountries(ctx context.Context, exec boil.Context
 	return nil
 }
 
-// AddPollsCountriesG adds the given related objects to the existing relationships
-// of the country, optionally inserting them as new records.
-// Appends related to o.R.PollsCountries.
-// Sets related.R.Country appropriately.
-// Uses the global database handle.
-func (o *Country) AddPollsCountriesG(ctx context.Context, insert bool, related ...*PollsCountry) error {
-	return o.AddPollsCountries(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsCountries adds the given related objects to the existing relationships
 // of the country, optionally inserting them as new records.
 // Appends related to o.R.PollsCountries.
@@ -968,15 +922,6 @@ func (o *Country) AddPollsCountries(ctx context.Context, exec boil.ContextExecut
 		}
 	}
 	return nil
-}
-
-// AddStatesG adds the given related objects to the existing relationships
-// of the country, optionally inserting them as new records.
-// Appends related to o.R.States.
-// Sets related.R.Country appropriately.
-// Uses the global database handle.
-func (o *Country) AddStatesG(ctx context.Context, insert bool, related ...*State) error {
-	return o.AddStates(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddStates adds the given related objects to the existing relationships
@@ -1038,11 +983,6 @@ func Countries(mods ...qm.QueryMod) countryQuery {
 	return countryQuery{NewQuery(mods...)}
 }
 
-// FindCountryG retrieves a single record by ID.
-func FindCountryG(ctx context.Context, countryID int64, selectCols ...string) (*Country, error) {
-	return FindCountry(ctx, boil.GetContextDB(), countryID, selectCols...)
-}
-
 // FindCountry retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindCountry(ctx context.Context, exec boil.ContextExecutor, countryID int64, selectCols ...string) (*Country, error) {
@@ -1067,11 +1007,6 @@ func FindCountry(ctx context.Context, exec boil.ContextExecutor, countryID int64
 	}
 
 	return countryObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Country) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1150,12 +1085,6 @@ func (o *Country) Insert(ctx context.Context, exec boil.ContextExecutor, columns
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Country record using the global executor.
-// See Update for more documentation.
-func (o *Country) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Country.
@@ -1238,11 +1167,6 @@ func (q countryQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o CountrySlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o CountrySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1289,11 +1213,6 @@ func (o CountrySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all country")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Country) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1411,12 +1330,6 @@ func (o *Country) Upsert(ctx context.Context, exec boil.ContextExecutor, updateO
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Country record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Country) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Country record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Country) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1474,11 +1387,6 @@ func (q countryQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) 
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o CountrySlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o CountrySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1532,15 +1440,6 @@ func (o CountrySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) 
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Country) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Country provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Country) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1551,16 +1450,6 @@ func (o *Country) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *CountrySlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty CountrySlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1590,11 +1479,6 @@ func (o *CountrySlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor)
 	*o = slice
 
 	return nil
-}
-
-// CountryExistsG checks if the Country row exists.
-func CountryExistsG(ctx context.Context, countryID int64) (bool, error) {
-	return CountryExists(ctx, boil.GetContextDB(), countryID)
 }
 
 // CountryExists checks if the Country row exists.

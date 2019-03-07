@@ -234,11 +234,6 @@ func AddPollsCountryHook(hookPoint boil.HookPoint, pollsCountryHook PollsCountry
 	}
 }
 
-// OneG returns a single pollsCountry record from the query using the global executor.
-func (q pollsCountryQuery) OneG(ctx context.Context) (*PollsCountry, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single pollsCountry record from the query.
 func (q pollsCountryQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PollsCountry, error) {
 	o := &PollsCountry{}
@@ -258,11 +253,6 @@ func (q pollsCountryQuery) One(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return o, nil
-}
-
-// AllG returns all PollsCountry records from the query using the global executor.
-func (q pollsCountryQuery) AllG(ctx context.Context) (PollsCountrySlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PollsCountry records from the query.
@@ -285,11 +275,6 @@ func (q pollsCountryQuery) All(ctx context.Context, exec boil.ContextExecutor) (
 	return o, nil
 }
 
-// CountG returns the count of all PollsCountry records in the query, and panics on error.
-func (q pollsCountryQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PollsCountry records in the query.
 func (q pollsCountryQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -303,11 +288,6 @@ func (q pollsCountryQuery) Count(ctx context.Context, exec boil.ContextExecutor)
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollsCountryQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -543,14 +523,6 @@ func (pollsCountryL) LoadCountry(ctx context.Context, e boil.ContextExecutor, si
 	return nil
 }
 
-// SetPollG of the pollsCountry to the related item.
-// Sets o.R.Poll to related.
-// Adds o to related.R.PollsCountries.
-// Uses the global database handle.
-func (o *PollsCountry) SetPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetPoll(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetPoll of the pollsCountry to the related item.
 // Sets o.R.Poll to related.
 // Adds o to related.R.PollsCountries.
@@ -596,14 +568,6 @@ func (o *PollsCountry) SetPoll(ctx context.Context, exec boil.ContextExecutor, i
 	}
 
 	return nil
-}
-
-// SetCountryG of the pollsCountry to the related item.
-// Sets o.R.Country to related.
-// Adds o to related.R.PollsCountries.
-// Uses the global database handle.
-func (o *PollsCountry) SetCountryG(ctx context.Context, insert bool, related *Country) error {
-	return o.SetCountry(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetCountry of the pollsCountry to the related item.
@@ -659,11 +623,6 @@ func PollsCountries(mods ...qm.QueryMod) pollsCountryQuery {
 	return pollsCountryQuery{NewQuery(mods...)}
 }
 
-// FindPollsCountryG retrieves a single record by ID.
-func FindPollsCountryG(ctx context.Context, pollCountryID int64, selectCols ...string) (*PollsCountry, error) {
-	return FindPollsCountry(ctx, boil.GetContextDB(), pollCountryID, selectCols...)
-}
-
 // FindPollsCountry retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPollsCountry(ctx context.Context, exec boil.ContextExecutor, pollCountryID int64, selectCols ...string) (*PollsCountry, error) {
@@ -688,11 +647,6 @@ func FindPollsCountry(ctx context.Context, exec boil.ContextExecutor, pollCountr
 	}
 
 	return pollsCountryObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PollsCountry) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -771,12 +725,6 @@ func (o *PollsCountry) Insert(ctx context.Context, exec boil.ContextExecutor, co
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PollsCountry record using the global executor.
-// See Update for more documentation.
-func (o *PollsCountry) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PollsCountry.
@@ -859,11 +807,6 @@ func (q pollsCountryQuery) UpdateAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollsCountrySlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollsCountrySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -910,11 +853,6 @@ func (o PollsCountrySlice) UpdateAll(ctx context.Context, exec boil.ContextExecu
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all pollsCountry")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PollsCountry) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1032,12 +970,6 @@ func (o *PollsCountry) Upsert(ctx context.Context, exec boil.ContextExecutor, up
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PollsCountry record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PollsCountry) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PollsCountry record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PollsCountry) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1095,11 +1027,6 @@ func (q pollsCountryQuery) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollsCountrySlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollsCountrySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1153,15 +1080,6 @@ func (o PollsCountrySlice) DeleteAll(ctx context.Context, exec boil.ContextExecu
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PollsCountry) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PollsCountry provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PollsCountry) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1172,16 +1090,6 @@ func (o *PollsCountry) Reload(ctx context.Context, exec boil.ContextExecutor) er
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollsCountrySlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollsCountrySlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1211,11 +1119,6 @@ func (o *PollsCountrySlice) ReloadAll(ctx context.Context, exec boil.ContextExec
 	*o = slice
 
 	return nil
-}
-
-// PollsCountryExistsG checks if the PollsCountry row exists.
-func PollsCountryExistsG(ctx context.Context, pollCountryID int64) (bool, error) {
-	return PollsCountryExists(ctx, boil.GetContextDB(), pollCountryID)
 }
 
 // PollsCountryExists checks if the PollsCountry row exists.

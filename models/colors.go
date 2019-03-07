@@ -39,16 +39,13 @@ var ColorColumns = struct {
 
 // ColorRels is where relationship names are stored.
 var ColorRels = struct {
-	Dimensions                string
 	PollsDimensionsDirections string
 }{
-	Dimensions:                "Dimensions",
 	PollsDimensionsDirections: "PollsDimensionsDirections",
 }
 
 // colorR is where relationships are stored.
 type colorR struct {
-	Dimensions                DimensionSlice
 	PollsDimensionsDirections PollsDimensionsDirectionSlice
 }
 
@@ -231,11 +228,6 @@ func AddColorHook(hookPoint boil.HookPoint, colorHook ColorHook) {
 	}
 }
 
-// OneG returns a single color record from the query using the global executor.
-func (q colorQuery) OneG(ctx context.Context) (*Color, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single color record from the query.
 func (q colorQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Color, error) {
 	o := &Color{}
@@ -255,11 +247,6 @@ func (q colorQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Color,
 	}
 
 	return o, nil
-}
-
-// AllG returns all Color records from the query using the global executor.
-func (q colorQuery) AllG(ctx context.Context) (ColorSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Color records from the query.
@@ -282,11 +269,6 @@ func (q colorQuery) All(ctx context.Context, exec boil.ContextExecutor) (ColorSl
 	return o, nil
 }
 
-// CountG returns the count of all Color records in the query, and panics on error.
-func (q colorQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Color records in the query.
 func (q colorQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -302,11 +284,6 @@ func (q colorQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64
 	return count, nil
 }
 
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q colorQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
-}
-
 // Exists checks if the row exists in the table.
 func (q colorQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
 	var count int64
@@ -320,27 +297,6 @@ func (q colorQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 	}
 
 	return count > 0, nil
-}
-
-// Dimensions retrieves all the dimension's Dimensions with an executor.
-func (o *Color) Dimensions(mods ...qm.QueryMod) dimensionQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"dimensions\".\"color_id\"=?", o.ColorID),
-	)
-
-	query := Dimensions(queryMods...)
-	queries.SetFrom(query.Query, "\"dimensions\"")
-
-	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"dimensions\".*"})
-	}
-
-	return query
 }
 
 // PollsDimensionsDirections retrieves all the polls_dimensions_direction's PollsDimensionsDirections with an executor.
@@ -362,97 +318,6 @@ func (o *Color) PollsDimensionsDirections(mods ...qm.QueryMod) pollsDimensionsDi
 	}
 
 	return query
-}
-
-// LoadDimensions allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (colorL) LoadDimensions(ctx context.Context, e boil.ContextExecutor, singular bool, maybeColor interface{}, mods queries.Applicator) error {
-	var slice []*Color
-	var object *Color
-
-	if singular {
-		object = maybeColor.(*Color)
-	} else {
-		slice = *maybeColor.(*[]*Color)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &colorR{}
-		}
-		args = append(args, object.ColorID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &colorR{}
-			}
-
-			for _, a := range args {
-				if a == obj.ColorID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.ColorID)
-		}
-	}
-
-	query := NewQuery(qm.From(`dimensions`), qm.WhereIn(`color_id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load dimensions")
-	}
-
-	var resultSlice []*Dimension
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice dimensions")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on dimensions")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for dimensions")
-	}
-
-	if len(dimensionAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Dimensions = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &dimensionR{}
-			}
-			foreign.R.Color = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.ColorID == foreign.ColorID {
-				local.R.Dimensions = append(local.R.Dimensions, foreign)
-				if foreign.R == nil {
-					foreign.R = &dimensionR{}
-				}
-				foreign.R.Color = local
-				break
-			}
-		}
-	}
-
-	return nil
 }
 
 // LoadPollsDimensionsDirections allows an eager lookup of values, cached into the
@@ -546,77 +411,6 @@ func (colorL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 	return nil
 }
 
-// AddDimensionsG adds the given related objects to the existing relationships
-// of the color, optionally inserting them as new records.
-// Appends related to o.R.Dimensions.
-// Sets related.R.Color appropriately.
-// Uses the global database handle.
-func (o *Color) AddDimensionsG(ctx context.Context, insert bool, related ...*Dimension) error {
-	return o.AddDimensions(ctx, boil.GetContextDB(), insert, related...)
-}
-
-// AddDimensions adds the given related objects to the existing relationships
-// of the color, optionally inserting them as new records.
-// Appends related to o.R.Dimensions.
-// Sets related.R.Color appropriately.
-func (o *Color) AddDimensions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Dimension) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.ColorID = o.ColorID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"dimensions\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"color_id"}),
-				strmangle.WhereClause("\"", "\"", 2, dimensionPrimaryKeyColumns),
-			)
-			values := []interface{}{o.ColorID, rel.DimensionID}
-
-			if boil.DebugMode {
-				fmt.Fprintln(boil.DebugWriter, updateQuery)
-				fmt.Fprintln(boil.DebugWriter, values)
-			}
-
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.ColorID = o.ColorID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &colorR{
-			Dimensions: related,
-		}
-	} else {
-		o.R.Dimensions = append(o.R.Dimensions, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &dimensionR{
-				Color: o,
-			}
-		} else {
-			rel.R.Color = o
-		}
-	}
-	return nil
-}
-
-// AddPollsDimensionsDirectionsG adds the given related objects to the existing relationships
-// of the color, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
-// Sets related.R.Color appropriately.
-// Uses the global database handle.
-func (o *Color) AddPollsDimensionsDirectionsG(ctx context.Context, insert bool, related ...*PollsDimensionsDirection) error {
-	return o.AddPollsDimensionsDirections(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsDimensionsDirections adds the given related objects to the existing relationships
 // of the color, optionally inserting them as new records.
 // Appends related to o.R.PollsDimensionsDirections.
@@ -676,11 +470,6 @@ func Colors(mods ...qm.QueryMod) colorQuery {
 	return colorQuery{NewQuery(mods...)}
 }
 
-// FindColorG retrieves a single record by ID.
-func FindColorG(ctx context.Context, colorID int64, selectCols ...string) (*Color, error) {
-	return FindColor(ctx, boil.GetContextDB(), colorID, selectCols...)
-}
-
 // FindColor retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindColor(ctx context.Context, exec boil.ContextExecutor, colorID int64, selectCols ...string) (*Color, error) {
@@ -705,11 +494,6 @@ func FindColor(ctx context.Context, exec boil.ContextExecutor, colorID int64, se
 	}
 
 	return colorObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Color) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -788,12 +572,6 @@ func (o *Color) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Color record using the global executor.
-// See Update for more documentation.
-func (o *Color) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Color.
@@ -876,11 +654,6 @@ func (q colorQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o ColorSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o ColorSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -927,11 +700,6 @@ func (o ColorSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all color")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Color) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1049,12 +817,6 @@ func (o *Color) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnC
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Color record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Color) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Color record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Color) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1112,11 +874,6 @@ func (q colorQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o ColorSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o ColorSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1170,15 +927,6 @@ func (o ColorSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Color) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Color provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Color) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1189,16 +937,6 @@ func (o *Color) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *ColorSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty ColorSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1228,11 +966,6 @@ func (o *ColorSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 	*o = slice
 
 	return nil
-}
-
-// ColorExistsG checks if the Color row exists.
-func ColorExistsG(ctx context.Context, colorID int64) (bool, error) {
-	return ColorExists(ctx, boil.GetContextDB(), colorID)
 }
 
 // ColorExists checks if the Color row exists.

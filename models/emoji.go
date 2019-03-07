@@ -231,11 +231,6 @@ func AddEmojiHook(hookPoint boil.HookPoint, emojiHook EmojiHook) {
 	}
 }
 
-// OneG returns a single emoji record from the query using the global executor.
-func (q emojiQuery) OneG(ctx context.Context) (*Emoji, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single emoji record from the query.
 func (q emojiQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Emoji, error) {
 	o := &Emoji{}
@@ -255,11 +250,6 @@ func (q emojiQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Emoji,
 	}
 
 	return o, nil
-}
-
-// AllG returns all Emoji records from the query using the global executor.
-func (q emojiQuery) AllG(ctx context.Context) (EmojiSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Emoji records from the query.
@@ -282,11 +272,6 @@ func (q emojiQuery) All(ctx context.Context, exec boil.ContextExecutor) (EmojiSl
 	return o, nil
 }
 
-// CountG returns the count of all Emoji records in the query, and panics on error.
-func (q emojiQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Emoji records in the query.
 func (q emojiQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -300,11 +285,6 @@ func (q emojiQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q emojiQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -390,7 +370,7 @@ func (emojiL) LoadDirections(ctx context.Context, e boil.ContextExecutor, singul
 			}
 
 			for _, a := range args {
-				if a == obj.EmojiID {
+				if queries.Equal(a, obj.EmojiID) {
 					continue Outer
 				}
 			}
@@ -441,7 +421,7 @@ func (emojiL) LoadDirections(ctx context.Context, e boil.ContextExecutor, singul
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.EmojiID == foreign.EmojiID {
+			if queries.Equal(local.EmojiID, foreign.EmojiID) {
 				local.R.Directions = append(local.R.Directions, foreign)
 				if foreign.R == nil {
 					foreign.R = &directionR{}
@@ -481,7 +461,7 @@ func (emojiL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 			}
 
 			for _, a := range args {
-				if a == obj.EmojiID {
+				if queries.Equal(a, obj.EmojiID) {
 					continue Outer
 				}
 			}
@@ -532,7 +512,7 @@ func (emojiL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.EmojiID == foreign.EmojiID {
+			if queries.Equal(local.EmojiID, foreign.EmojiID) {
 				local.R.PollsDimensionsDirections = append(local.R.PollsDimensionsDirections, foreign)
 				if foreign.R == nil {
 					foreign.R = &pollsDimensionsDirectionR{}
@@ -546,15 +526,6 @@ func (emojiL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 	return nil
 }
 
-// AddDirectionsG adds the given related objects to the existing relationships
-// of the emoji, optionally inserting them as new records.
-// Appends related to o.R.Directions.
-// Sets related.R.Emoji appropriately.
-// Uses the global database handle.
-func (o *Emoji) AddDirectionsG(ctx context.Context, insert bool, related ...*Direction) error {
-	return o.AddDirections(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddDirections adds the given related objects to the existing relationships
 // of the emoji, optionally inserting them as new records.
 // Appends related to o.R.Directions.
@@ -563,7 +534,7 @@ func (o *Emoji) AddDirections(ctx context.Context, exec boil.ContextExecutor, in
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.EmojiID = o.EmojiID
+			queries.Assign(&rel.EmojiID, o.EmojiID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -584,7 +555,7 @@ func (o *Emoji) AddDirections(ctx context.Context, exec boil.ContextExecutor, in
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.EmojiID = o.EmojiID
+			queries.Assign(&rel.EmojiID, o.EmojiID)
 		}
 	}
 
@@ -608,13 +579,74 @@ func (o *Emoji) AddDirections(ctx context.Context, exec boil.ContextExecutor, in
 	return nil
 }
 
-// AddPollsDimensionsDirectionsG adds the given related objects to the existing relationships
-// of the emoji, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
-// Sets related.R.Emoji appropriately.
-// Uses the global database handle.
-func (o *Emoji) AddPollsDimensionsDirectionsG(ctx context.Context, insert bool, related ...*PollsDimensionsDirection) error {
-	return o.AddPollsDimensionsDirections(ctx, boil.GetContextDB(), insert, related...)
+// SetDirections removes all previously related items of the
+// emoji replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Emoji's Directions accordingly.
+// Replaces o.R.Directions with related.
+// Sets related.R.Emoji's Directions accordingly.
+func (o *Emoji) SetDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Direction) error {
+	query := "update \"directions\" set \"emoji_id\" = null where \"emoji_id\" = $1"
+	values := []interface{}{o.EmojiID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.Directions {
+			queries.SetScanner(&rel.EmojiID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.Emoji = nil
+		}
+
+		o.R.Directions = nil
+	}
+	return o.AddDirections(ctx, exec, insert, related...)
+}
+
+// RemoveDirections relationships from objects passed in.
+// Removes related items from R.Directions (uses pointer comparison, removal does not keep order)
+// Sets related.R.Emoji.
+func (o *Emoji) RemoveDirections(ctx context.Context, exec boil.ContextExecutor, related ...*Direction) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.EmojiID, nil)
+		if rel.R != nil {
+			rel.R.Emoji = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("emoji_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.Directions {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.Directions)
+			if ln > 1 && i < ln-1 {
+				o.R.Directions[i] = o.R.Directions[ln-1]
+			}
+			o.R.Directions = o.R.Directions[:ln-1]
+			break
+		}
+	}
+
+	return nil
 }
 
 // AddPollsDimensionsDirections adds the given related objects to the existing relationships
@@ -625,7 +657,7 @@ func (o *Emoji) AddPollsDimensionsDirections(ctx context.Context, exec boil.Cont
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.EmojiID = o.EmojiID
+			queries.Assign(&rel.EmojiID, o.EmojiID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -646,7 +678,7 @@ func (o *Emoji) AddPollsDimensionsDirections(ctx context.Context, exec boil.Cont
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.EmojiID = o.EmojiID
+			queries.Assign(&rel.EmojiID, o.EmojiID)
 		}
 	}
 
@@ -670,15 +702,80 @@ func (o *Emoji) AddPollsDimensionsDirections(ctx context.Context, exec boil.Cont
 	return nil
 }
 
+// SetPollsDimensionsDirections removes all previously related items of the
+// emoji replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Emoji's PollsDimensionsDirections accordingly.
+// Replaces o.R.PollsDimensionsDirections with related.
+// Sets related.R.Emoji's PollsDimensionsDirections accordingly.
+func (o *Emoji) SetPollsDimensionsDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PollsDimensionsDirection) error {
+	query := "update \"polls_dimensions_directions\" set \"emoji_id\" = null where \"emoji_id\" = $1"
+	values := []interface{}{o.EmojiID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.PollsDimensionsDirections {
+			queries.SetScanner(&rel.EmojiID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.Emoji = nil
+		}
+
+		o.R.PollsDimensionsDirections = nil
+	}
+	return o.AddPollsDimensionsDirections(ctx, exec, insert, related...)
+}
+
+// RemovePollsDimensionsDirections relationships from objects passed in.
+// Removes related items from R.PollsDimensionsDirections (uses pointer comparison, removal does not keep order)
+// Sets related.R.Emoji.
+func (o *Emoji) RemovePollsDimensionsDirections(ctx context.Context, exec boil.ContextExecutor, related ...*PollsDimensionsDirection) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.EmojiID, nil)
+		if rel.R != nil {
+			rel.R.Emoji = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("emoji_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.PollsDimensionsDirections {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.PollsDimensionsDirections)
+			if ln > 1 && i < ln-1 {
+				o.R.PollsDimensionsDirections[i] = o.R.PollsDimensionsDirections[ln-1]
+			}
+			o.R.PollsDimensionsDirections = o.R.PollsDimensionsDirections[:ln-1]
+			break
+		}
+	}
+
+	return nil
+}
+
 // Emojis retrieves all the records using an executor.
 func Emojis(mods ...qm.QueryMod) emojiQuery {
 	mods = append(mods, qm.From("\"emoji\""))
 	return emojiQuery{NewQuery(mods...)}
-}
-
-// FindEmojiG retrieves a single record by ID.
-func FindEmojiG(ctx context.Context, emojiID int64, selectCols ...string) (*Emoji, error) {
-	return FindEmoji(ctx, boil.GetContextDB(), emojiID, selectCols...)
 }
 
 // FindEmoji retrieves a single record by ID with an executor.
@@ -705,11 +802,6 @@ func FindEmoji(ctx context.Context, exec boil.ContextExecutor, emojiID int64, se
 	}
 
 	return emojiObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Emoji) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -788,12 +880,6 @@ func (o *Emoji) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Emoji record using the global executor.
-// See Update for more documentation.
-func (o *Emoji) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Emoji.
@@ -876,11 +962,6 @@ func (q emojiQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o EmojiSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o EmojiSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -927,11 +1008,6 @@ func (o EmojiSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all emoji")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Emoji) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1049,12 +1125,6 @@ func (o *Emoji) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnC
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Emoji record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Emoji) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Emoji record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Emoji) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1112,11 +1182,6 @@ func (q emojiQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o EmojiSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o EmojiSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1170,15 +1235,6 @@ func (o EmojiSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Emoji) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Emoji provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Emoji) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1189,16 +1245,6 @@ func (o *Emoji) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *EmojiSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty EmojiSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1228,11 +1274,6 @@ func (o *EmojiSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 	*o = slice
 
 	return nil
-}
-
-// EmojiExistsG checks if the Emoji row exists.
-func EmojiExistsG(ctx context.Context, emojiID int64) (bool, error) {
-	return EmojiExists(ctx, boil.GetContextDB(), emojiID)
 }
 
 // EmojiExists checks if the Emoji row exists.

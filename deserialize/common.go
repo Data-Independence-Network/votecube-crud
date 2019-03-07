@@ -6,9 +6,9 @@ import (
 )
 
 var (
+	NIL       byte = 0
 	RECORD    byte = 1
 	REFERENCE byte = 2
-	NIL       byte = 4
 )
 
 func RStr(data []byte, cursor *int64, dataLen int64, err error) (string, error) {

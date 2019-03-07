@@ -238,11 +238,6 @@ func AddUserAccountEthnicityHook(hookPoint boil.HookPoint, userAccountEthnicityH
 	}
 }
 
-// OneG returns a single userAccountEthnicity record from the query using the global executor.
-func (q userAccountEthnicityQuery) OneG(ctx context.Context) (*UserAccountEthnicity, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single userAccountEthnicity record from the query.
 func (q userAccountEthnicityQuery) One(ctx context.Context, exec boil.ContextExecutor) (*UserAccountEthnicity, error) {
 	o := &UserAccountEthnicity{}
@@ -262,11 +257,6 @@ func (q userAccountEthnicityQuery) One(ctx context.Context, exec boil.ContextExe
 	}
 
 	return o, nil
-}
-
-// AllG returns all UserAccountEthnicity records from the query using the global executor.
-func (q userAccountEthnicityQuery) AllG(ctx context.Context) (UserAccountEthnicitySlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all UserAccountEthnicity records from the query.
@@ -289,11 +279,6 @@ func (q userAccountEthnicityQuery) All(ctx context.Context, exec boil.ContextExe
 	return o, nil
 }
 
-// CountG returns the count of all UserAccountEthnicity records in the query, and panics on error.
-func (q userAccountEthnicityQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all UserAccountEthnicity records in the query.
 func (q userAccountEthnicityQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -307,11 +292,6 @@ func (q userAccountEthnicityQuery) Count(ctx context.Context, exec boil.ContextE
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q userAccountEthnicityQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -547,14 +527,6 @@ func (userAccountEthnicityL) LoadEthnicSubgroup(ctx context.Context, e boil.Cont
 	return nil
 }
 
-// SetUserAccountG of the userAccountEthnicity to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.UserAccountEthnicities.
-// Uses the global database handle.
-func (o *UserAccountEthnicity) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the userAccountEthnicity to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.UserAccountEthnicities.
@@ -600,14 +572,6 @@ func (o *UserAccountEthnicity) SetUserAccount(ctx context.Context, exec boil.Con
 	}
 
 	return nil
-}
-
-// SetEthnicSubgroupG of the userAccountEthnicity to the related item.
-// Sets o.R.EthnicSubgroup to related.
-// Adds o to related.R.UserAccountEthnicities.
-// Uses the global database handle.
-func (o *UserAccountEthnicity) SetEthnicSubgroupG(ctx context.Context, insert bool, related *EthnicSubgroup) error {
-	return o.SetEthnicSubgroup(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetEthnicSubgroup of the userAccountEthnicity to the related item.
@@ -663,11 +627,6 @@ func UserAccountEthnicities(mods ...qm.QueryMod) userAccountEthnicityQuery {
 	return userAccountEthnicityQuery{NewQuery(mods...)}
 }
 
-// FindUserAccountEthnicityG retrieves a single record by ID.
-func FindUserAccountEthnicityG(ctx context.Context, userAccountEthnicityID int64, selectCols ...string) (*UserAccountEthnicity, error) {
-	return FindUserAccountEthnicity(ctx, boil.GetContextDB(), userAccountEthnicityID, selectCols...)
-}
-
 // FindUserAccountEthnicity retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUserAccountEthnicity(ctx context.Context, exec boil.ContextExecutor, userAccountEthnicityID int64, selectCols ...string) (*UserAccountEthnicity, error) {
@@ -692,11 +651,6 @@ func FindUserAccountEthnicity(ctx context.Context, exec boil.ContextExecutor, us
 	}
 
 	return userAccountEthnicityObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *UserAccountEthnicity) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -775,12 +729,6 @@ func (o *UserAccountEthnicity) Insert(ctx context.Context, exec boil.ContextExec
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single UserAccountEthnicity record using the global executor.
-// See Update for more documentation.
-func (o *UserAccountEthnicity) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the UserAccountEthnicity.
@@ -863,11 +811,6 @@ func (q userAccountEthnicityQuery) UpdateAll(ctx context.Context, exec boil.Cont
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o UserAccountEthnicitySlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o UserAccountEthnicitySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -914,11 +857,6 @@ func (o UserAccountEthnicitySlice) UpdateAll(ctx context.Context, exec boil.Cont
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all userAccountEthnicity")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *UserAccountEthnicity) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1036,12 +974,6 @@ func (o *UserAccountEthnicity) Upsert(ctx context.Context, exec boil.ContextExec
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single UserAccountEthnicity record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *UserAccountEthnicity) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single UserAccountEthnicity record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *UserAccountEthnicity) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1099,11 +1031,6 @@ func (q userAccountEthnicityQuery) DeleteAll(ctx context.Context, exec boil.Cont
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o UserAccountEthnicitySlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o UserAccountEthnicitySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1157,15 +1084,6 @@ func (o UserAccountEthnicitySlice) DeleteAll(ctx context.Context, exec boil.Cont
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *UserAccountEthnicity) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no UserAccountEthnicity provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserAccountEthnicity) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1176,16 +1094,6 @@ func (o *UserAccountEthnicity) Reload(ctx context.Context, exec boil.ContextExec
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *UserAccountEthnicitySlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty UserAccountEthnicitySlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1215,11 +1123,6 @@ func (o *UserAccountEthnicitySlice) ReloadAll(ctx context.Context, exec boil.Con
 	*o = slice
 
 	return nil
-}
-
-// UserAccountEthnicityExistsG checks if the UserAccountEthnicity row exists.
-func UserAccountEthnicityExistsG(ctx context.Context, userAccountEthnicityID int64) (bool, error) {
-	return UserAccountEthnicityExists(ctx, boil.GetContextDB(), userAccountEthnicityID)
 }
 
 // UserAccountEthnicityExists checks if the UserAccountEthnicity row exists.

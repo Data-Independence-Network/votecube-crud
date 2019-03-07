@@ -237,11 +237,6 @@ func AddUserPersonalInfoHonorHook(hookPoint boil.HookPoint, userPersonalInfoHono
 	}
 }
 
-// OneG returns a single userPersonalInfoHonor record from the query using the global executor.
-func (q userPersonalInfoHonorQuery) OneG(ctx context.Context) (*UserPersonalInfoHonor, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single userPersonalInfoHonor record from the query.
 func (q userPersonalInfoHonorQuery) One(ctx context.Context, exec boil.ContextExecutor) (*UserPersonalInfoHonor, error) {
 	o := &UserPersonalInfoHonor{}
@@ -261,11 +256,6 @@ func (q userPersonalInfoHonorQuery) One(ctx context.Context, exec boil.ContextEx
 	}
 
 	return o, nil
-}
-
-// AllG returns all UserPersonalInfoHonor records from the query using the global executor.
-func (q userPersonalInfoHonorQuery) AllG(ctx context.Context) (UserPersonalInfoHonorSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all UserPersonalInfoHonor records from the query.
@@ -288,11 +278,6 @@ func (q userPersonalInfoHonorQuery) All(ctx context.Context, exec boil.ContextEx
 	return o, nil
 }
 
-// CountG returns the count of all UserPersonalInfoHonor records in the query, and panics on error.
-func (q userPersonalInfoHonorQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all UserPersonalInfoHonor records in the query.
 func (q userPersonalInfoHonorQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -306,11 +291,6 @@ func (q userPersonalInfoHonorQuery) Count(ctx context.Context, exec boil.Context
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q userPersonalInfoHonorQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -546,14 +526,6 @@ func (userPersonalInfoHonorL) LoadHonor(ctx context.Context, e boil.ContextExecu
 	return nil
 }
 
-// SetUserPersonalInfoG of the userPersonalInfoHonor to the related item.
-// Sets o.R.UserPersonalInfo to related.
-// Adds o to related.R.UserPersonalInfoHonors.
-// Uses the global database handle.
-func (o *UserPersonalInfoHonor) SetUserPersonalInfoG(ctx context.Context, insert bool, related *UserPersonalInfo) error {
-	return o.SetUserPersonalInfo(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserPersonalInfo of the userPersonalInfoHonor to the related item.
 // Sets o.R.UserPersonalInfo to related.
 // Adds o to related.R.UserPersonalInfoHonors.
@@ -599,14 +571,6 @@ func (o *UserPersonalInfoHonor) SetUserPersonalInfo(ctx context.Context, exec bo
 	}
 
 	return nil
-}
-
-// SetHonorG of the userPersonalInfoHonor to the related item.
-// Sets o.R.Honor to related.
-// Adds o to related.R.UserPersonalInfoHonors.
-// Uses the global database handle.
-func (o *UserPersonalInfoHonor) SetHonorG(ctx context.Context, insert bool, related *Honor) error {
-	return o.SetHonor(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetHonor of the userPersonalInfoHonor to the related item.
@@ -662,11 +626,6 @@ func UserPersonalInfoHonors(mods ...qm.QueryMod) userPersonalInfoHonorQuery {
 	return userPersonalInfoHonorQuery{NewQuery(mods...)}
 }
 
-// FindUserPersonalInfoHonorG retrieves a single record by ID.
-func FindUserPersonalInfoHonorG(ctx context.Context, userPersonalInfoHonorID int64, selectCols ...string) (*UserPersonalInfoHonor, error) {
-	return FindUserPersonalInfoHonor(ctx, boil.GetContextDB(), userPersonalInfoHonorID, selectCols...)
-}
-
 // FindUserPersonalInfoHonor retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindUserPersonalInfoHonor(ctx context.Context, exec boil.ContextExecutor, userPersonalInfoHonorID int64, selectCols ...string) (*UserPersonalInfoHonor, error) {
@@ -691,11 +650,6 @@ func FindUserPersonalInfoHonor(ctx context.Context, exec boil.ContextExecutor, u
 	}
 
 	return userPersonalInfoHonorObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *UserPersonalInfoHonor) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -774,12 +728,6 @@ func (o *UserPersonalInfoHonor) Insert(ctx context.Context, exec boil.ContextExe
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single UserPersonalInfoHonor record using the global executor.
-// See Update for more documentation.
-func (o *UserPersonalInfoHonor) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the UserPersonalInfoHonor.
@@ -862,11 +810,6 @@ func (q userPersonalInfoHonorQuery) UpdateAll(ctx context.Context, exec boil.Con
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o UserPersonalInfoHonorSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o UserPersonalInfoHonorSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -913,11 +856,6 @@ func (o UserPersonalInfoHonorSlice) UpdateAll(ctx context.Context, exec boil.Con
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all userPersonalInfoHonor")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *UserPersonalInfoHonor) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1035,12 +973,6 @@ func (o *UserPersonalInfoHonor) Upsert(ctx context.Context, exec boil.ContextExe
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single UserPersonalInfoHonor record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *UserPersonalInfoHonor) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single UserPersonalInfoHonor record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *UserPersonalInfoHonor) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1098,11 +1030,6 @@ func (q userPersonalInfoHonorQuery) DeleteAll(ctx context.Context, exec boil.Con
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o UserPersonalInfoHonorSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o UserPersonalInfoHonorSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1156,15 +1083,6 @@ func (o UserPersonalInfoHonorSlice) DeleteAll(ctx context.Context, exec boil.Con
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *UserPersonalInfoHonor) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no UserPersonalInfoHonor provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *UserPersonalInfoHonor) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1175,16 +1093,6 @@ func (o *UserPersonalInfoHonor) Reload(ctx context.Context, exec boil.ContextExe
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *UserPersonalInfoHonorSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty UserPersonalInfoHonorSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1214,11 +1122,6 @@ func (o *UserPersonalInfoHonorSlice) ReloadAll(ctx context.Context, exec boil.Co
 	*o = slice
 
 	return nil
-}
-
-// UserPersonalInfoHonorExistsG checks if the UserPersonalInfoHonor row exists.
-func UserPersonalInfoHonorExistsG(ctx context.Context, userPersonalInfoHonorID int64) (bool, error) {
-	return UserPersonalInfoHonorExists(ctx, boil.GetContextDB(), userPersonalInfoHonorID)
 }
 
 // UserPersonalInfoHonorExists checks if the UserPersonalInfoHonor row exists.

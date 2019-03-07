@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -22,11 +23,11 @@ import (
 
 // Label is an object representing the database table.
 type Label struct {
-	LabelID       int64     `boil:"label_id" json:"label_id" toml:"label_id" yaml:"label_id"`
-	Name          string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	Description   string    `boil:"description" json:"description" toml:"description" yaml:"description"`
-	UserAccountID int64     `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
-	CreatedAt     time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	LabelID       int64       `boil:"label_id" json:"label_id" toml:"label_id" yaml:"label_id"`
+	Name          string      `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Description   null.String `boil:"description" json:"description,omitempty" toml:"description" yaml:"description,omitempty"`
+	UserAccountID int64       `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
+	CreatedAt     time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *labelR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L labelL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -240,11 +241,6 @@ func AddLabelHook(hookPoint boil.HookPoint, labelHook LabelHook) {
 	}
 }
 
-// OneG returns a single label record from the query using the global executor.
-func (q labelQuery) OneG(ctx context.Context) (*Label, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single label record from the query.
 func (q labelQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Label, error) {
 	o := &Label{}
@@ -264,11 +260,6 @@ func (q labelQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Label,
 	}
 
 	return o, nil
-}
-
-// AllG returns all Label records from the query using the global executor.
-func (q labelQuery) AllG(ctx context.Context) (LabelSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Label records from the query.
@@ -291,11 +282,6 @@ func (q labelQuery) All(ctx context.Context, exec boil.ContextExecutor) (LabelSl
 	return o, nil
 }
 
-// CountG returns the count of all Label records in the query, and panics on error.
-func (q labelQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Label records in the query.
 func (q labelQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -309,11 +295,6 @@ func (q labelQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q labelQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -552,14 +533,6 @@ func (labelL) LoadPollsLabels(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
-// SetUserAccountG of the label to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Labels.
-// Uses the global database handle.
-func (o *Label) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the label to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Labels.
@@ -605,15 +578,6 @@ func (o *Label) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, i
 	}
 
 	return nil
-}
-
-// AddPollsLabelsG adds the given related objects to the existing relationships
-// of the label, optionally inserting them as new records.
-// Appends related to o.R.PollsLabels.
-// Sets related.R.Label appropriately.
-// Uses the global database handle.
-func (o *Label) AddPollsLabelsG(ctx context.Context, insert bool, related ...*PollsLabel) error {
-	return o.AddPollsLabels(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsLabels adds the given related objects to the existing relationships
@@ -675,11 +639,6 @@ func Labels(mods ...qm.QueryMod) labelQuery {
 	return labelQuery{NewQuery(mods...)}
 }
 
-// FindLabelG retrieves a single record by ID.
-func FindLabelG(ctx context.Context, labelID int64, selectCols ...string) (*Label, error) {
-	return FindLabel(ctx, boil.GetContextDB(), labelID, selectCols...)
-}
-
 // FindLabel retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindLabel(ctx context.Context, exec boil.ContextExecutor, labelID int64, selectCols ...string) (*Label, error) {
@@ -704,11 +663,6 @@ func FindLabel(ctx context.Context, exec boil.ContextExecutor, labelID int64, se
 	}
 
 	return labelObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Label) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -794,12 +748,6 @@ func (o *Label) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Label record using the global executor.
-// See Update for more documentation.
-func (o *Label) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Label.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -880,11 +828,6 @@ func (q labelQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o LabelSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o LabelSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -931,11 +874,6 @@ func (o LabelSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all label")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Label) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1058,12 +996,6 @@ func (o *Label) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnC
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Label record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Label) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Label record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Label) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1121,11 +1053,6 @@ func (q labelQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o LabelSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o LabelSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1179,15 +1106,6 @@ func (o LabelSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Label) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Label provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Label) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1198,16 +1116,6 @@ func (o *Label) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *LabelSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty LabelSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1237,11 +1145,6 @@ func (o *LabelSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 	*o = slice
 
 	return nil
-}
-
-// LabelExistsG checks if the Label row exists.
-func LabelExistsG(ctx context.Context, labelID int64) (bool, error) {
-	return LabelExists(ctx, boil.GetContextDB(), labelID)
 }
 
 // LabelExists checks if the Label row exists.

@@ -228,11 +228,6 @@ func AddPersonTypeHook(hookPoint boil.HookPoint, personTypeHook PersonTypeHook) 
 	}
 }
 
-// OneG returns a single personType record from the query using the global executor.
-func (q personTypeQuery) OneG(ctx context.Context) (*PersonType, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single personType record from the query.
 func (q personTypeQuery) One(ctx context.Context, exec boil.ContextExecutor) (*PersonType, error) {
 	o := &PersonType{}
@@ -252,11 +247,6 @@ func (q personTypeQuery) One(ctx context.Context, exec boil.ContextExecutor) (*P
 	}
 
 	return o, nil
-}
-
-// AllG returns all PersonType records from the query using the global executor.
-func (q personTypeQuery) AllG(ctx context.Context) (PersonTypeSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all PersonType records from the query.
@@ -279,11 +269,6 @@ func (q personTypeQuery) All(ctx context.Context, exec boil.ContextExecutor) (Pe
 	return o, nil
 }
 
-// CountG returns the count of all PersonType records in the query, and panics on error.
-func (q personTypeQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all PersonType records in the query.
 func (q personTypeQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -297,11 +282,6 @@ func (q personTypeQuery) Count(ctx context.Context, exec boil.ContextExecutor) (
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q personTypeQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -431,15 +411,6 @@ func (personTypeL) LoadUserPersonalInfos(ctx context.Context, e boil.ContextExec
 	return nil
 }
 
-// AddUserPersonalInfosG adds the given related objects to the existing relationships
-// of the person_type, optionally inserting them as new records.
-// Appends related to o.R.UserPersonalInfos.
-// Sets related.R.PersonType appropriately.
-// Uses the global database handle.
-func (o *PersonType) AddUserPersonalInfosG(ctx context.Context, insert bool, related ...*UserPersonalInfo) error {
-	return o.AddUserPersonalInfos(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddUserPersonalInfos adds the given related objects to the existing relationships
 // of the person_type, optionally inserting them as new records.
 // Appends related to o.R.UserPersonalInfos.
@@ -499,11 +470,6 @@ func PersonTypes(mods ...qm.QueryMod) personTypeQuery {
 	return personTypeQuery{NewQuery(mods...)}
 }
 
-// FindPersonTypeG retrieves a single record by ID.
-func FindPersonTypeG(ctx context.Context, personTypeID int64, selectCols ...string) (*PersonType, error) {
-	return FindPersonType(ctx, boil.GetContextDB(), personTypeID, selectCols...)
-}
-
 // FindPersonType retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPersonType(ctx context.Context, exec boil.ContextExecutor, personTypeID int64, selectCols ...string) (*PersonType, error) {
@@ -528,11 +494,6 @@ func FindPersonType(ctx context.Context, exec boil.ContextExecutor, personTypeID
 	}
 
 	return personTypeObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *PersonType) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -611,12 +572,6 @@ func (o *PersonType) Insert(ctx context.Context, exec boil.ContextExecutor, colu
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single PersonType record using the global executor.
-// See Update for more documentation.
-func (o *PersonType) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the PersonType.
@@ -699,11 +654,6 @@ func (q personTypeQuery) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PersonTypeSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PersonTypeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -750,11 +700,6 @@ func (o PersonTypeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all personType")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *PersonType) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -872,12 +817,6 @@ func (o *PersonType) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single PersonType record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *PersonType) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single PersonType record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *PersonType) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -935,11 +874,6 @@ func (q personTypeQuery) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PersonTypeSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PersonTypeSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -993,15 +927,6 @@ func (o PersonTypeSlice) DeleteAll(ctx context.Context, exec boil.ContextExecuto
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *PersonType) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no PersonType provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *PersonType) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1012,16 +937,6 @@ func (o *PersonType) Reload(ctx context.Context, exec boil.ContextExecutor) erro
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PersonTypeSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PersonTypeSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1051,11 +966,6 @@ func (o *PersonTypeSlice) ReloadAll(ctx context.Context, exec boil.ContextExecut
 	*o = slice
 
 	return nil
-}
-
-// PersonTypeExistsG checks if the PersonType row exists.
-func PersonTypeExistsG(ctx context.Context, personTypeID int64) (bool, error) {
-	return PersonTypeExists(ctx, boil.GetContextDB(), personTypeID)
 }
 
 // PersonTypeExists checks if the PersonType row exists.

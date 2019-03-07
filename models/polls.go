@@ -291,11 +291,6 @@ func AddPollHook(hookPoint boil.HookPoint, pollHook PollHook) {
 	}
 }
 
-// OneG returns a single poll record from the query using the global executor.
-func (q pollQuery) OneG(ctx context.Context) (*Poll, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single poll record from the query.
 func (q pollQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Poll, error) {
 	o := &Poll{}
@@ -315,11 +310,6 @@ func (q pollQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Poll, e
 	}
 
 	return o, nil
-}
-
-// AllG returns all Poll records from the query using the global executor.
-func (q pollQuery) AllG(ctx context.Context) (PollSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Poll records from the query.
@@ -342,11 +332,6 @@ func (q pollQuery) All(ctx context.Context, exec boil.ContextExecutor) (PollSlic
 	return o, nil
 }
 
-// CountG returns the count of all Poll records in the query, and panics on error.
-func (q pollQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Poll records in the query.
 func (q pollQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -360,11 +345,6 @@ func (q pollQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64,
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q pollQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -2049,14 +2029,6 @@ func (pollL) LoadVotes(ctx context.Context, e boil.ContextExecutor, singular boo
 	return nil
 }
 
-// SetUserAccountG of the poll to the related item.
-// Sets o.R.UserAccount to related.
-// Adds o to related.R.Polls.
-// Uses the global database handle.
-func (o *Poll) SetUserAccountG(ctx context.Context, insert bool, related *UserAccount) error {
-	return o.SetUserAccount(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetUserAccount of the poll to the related item.
 // Sets o.R.UserAccount to related.
 // Adds o to related.R.Polls.
@@ -2102,14 +2074,6 @@ func (o *Poll) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, in
 	}
 
 	return nil
-}
-
-// SetParentPollG of the poll to the related item.
-// Sets o.R.ParentPoll to related.
-// Adds o to related.R.ParentPollPoll.
-// Uses the global database handle.
-func (o *Poll) SetParentPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetParentPoll(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetParentPoll of the poll to the related item.
@@ -2159,14 +2123,6 @@ func (o *Poll) SetParentPoll(ctx context.Context, exec boil.ContextExecutor, ins
 	return nil
 }
 
-// SetThemeG of the poll to the related item.
-// Sets o.R.Theme to related.
-// Adds o to related.R.Polls.
-// Uses the global database handle.
-func (o *Poll) SetThemeG(ctx context.Context, insert bool, related *Theme) error {
-	return o.SetTheme(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetTheme of the poll to the related item.
 // Sets o.R.Theme to related.
 // Adds o to related.R.Polls.
@@ -2212,14 +2168,6 @@ func (o *Poll) SetTheme(ctx context.Context, exec boil.ContextExecutor, insert b
 	}
 
 	return nil
-}
-
-// SetParentPollPollG of the poll to the related item.
-// Sets o.R.ParentPollPoll to related.
-// Adds o to related.R.ParentPoll.
-// Uses the global database handle.
-func (o *Poll) SetParentPollPollG(ctx context.Context, insert bool, related *Poll) error {
-	return o.SetParentPollPoll(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetParentPollPoll of the poll to the related item.
@@ -2271,15 +2219,6 @@ func (o *Poll) SetParentPollPoll(ctx context.Context, exec boil.ContextExecutor,
 		related.R.ParentPoll = o
 	}
 	return nil
-}
-
-// AddPollsContinentsG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsContinents.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsContinentsG(ctx context.Context, insert bool, related ...*PollsContinent) error {
-	return o.AddPollsContinents(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsContinents adds the given related objects to the existing relationships
@@ -2335,15 +2274,6 @@ func (o *Poll) AddPollsContinents(ctx context.Context, exec boil.ContextExecutor
 	return nil
 }
 
-// AddPollsCountriesG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsCountries.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsCountriesG(ctx context.Context, insert bool, related ...*PollsCountry) error {
-	return o.AddPollsCountries(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsCountries adds the given related objects to the existing relationships
 // of the poll, optionally inserting them as new records.
 // Appends related to o.R.PollsCountries.
@@ -2395,15 +2325,6 @@ func (o *Poll) AddPollsCountries(ctx context.Context, exec boil.ContextExecutor,
 		}
 	}
 	return nil
-}
-
-// AddPollsCountiesG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsCounties.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsCountiesG(ctx context.Context, insert bool, related ...*PollsCounty) error {
-	return o.AddPollsCounties(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsCounties adds the given related objects to the existing relationships
@@ -2459,15 +2380,6 @@ func (o *Poll) AddPollsCounties(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
-// AddPollsDimensionsDirectionsG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsDimensionsDirectionsG(ctx context.Context, insert bool, related ...*PollsDimensionsDirection) error {
-	return o.AddPollsDimensionsDirections(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsDimensionsDirections adds the given related objects to the existing relationships
 // of the poll, optionally inserting them as new records.
 // Appends related to o.R.PollsDimensionsDirections.
@@ -2519,15 +2431,6 @@ func (o *Poll) AddPollsDimensionsDirections(ctx context.Context, exec boil.Conte
 		}
 	}
 	return nil
-}
-
-// AddPollsLabelsG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsLabels.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsLabelsG(ctx context.Context, insert bool, related ...*PollsLabel) error {
-	return o.AddPollsLabels(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsLabels adds the given related objects to the existing relationships
@@ -2583,15 +2486,6 @@ func (o *Poll) AddPollsLabels(ctx context.Context, exec boil.ContextExecutor, in
 	return nil
 }
 
-// AddPollsLinksG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsLinks.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsLinksG(ctx context.Context, insert bool, related ...*PollsLink) error {
-	return o.AddPollsLinks(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsLinks adds the given related objects to the existing relationships
 // of the poll, optionally inserting them as new records.
 // Appends related to o.R.PollsLinks.
@@ -2643,15 +2537,6 @@ func (o *Poll) AddPollsLinks(ctx context.Context, exec boil.ContextExecutor, ins
 		}
 	}
 	return nil
-}
-
-// AddPollsMessagesG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsMessages.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsMessagesG(ctx context.Context, insert bool, related ...*PollsMessage) error {
-	return o.AddPollsMessages(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsMessages adds the given related objects to the existing relationships
@@ -2707,15 +2592,6 @@ func (o *Poll) AddPollsMessages(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
-// AddPollsPollsGroupsG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsPollsGroups.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsPollsGroupsG(ctx context.Context, insert bool, related ...*PollsPollsGroup) error {
-	return o.AddPollsPollsGroups(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsPollsGroups adds the given related objects to the existing relationships
 // of the poll, optionally inserting them as new records.
 // Appends related to o.R.PollsPollsGroups.
@@ -2767,15 +2643,6 @@ func (o *Poll) AddPollsPollsGroups(ctx context.Context, exec boil.ContextExecuto
 		}
 	}
 	return nil
-}
-
-// AddPollsStatesG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsStates.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsStatesG(ctx context.Context, insert bool, related ...*PollsState) error {
-	return o.AddPollsStates(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsStates adds the given related objects to the existing relationships
@@ -2831,15 +2698,6 @@ func (o *Poll) AddPollsStates(ctx context.Context, exec boil.ContextExecutor, in
 	return nil
 }
 
-// AddPollsTownsG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsTowns.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddPollsTownsG(ctx context.Context, insert bool, related ...*PollsTown) error {
-	return o.AddPollsTowns(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddPollsTowns adds the given related objects to the existing relationships
 // of the poll, optionally inserting them as new records.
 // Appends related to o.R.PollsTowns.
@@ -2891,15 +2749,6 @@ func (o *Poll) AddPollsTowns(ctx context.Context, exec boil.ContextExecutor, ins
 		}
 	}
 	return nil
-}
-
-// AddVotesG adds the given related objects to the existing relationships
-// of the poll, optionally inserting them as new records.
-// Appends related to o.R.Votes.
-// Sets related.R.Poll appropriately.
-// Uses the global database handle.
-func (o *Poll) AddVotesG(ctx context.Context, insert bool, related ...*Vote) error {
-	return o.AddVotes(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddVotes adds the given related objects to the existing relationships
@@ -2961,11 +2810,6 @@ func Polls(mods ...qm.QueryMod) pollQuery {
 	return pollQuery{NewQuery(mods...)}
 }
 
-// FindPollG retrieves a single record by ID.
-func FindPollG(ctx context.Context, pollID int64, selectCols ...string) (*Poll, error) {
-	return FindPoll(ctx, boil.GetContextDB(), pollID, selectCols...)
-}
-
 // FindPoll retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindPoll(ctx context.Context, exec boil.ContextExecutor, pollID int64, selectCols ...string) (*Poll, error) {
@@ -2990,11 +2834,6 @@ func FindPoll(ctx context.Context, exec boil.ContextExecutor, pollID int64, sele
 	}
 
 	return pollObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Poll) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -3080,12 +2919,6 @@ func (o *Poll) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// UpdateG a single Poll record using the global executor.
-// See Update for more documentation.
-func (o *Poll) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
-}
-
 // Update uses an executor to update the Poll.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
@@ -3166,11 +2999,6 @@ func (q pollQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o PollSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o PollSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -3217,11 +3045,6 @@ func (o PollSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all poll")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Poll) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -3344,12 +3167,6 @@ func (o *Poll) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Poll record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Poll) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Poll record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Poll) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -3407,11 +3224,6 @@ func (q pollQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o PollSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o PollSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -3465,15 +3277,6 @@ func (o PollSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (in
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Poll) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Poll provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Poll) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -3484,16 +3287,6 @@ func (o *Poll) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *PollSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty PollSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -3523,11 +3316,6 @@ func (o *PollSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) er
 	*o = slice
 
 	return nil
-}
-
-// PollExistsG checks if the Poll row exists.
-func PollExistsG(ctx context.Context, pollID int64) (bool, error) {
-	return PollExists(ctx, boil.GetContextDB(), pollID)
 }
 
 // PollExists checks if the Poll row exists.

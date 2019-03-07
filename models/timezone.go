@@ -231,11 +231,6 @@ func AddTimezoneHook(hookPoint boil.HookPoint, timezoneHook TimezoneHook) {
 	}
 }
 
-// OneG returns a single timezone record from the query using the global executor.
-func (q timezoneQuery) OneG(ctx context.Context) (*Timezone, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single timezone record from the query.
 func (q timezoneQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Timezone, error) {
 	o := &Timezone{}
@@ -255,11 +250,6 @@ func (q timezoneQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Tim
 	}
 
 	return o, nil
-}
-
-// AllG returns all Timezone records from the query using the global executor.
-func (q timezoneQuery) AllG(ctx context.Context) (TimezoneSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all Timezone records from the query.
@@ -282,11 +272,6 @@ func (q timezoneQuery) All(ctx context.Context, exec boil.ContextExecutor) (Time
 	return o, nil
 }
 
-// CountG returns the count of all Timezone records in the query, and panics on error.
-func (q timezoneQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all Timezone records in the query.
 func (q timezoneQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -300,11 +285,6 @@ func (q timezoneQuery) Count(ctx context.Context, exec boil.ContextExecutor) (in
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q timezoneQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -434,15 +414,6 @@ func (timezoneL) LoadStates(ctx context.Context, e boil.ContextExecutor, singula
 	return nil
 }
 
-// AddStatesG adds the given related objects to the existing relationships
-// of the timezone, optionally inserting them as new records.
-// Appends related to o.R.States.
-// Sets related.R.Timezone appropriately.
-// Uses the global database handle.
-func (o *Timezone) AddStatesG(ctx context.Context, insert bool, related ...*State) error {
-	return o.AddStates(ctx, boil.GetContextDB(), insert, related...)
-}
-
 // AddStates adds the given related objects to the existing relationships
 // of the timezone, optionally inserting them as new records.
 // Appends related to o.R.States.
@@ -502,11 +473,6 @@ func Timezones(mods ...qm.QueryMod) timezoneQuery {
 	return timezoneQuery{NewQuery(mods...)}
 }
 
-// FindTimezoneG retrieves a single record by ID.
-func FindTimezoneG(ctx context.Context, timezoneID int64, selectCols ...string) (*Timezone, error) {
-	return FindTimezone(ctx, boil.GetContextDB(), timezoneID, selectCols...)
-}
-
 // FindTimezone retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindTimezone(ctx context.Context, exec boil.ContextExecutor, timezoneID int64, selectCols ...string) (*Timezone, error) {
@@ -531,11 +497,6 @@ func FindTimezone(ctx context.Context, exec boil.ContextExecutor, timezoneID int
 	}
 
 	return timezoneObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *Timezone) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -614,12 +575,6 @@ func (o *Timezone) Insert(ctx context.Context, exec boil.ContextExecutor, column
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single Timezone record using the global executor.
-// See Update for more documentation.
-func (o *Timezone) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the Timezone.
@@ -702,11 +657,6 @@ func (q timezoneQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o TimezoneSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o TimezoneSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -753,11 +703,6 @@ func (o TimezoneSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all timezone")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *Timezone) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -875,12 +820,6 @@ func (o *Timezone) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single Timezone record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *Timezone) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single Timezone record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *Timezone) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -938,11 +877,6 @@ func (q timezoneQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o TimezoneSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o TimezoneSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -996,15 +930,6 @@ func (o TimezoneSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor)
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *Timezone) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no Timezone provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *Timezone) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1015,16 +940,6 @@ func (o *Timezone) Reload(ctx context.Context, exec boil.ContextExecutor) error 
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *TimezoneSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty TimezoneSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1054,11 +969,6 @@ func (o *TimezoneSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor
 	*o = slice
 
 	return nil
-}
-
-// TimezoneExistsG checks if the Timezone row exists.
-func TimezoneExistsG(ctx context.Context, timezoneID int64) (bool, error) {
-	return TimezoneExists(ctx, boil.GetContextDB(), timezoneID)
 }
 
 // TimezoneExists checks if the Timezone row exists.

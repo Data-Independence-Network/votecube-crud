@@ -249,11 +249,6 @@ func AddStateHook(hookPoint boil.HookPoint, stateHook StateHook) {
 	}
 }
 
-// OneG returns a single state record from the query using the global executor.
-func (q stateQuery) OneG(ctx context.Context) (*State, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single state record from the query.
 func (q stateQuery) One(ctx context.Context, exec boil.ContextExecutor) (*State, error) {
 	o := &State{}
@@ -273,11 +268,6 @@ func (q stateQuery) One(ctx context.Context, exec boil.ContextExecutor) (*State,
 	}
 
 	return o, nil
-}
-
-// AllG returns all State records from the query using the global executor.
-func (q stateQuery) AllG(ctx context.Context) (StateSlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all State records from the query.
@@ -300,11 +290,6 @@ func (q stateQuery) All(ctx context.Context, exec boil.ContextExecutor) (StateSl
 	return o, nil
 }
 
-// CountG returns the count of all State records in the query, and panics on error.
-func (q stateQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all State records in the query.
 func (q stateQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -318,11 +303,6 @@ func (q stateQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q stateQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -782,14 +762,6 @@ func (stateL) LoadPollsStates(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
-// SetTimezoneG of the state to the related item.
-// Sets o.R.Timezone to related.
-// Adds o to related.R.States.
-// Uses the global database handle.
-func (o *State) SetTimezoneG(ctx context.Context, insert bool, related *Timezone) error {
-	return o.SetTimezone(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetTimezone of the state to the related item.
 // Sets o.R.Timezone to related.
 // Adds o to related.R.States.
@@ -837,14 +809,6 @@ func (o *State) SetTimezone(ctx context.Context, exec boil.ContextExecutor, inse
 	return nil
 }
 
-// SetCountryG of the state to the related item.
-// Sets o.R.Country to related.
-// Adds o to related.R.States.
-// Uses the global database handle.
-func (o *State) SetCountryG(ctx context.Context, insert bool, related *Country) error {
-	return o.SetCountry(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetCountry of the state to the related item.
 // Sets o.R.Country to related.
 // Adds o to related.R.States.
@@ -890,15 +854,6 @@ func (o *State) SetCountry(ctx context.Context, exec boil.ContextExecutor, inser
 	}
 
 	return nil
-}
-
-// AddCountiesG adds the given related objects to the existing relationships
-// of the state, optionally inserting them as new records.
-// Appends related to o.R.Counties.
-// Sets related.R.State appropriately.
-// Uses the global database handle.
-func (o *State) AddCountiesG(ctx context.Context, insert bool, related ...*County) error {
-	return o.AddCounties(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddCounties adds the given related objects to the existing relationships
@@ -952,15 +907,6 @@ func (o *State) AddCounties(ctx context.Context, exec boil.ContextExecutor, inse
 		}
 	}
 	return nil
-}
-
-// AddPollsStatesG adds the given related objects to the existing relationships
-// of the state, optionally inserting them as new records.
-// Appends related to o.R.PollsStates.
-// Sets related.R.State appropriately.
-// Uses the global database handle.
-func (o *State) AddPollsStatesG(ctx context.Context, insert bool, related ...*PollsState) error {
-	return o.AddPollsStates(ctx, boil.GetContextDB(), insert, related...)
 }
 
 // AddPollsStates adds the given related objects to the existing relationships
@@ -1022,11 +968,6 @@ func States(mods ...qm.QueryMod) stateQuery {
 	return stateQuery{NewQuery(mods...)}
 }
 
-// FindStateG retrieves a single record by ID.
-func FindStateG(ctx context.Context, stateID int64, selectCols ...string) (*State, error) {
-	return FindState(ctx, boil.GetContextDB(), stateID, selectCols...)
-}
-
 // FindState retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindState(ctx context.Context, exec boil.ContextExecutor, stateID int64, selectCols ...string) (*State, error) {
@@ -1051,11 +992,6 @@ func FindState(ctx context.Context, exec boil.ContextExecutor, stateID int64, se
 	}
 
 	return stateObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *State) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -1134,12 +1070,6 @@ func (o *State) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single State record using the global executor.
-// See Update for more documentation.
-func (o *State) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the State.
@@ -1222,11 +1152,6 @@ func (q stateQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o StateSlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o StateSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -1273,11 +1198,6 @@ func (o StateSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all state")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *State) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1395,12 +1315,6 @@ func (o *State) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnC
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single State record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *State) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single State record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *State) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1458,11 +1372,6 @@ func (q stateQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o StateSlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o StateSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1516,15 +1425,6 @@ func (o StateSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *State) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no State provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *State) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1535,16 +1435,6 @@ func (o *State) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *StateSlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty StateSlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1574,11 +1464,6 @@ func (o *StateSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 	*o = slice
 
 	return nil
-}
-
-// StateExistsG checks if the State row exists.
-func StateExistsG(ctx context.Context, stateID int64) (bool, error) {
-	return StateExists(ctx, boil.GetContextDB(), stateID)
 }
 
 // StateExists checks if the State row exists.

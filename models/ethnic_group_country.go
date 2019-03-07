@@ -234,11 +234,6 @@ func AddEthnicGroupCountryHook(hookPoint boil.HookPoint, ethnicGroupCountryHook 
 	}
 }
 
-// OneG returns a single ethnicGroupCountry record from the query using the global executor.
-func (q ethnicGroupCountryQuery) OneG(ctx context.Context) (*EthnicGroupCountry, error) {
-	return q.One(ctx, boil.GetContextDB())
-}
-
 // One returns a single ethnicGroupCountry record from the query.
 func (q ethnicGroupCountryQuery) One(ctx context.Context, exec boil.ContextExecutor) (*EthnicGroupCountry, error) {
 	o := &EthnicGroupCountry{}
@@ -258,11 +253,6 @@ func (q ethnicGroupCountryQuery) One(ctx context.Context, exec boil.ContextExecu
 	}
 
 	return o, nil
-}
-
-// AllG returns all EthnicGroupCountry records from the query using the global executor.
-func (q ethnicGroupCountryQuery) AllG(ctx context.Context) (EthnicGroupCountrySlice, error) {
-	return q.All(ctx, boil.GetContextDB())
 }
 
 // All returns all EthnicGroupCountry records from the query.
@@ -285,11 +275,6 @@ func (q ethnicGroupCountryQuery) All(ctx context.Context, exec boil.ContextExecu
 	return o, nil
 }
 
-// CountG returns the count of all EthnicGroupCountry records in the query, and panics on error.
-func (q ethnicGroupCountryQuery) CountG(ctx context.Context) (int64, error) {
-	return q.Count(ctx, boil.GetContextDB())
-}
-
 // Count returns the count of all EthnicGroupCountry records in the query.
 func (q ethnicGroupCountryQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
@@ -303,11 +288,6 @@ func (q ethnicGroupCountryQuery) Count(ctx context.Context, exec boil.ContextExe
 	}
 
 	return count, nil
-}
-
-// ExistsG checks if the row exists in the table, and panics on error.
-func (q ethnicGroupCountryQuery) ExistsG(ctx context.Context) (bool, error) {
-	return q.Exists(ctx, boil.GetContextDB())
 }
 
 // Exists checks if the row exists in the table.
@@ -543,14 +523,6 @@ func (ethnicGroupCountryL) LoadCountry(ctx context.Context, e boil.ContextExecut
 	return nil
 }
 
-// SetEthnicGroupG of the ethnicGroupCountry to the related item.
-// Sets o.R.EthnicGroup to related.
-// Adds o to related.R.EthnicGroupCountries.
-// Uses the global database handle.
-func (o *EthnicGroupCountry) SetEthnicGroupG(ctx context.Context, insert bool, related *EthnicGroup) error {
-	return o.SetEthnicGroup(ctx, boil.GetContextDB(), insert, related)
-}
-
 // SetEthnicGroup of the ethnicGroupCountry to the related item.
 // Sets o.R.EthnicGroup to related.
 // Adds o to related.R.EthnicGroupCountries.
@@ -596,14 +568,6 @@ func (o *EthnicGroupCountry) SetEthnicGroup(ctx context.Context, exec boil.Conte
 	}
 
 	return nil
-}
-
-// SetCountryG of the ethnicGroupCountry to the related item.
-// Sets o.R.Country to related.
-// Adds o to related.R.EthnicGroupCountries.
-// Uses the global database handle.
-func (o *EthnicGroupCountry) SetCountryG(ctx context.Context, insert bool, related *Country) error {
-	return o.SetCountry(ctx, boil.GetContextDB(), insert, related)
 }
 
 // SetCountry of the ethnicGroupCountry to the related item.
@@ -659,11 +623,6 @@ func EthnicGroupCountries(mods ...qm.QueryMod) ethnicGroupCountryQuery {
 	return ethnicGroupCountryQuery{NewQuery(mods...)}
 }
 
-// FindEthnicGroupCountryG retrieves a single record by ID.
-func FindEthnicGroupCountryG(ctx context.Context, ethnicGroupCountryID int64, selectCols ...string) (*EthnicGroupCountry, error) {
-	return FindEthnicGroupCountry(ctx, boil.GetContextDB(), ethnicGroupCountryID, selectCols...)
-}
-
 // FindEthnicGroupCountry retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
 func FindEthnicGroupCountry(ctx context.Context, exec boil.ContextExecutor, ethnicGroupCountryID int64, selectCols ...string) (*EthnicGroupCountry, error) {
@@ -688,11 +647,6 @@ func FindEthnicGroupCountry(ctx context.Context, exec boil.ContextExecutor, ethn
 	}
 
 	return ethnicGroupCountryObj, nil
-}
-
-// InsertG a single record. See Insert for whitelist behavior description.
-func (o *EthnicGroupCountry) InsertG(ctx context.Context, columns boil.Columns) error {
-	return o.Insert(ctx, boil.GetContextDB(), columns)
 }
 
 // Insert a single record using an executor.
@@ -771,12 +725,6 @@ func (o *EthnicGroupCountry) Insert(ctx context.Context, exec boil.ContextExecut
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
-}
-
-// UpdateG a single EthnicGroupCountry record using the global executor.
-// See Update for more documentation.
-func (o *EthnicGroupCountry) UpdateG(ctx context.Context, columns boil.Columns) (int64, error) {
-	return o.Update(ctx, boil.GetContextDB(), columns)
 }
 
 // Update uses an executor to update the EthnicGroupCountry.
@@ -859,11 +807,6 @@ func (q ethnicGroupCountryQuery) UpdateAll(ctx context.Context, exec boil.Contex
 	return rowsAff, nil
 }
 
-// UpdateAllG updates all rows with the specified column values.
-func (o EthnicGroupCountrySlice) UpdateAllG(ctx context.Context, cols M) (int64, error) {
-	return o.UpdateAll(ctx, boil.GetContextDB(), cols)
-}
-
 // UpdateAll updates all rows with the specified column values, using an executor.
 func (o EthnicGroupCountrySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
@@ -910,11 +853,6 @@ func (o EthnicGroupCountrySlice) UpdateAll(ctx context.Context, exec boil.Contex
 		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all ethnicGroupCountry")
 	}
 	return rowsAff, nil
-}
-
-// UpsertG attempts an insert, and does an update or ignore on conflict.
-func (o *EthnicGroupCountry) UpsertG(ctx context.Context, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
-	return o.Upsert(ctx, boil.GetContextDB(), updateOnConflict, conflictColumns, updateColumns, insertColumns)
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
@@ -1032,12 +970,6 @@ func (o *EthnicGroupCountry) Upsert(ctx context.Context, exec boil.ContextExecut
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// DeleteG deletes a single EthnicGroupCountry record.
-// DeleteG will match against the primary key column to find the record to delete.
-func (o *EthnicGroupCountry) DeleteG(ctx context.Context) (int64, error) {
-	return o.Delete(ctx, boil.GetContextDB())
-}
-
 // Delete deletes a single EthnicGroupCountry record with an executor.
 // Delete will match against the primary key column to find the record to delete.
 func (o *EthnicGroupCountry) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
@@ -1095,11 +1027,6 @@ func (q ethnicGroupCountryQuery) DeleteAll(ctx context.Context, exec boil.Contex
 	return rowsAff, nil
 }
 
-// DeleteAllG deletes all rows in the slice.
-func (o EthnicGroupCountrySlice) DeleteAllG(ctx context.Context) (int64, error) {
-	return o.DeleteAll(ctx, boil.GetContextDB())
-}
-
 // DeleteAll deletes all rows in the slice, using an executor.
 func (o EthnicGroupCountrySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
@@ -1153,15 +1080,6 @@ func (o EthnicGroupCountrySlice) DeleteAll(ctx context.Context, exec boil.Contex
 	return rowsAff, nil
 }
 
-// ReloadG refetches the object from the database using the primary keys.
-func (o *EthnicGroupCountry) ReloadG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: no EthnicGroupCountry provided for reload")
-	}
-
-	return o.Reload(ctx, boil.GetContextDB())
-}
-
 // Reload refetches the object from the database
 // using the primary keys with an executor.
 func (o *EthnicGroupCountry) Reload(ctx context.Context, exec boil.ContextExecutor) error {
@@ -1172,16 +1090,6 @@ func (o *EthnicGroupCountry) Reload(ctx context.Context, exec boil.ContextExecut
 
 	*o = *ret
 	return nil
-}
-
-// ReloadAllG refetches every row with matching primary key column values
-// and overwrites the original object slice with the newly updated slice.
-func (o *EthnicGroupCountrySlice) ReloadAllG(ctx context.Context) error {
-	if o == nil {
-		return errors.New("models: empty EthnicGroupCountrySlice provided for reload all")
-	}
-
-	return o.ReloadAll(ctx, boil.GetContextDB())
 }
 
 // ReloadAll refetches every row with matching primary key column values
@@ -1211,11 +1119,6 @@ func (o *EthnicGroupCountrySlice) ReloadAll(ctx context.Context, exec boil.Conte
 	*o = slice
 
 	return nil
-}
-
-// EthnicGroupCountryExistsG checks if the EthnicGroupCountry row exists.
-func EthnicGroupCountryExistsG(ctx context.Context, ethnicGroupCountryID int64) (bool, error) {
-	return EthnicGroupCountryExists(ctx, boil.GetContextDB(), ethnicGroupCountryID)
 }
 
 // EthnicGroupCountryExists checks if the EthnicGroupCountry row exists.
