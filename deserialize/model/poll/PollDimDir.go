@@ -15,7 +15,7 @@ type PollDimDirRefs struct {
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error) (models.PollsDimensionsDirectionSlice, error) {
+func DeserializePollDimDirs(ctx *deserialize.DeserializeContext, err error) (models.PollsDimensionsDirectionSlice, error) {
 	var pollsDimDirRefs models.PollsDimensionsDirectionSlice
 	var numPollsDimDirs int64
 
@@ -23,7 +23,7 @@ func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error
 		return pollsDimDirRefs, err
 	}
 
-	numPollsDimDirs, err = deserialize.RNum(data, cursor, dataLen, err)
+	numPollsDimDirs, err = deserialize.RNum(ctx, err)
 
 	if numPollsDimDirs == 0 {
 		return pollsDimDirRefs, err
@@ -34,10 +34,7 @@ func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error
 	for i := int64(0); i < numPollsDimDirs; i++ {
 		// PollDimDir is always a RECORD, but byte is still sent (for now)
 		var _ byte
-		_, err = deserialize.RByte(data, cursor, dataLen, err)
-
-		var tempId int64
-		tempId, err = deserialize.RNum(data, cursor, dataLen, err)
+		_, err = deserialize.RByte(ctx, err)
 
 		if err != nil {
 			return pollsDimDirRefs, err
@@ -56,7 +53,7 @@ func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error
 			dirByte  byte
 		)
 
-		axisByte, err = deserialize.RByte(data, cursor, dataLen, err)
+		axisByte, err = deserialize.RByte(ctx, err)
 		if err != nil {
 			return pollsDimDirRefs, err
 		}
@@ -70,12 +67,7 @@ func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error
 			axis = "z"
 		}
 
-		colorId, err = deserialize.RNum(data, cursor, dataLen, err)
-
-		dirByte, err = deserialize.RByte(data, cursor, dataLen, err)
-		if err != nil {
-			return pollsDimDirRefs, err
-		}
+		colorId, err = deserialize.RNum(ctx, err)
 
 		pollsDimDir = models.PollsDimensionsDirection{
 			ColorID:                 colorId,
@@ -86,7 +78,7 @@ func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error
 			dimensionDirection models.DimensionDirection
 			dimDirId           int64
 		)
-		dimensionDirection, dimDirId, err = model.DeserializeDimDir(data, cursor, dataLen, err)
+		dimensionDirection, dimDirId, err = model.DeserializeDimDir(ctx, err)
 
 		if err != nil {
 			return pollsDimDirRefs, err
@@ -96,6 +88,11 @@ func DeserializePollDimDirs(data []byte, cursor *int64, dataLen int64, err error
 			pollsDimDir.DimensionDirectionID = dimDirId
 		} else {
 			pollsDimDir.R.DimensionDirection = &dimensionDirection
+		}
+
+		dirByte, err = deserialize.RByte(ctx, err)
+		if err != nil {
+			return pollsDimDirRefs, err
 		}
 
 		switch dirByte {

@@ -24,7 +24,7 @@ func SetupSequences() {
 	DimensionId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  1000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "dimension_id",
 	}
@@ -32,7 +32,7 @@ func SetupSequences() {
 	DimensionDirectionId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "dimension_direction_id",
 	}
@@ -40,7 +40,7 @@ func SetupSequences() {
 	DirectionId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  1000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "direction_id",
 	}
@@ -48,7 +48,7 @@ func SetupSequences() {
 	LabelId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  1000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "label_id",
 	}
@@ -56,7 +56,7 @@ func SetupSequences() {
 	PollContinentId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_continent_id",
 	}
@@ -64,7 +64,7 @@ func SetupSequences() {
 	PollCountryId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_country_id",
 	}
@@ -72,7 +72,7 @@ func SetupSequences() {
 	PollCountyId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_county_id",
 	}
@@ -80,7 +80,7 @@ func SetupSequences() {
 	PollDimensionDirectionId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_dimension_direction_id",
 	}
@@ -88,7 +88,7 @@ func SetupSequences() {
 	PollLabelId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_label_id",
 	}
@@ -96,7 +96,7 @@ func SetupSequences() {
 	PollId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_id",
 	}
@@ -104,7 +104,7 @@ func SetupSequences() {
 	PollStateId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_state_id",
 	}
@@ -112,8 +112,33 @@ func SetupSequences() {
 	PollTownId = sequence.Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
-		IncrementBy:  10000,
+		IncrementBy:  60000,
 		Max:          0,
 		Name:         "poll_town_id",
+	}
+
+	numSequences := 12
+	seqInitsDone := make(chan bool, numSequences)
+
+	go DimensionId.Init(seqInitsDone)
+	go DimensionDirectionId.Init(seqInitsDone)
+	go DirectionId.Init(seqInitsDone)
+	go LabelId.Init(seqInitsDone)
+	go PollContinentId.Init(seqInitsDone)
+	go PollCountryId.Init(seqInitsDone)
+	go PollCountyId.Init(seqInitsDone)
+	go PollDimensionDirectionId.Init(seqInitsDone)
+	go PollLabelId.Init(seqInitsDone)
+	go PollId.Init(seqInitsDone)
+	go PollStateId.Init(seqInitsDone)
+	go PollTownId.Init(seqInitsDone)
+
+	numInitializedSequences := 0
+
+	for range seqInitsDone {
+		numInitializedSequences++
+		if numInitializedSequences == numSequences {
+			return
+		}
 	}
 }

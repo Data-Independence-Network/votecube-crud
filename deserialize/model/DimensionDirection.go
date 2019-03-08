@@ -9,14 +9,14 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeDimDir(data []byte, cursor *int64, dataLen int64, err error) (models.DimensionDirection, int64, error) {
+func DeserializeDimDir(ctx *deserialize.DeserializeContext, err error) (models.DimensionDirection, int64, error) {
 	var dimensionDirection models.DimensionDirection
 
 	var objectType byte
-	objectType, err = deserialize.RByte(data, cursor, dataLen, err)
+	objectType, err = deserialize.RByte(ctx, err)
 
 	var dimDirId int64
-	dimDirId, err = deserialize.RNum(data, cursor, dataLen, err)
+	dimDirId, err = deserialize.RNum(ctx, err)
 
 	if objectType == deserialize.REFERENCE {
 		return dimensionDirection, dimDirId, nil
@@ -24,17 +24,19 @@ func DeserializeDimDir(data []byte, cursor *int64, dataLen int64, err error) (mo
 
 	var dimension models.Dimension
 	var dimId int64
-	dimension, dimId, err = DeserializeDimension(data, cursor, dataLen, err)
+	dimension, dimId, err = DeserializeDimension(ctx, err)
 
 	var direction models.Direction
 	var dirId int64
-	direction, dirId, err = DeserializeDirection(data, cursor, dataLen, err)
+	direction, dirId, err = DeserializeDirection(ctx, err)
 
 	if err != nil {
 		return dimensionDirection, 0, err
 	}
 
-	dimensionDirection = models.DimensionDirection{}
+	dimensionDirection = models.DimensionDirection{
+		UserAccountID: ctx.UserAccountId,
+	}
 
 	if dimId != 0 {
 		dimensionDirection.DimensionID = dimId

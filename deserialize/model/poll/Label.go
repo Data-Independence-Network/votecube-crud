@@ -3,14 +3,13 @@ package poll
 import (
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
-	"github.com/volatiletech/null"
 )
 
 /**
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeLabel(data []byte, cursor *int64, dataLen int64, err error) (models.Label, int64, error) {
+func DeserializeLabel(ctx *deserialize.DeserializeContext, err error) (models.Label, int64, error) {
 	var label models.Label
 
 	if err != nil {
@@ -18,38 +17,23 @@ func DeserializeLabel(data []byte, cursor *int64, dataLen int64, err error) (mod
 	}
 
 	var objectType byte
-	objectType, err = deserialize.RByte(data, cursor, dataLen, err)
-
-	var labelId int64
-	labelId, err = deserialize.RNum(data, cursor, dataLen, err)
+	objectType, err = deserialize.RByte(ctx, err)
 
 	if objectType == deserialize.REFERENCE {
+		var labelId int64
+		labelId, err = deserialize.RNum(ctx, err)
+
 		return label, labelId, err
 	} else {
 		//var description string
 		//description, err = deserialize.RStr(data, cursor, dataLen, err)
 		var name string
-		name, err = deserialize.RStr(data, cursor, dataLen, err)
+		name, err = deserialize.RStr(ctx, err)
 
-		var parentLabelId int64
-		var parentDimIdReference null.Int64
-		objectType, err = deserialize.RByte(data, cursor, dataLen, err)
-		if objectType == deserialize.REFERENCE {
-			parentLabelId, err = deserialize.RNum(data, cursor, dataLen, err)
-			parentDimIdReference = null.Int64{
-				Int64: parentLabelId,
-				Valid: true,
-			}
-		}
-
-		if err != nil {
-			return label, 0, err
-		}
-
-		label = models.Label{
-			LabelName:     name,
-			ParentLabelID: parentDimIdReference,
-		}
+		return models.Label{
+			Name:          name,
+			UserAccountID: ctx.UserAccountId,
+		}, 0, err
 	}
 
 }

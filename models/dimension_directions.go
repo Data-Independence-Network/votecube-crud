@@ -25,6 +25,7 @@ type DimensionDirection struct {
 	DimensionDirectionID int64     `boil:"dimension_direction_id" json:"dimension_direction_id" toml:"dimension_direction_id" yaml:"dimension_direction_id"`
 	DimensionID          int64     `boil:"dimension_id" json:"dimension_id" toml:"dimension_id" yaml:"dimension_id"`
 	DirectionID          int64     `boil:"direction_id" json:"direction_id" toml:"direction_id" yaml:"direction_id"`
+	UserAccountID        int64     `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
 	CreatedAt            time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *dimensionDirectionR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -35,11 +36,13 @@ var DimensionDirectionColumns = struct {
 	DimensionDirectionID string
 	DimensionID          string
 	DirectionID          string
+	UserAccountID        string
 	CreatedAt            string
 }{
 	DimensionDirectionID: "dimension_direction_id",
 	DimensionID:          "dimension_id",
 	DirectionID:          "direction_id",
+	UserAccountID:        "user_account_id",
 	CreatedAt:            "created_at",
 }
 
@@ -70,8 +73,8 @@ func (*dimensionDirectionR) NewStruct() *dimensionDirectionR {
 type dimensionDirectionL struct{}
 
 var (
-	dimensionDirectionColumns               = []string{"dimension_direction_id", "dimension_id", "direction_id", "created_at"}
-	dimensionDirectionColumnsWithoutDefault = []string{"dimension_direction_id", "dimension_id", "direction_id", "created_at"}
+	dimensionDirectionColumns               = []string{"dimension_direction_id", "dimension_id", "direction_id", "user_account_id", "created_at"}
+	dimensionDirectionColumnsWithoutDefault = []string{"dimension_direction_id", "dimension_id", "direction_id", "user_account_id", "created_at"}
 	dimensionDirectionColumnsWithDefault    = []string{}
 	dimensionDirectionPrimaryKeyColumns     = []string{"dimension_direction_id"}
 )

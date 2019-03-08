@@ -9,7 +9,7 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializePollLabels(data []byte, cursor *int64, dataLen int64, err error) (models.PollsLabelSlice, error) {
+func DeserializePollLabels(ctx *deserialize.DeserializeContext, err error) (models.PollsLabelSlice, error) {
 	var pollsLabels models.PollsLabelSlice
 	var numPollsLabels int64
 
@@ -17,7 +17,7 @@ func DeserializePollLabels(data []byte, cursor *int64, dataLen int64, err error)
 		return pollsLabels, err
 	}
 
-	numPollsLabels, err = deserialize.RNum(data, cursor, dataLen, err)
+	numPollsLabels, err = deserialize.RNum(ctx, err)
 
 	if numPollsLabels == 0 {
 		return pollsLabels, err
@@ -26,25 +26,28 @@ func DeserializePollLabels(data []byte, cursor *int64, dataLen int64, err error)
 	pollsLabels = make(models.PollsLabelSlice, numPollsLabels)
 
 	for i := int64(0); i < numPollsLabels; i++ {
-		var objectType byte
-		objectType, err = deserialize.RByte(data, cursor, dataLen, err)
+		var label models.Label
+		var labelId int64
 
-		var dimDirId int64
-		dimDirId, err = deserialize.RNum(data, cursor, dataLen, err)
+		label, labelId, err = DeserializeLabel(ctx, err)
 
-		if objectType == deserialize.REFERENCE {
-			var labelId int64
-			labelId, err = deserialize.RNum(data, cursor, dataLen, err)
+		if err != nil {
+			return pollsLabels, err
+		}
 
-			if err != nil {
-				return pollsLabels, err
-			}
-
+		if labelId != 0 {
 			pollsLabels[i] = &models.PollsLabel{
-				LabelID: labelId,
+				LabelID:       labelId,
+				UserAccountID: ctx.UserAccountId,
 			}
 		} else {
+			pollsLabel := &models.PollsLabel{
+				UserAccountID: ctx.UserAccountId,
+			}
 
+			pollsLabel.R.Label = &label
+
+			pollsLabels[i] = pollsLabel
 		}
 
 	}

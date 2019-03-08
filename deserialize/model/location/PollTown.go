@@ -1,6 +1,7 @@
 package location
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
 )
@@ -8,7 +9,7 @@ import (
 /**
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
-func DeserializePollTowns(data []byte, cursor *int64, dataLen int64, err error) (models.PollsTownSlice, error) {
+func DeserializePollTowns(ctx *deserialize.DeserializeContext, err error) (models.PollsTownSlice, error) {
 	var pollsTowns models.PollsTownSlice
 	var numPollsTowns int64
 
@@ -16,7 +17,7 @@ func DeserializePollTowns(data []byte, cursor *int64, dataLen int64, err error) 
 		return pollsTowns, err
 	}
 
-	numPollsTowns, err = deserialize.RNum(data, cursor, dataLen, err)
+	numPollsTowns, err = deserialize.RNum(ctx, err)
 
 	if numPollsTowns == 0 {
 		return pollsTowns, err
@@ -25,15 +26,21 @@ func DeserializePollTowns(data []byte, cursor *int64, dataLen int64, err error) 
 	pollsTowns = make(models.PollsTownSlice, numPollsTowns)
 
 	for i := int64(0); i < numPollsTowns; i++ {
-		var continentId int64
-		continentId, err = deserialize.RNum(data, cursor, dataLen, err)
+		var townId int64
+		townId, err = deserialize.RNum(ctx, err)
 
 		if err != nil {
 			return pollsTowns, err
 		}
 
+		_, townExists := ctx.LocMaps.ContinentMap[townId]
+
+		if !townExists {
+			return pollsTowns, fmt.Errorf("invalid town id: %v", townId)
+		}
+
 		pollsTowns[i] = &models.PollsTown{
-			TownID: continentId,
+			TownID: townId,
 		}
 	}
 

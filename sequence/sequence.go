@@ -3,6 +3,7 @@ package sequence
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 type Sequence struct {
@@ -11,6 +12,7 @@ type Sequence struct {
 	IncrementBy  int64
 	Max          int64
 	Name         string
+	nextBlock    *SequenceBlock
 }
 
 type SequenceBlock struct {
@@ -23,10 +25,6 @@ type SequenceError struct {
 
 func (e *SequenceError) Error() string {
 	return fmt.Sprintf("at %v", 0)
-}
-
-func (seq *Sequence) Get() (int64, error) {
-
 }
 
 func (seq *Sequence) selectFromDb() (int64, error) {
@@ -48,19 +46,42 @@ func (seq *Sequence) selectFromDb() (int64, error) {
 	}
 
 	err = rows.Err()
-	if err != nil {
-		return newMax, err
-	}
+
+	return newMax, err
 }
 
-func (seq *Sequence) GetBlocks(numVals int64) ([]SequenceBlock, error) {
-	var seqBlocks []SequenceBlock
+func (seq *Sequence) Init(done chan bool) {
+	seq.getNextBlock()
 
+	done <- true
+}
+
+func (seq *Sequence) getNextBlock() {
+	newMax, err := seq.selectFromDb()
+
+	if err != nil {
+		log.Fatalf("Could not obtain sequences for %s", seq.Name)
+		log.Fatal(err)
+		panic(err)
+	}
+
+	seq.nextBlock = &SequenceBlock{
+		Start:  newMax - seq.IncrementBy,
+		Length: seq.IncrementBy,
+	}
+
+}
+
+func (seq *Sequence) GetBlocks(numVals int64) []SequenceBlock {
 	if seq.CurrentValue+numVals > seq.Max {
-		newMax, err := seq.selectFromDb()
+		if seq.nextBlock == nil {
+			log.Fatalf("Could not obtain sequences for %s in time", seq.Name)
+			panic(nil)
+		}
 
-		if err != nil {
-			return nil, err
+		if seq.Max == 0 {
+			seq.CurrentValue = seq.nextBlock.Start
+			seq.Max = seq.nextBlock.Start + seq.nextBlock.Length
 		}
 
 		var existingSeqBlock *SequenceBlock = nil
@@ -72,8 +93,11 @@ func (seq *Sequence) GetBlocks(numVals int64) ([]SequenceBlock, error) {
 			existingSeqBlock = &SequenceBlock{Start: seq.CurrentValue + 1, Length: acquiredRange}
 		}
 
-		seq.Max = newMax
-		seq.CurrentValue = newMax - seq.IncrementBy
+		seq.CurrentValue = seq.nextBlock.Start
+		seq.Max = seq.nextBlock.Start + seq.nextBlock.Length
+		seq.nextBlock = nil
+
+		go seq.getNextBlock()
 
 		newVals := numVals - acquiredRange
 
@@ -82,18 +106,15 @@ func (seq *Sequence) GetBlocks(numVals int64) ([]SequenceBlock, error) {
 		seq.CurrentValue += newVals
 
 		if existingSeqBlock == nil {
-			return []SequenceBlock{newSeqBlock}, nil
+			return []SequenceBlock{newSeqBlock}
 		} else {
-			return []SequenceBlock{*existingSeqBlock, newSeqBlock}, nil
+			return []SequenceBlock{*existingSeqBlock, newSeqBlock}
 		}
-
 	} else {
 		newSeqBlock := SequenceBlock{Start: seq.CurrentValue + 1, Length: numVals}
 
 		seq.CurrentValue += numVals
 
-		return []SequenceBlock{newSeqBlock}, nil
+		return []SequenceBlock{newSeqBlock}
 	}
-
-	return seqBlocks, nil
 }

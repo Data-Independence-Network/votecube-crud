@@ -938,7 +938,7 @@ func testDimensionDirectionsSelect(t *testing.T) {
 }
 
 var (
-	dimensionDirectionDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `DimensionDirectionID`: `int8`, `DimensionID`: `int8`, `DirectionID`: `int8`}
+	dimensionDirectionDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `DimensionDirectionID`: `int8`, `DimensionID`: `int8`, `DirectionID`: `int8`, `UserAccountID`: `int8`}
 	_                         = bytes.MinRead
 )
 

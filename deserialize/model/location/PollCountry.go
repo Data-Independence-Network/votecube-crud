@@ -1,6 +1,7 @@
 package location
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
 )
@@ -8,7 +9,7 @@ import (
 /**
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
-func DeserializePollCountries(data []byte, cursor *int64, dataLen int64, err error) (models.PollsCountrySlice, error) {
+func DeserializePollCountries(ctx *deserialize.DeserializeContext, err error) (models.PollsCountrySlice, error) {
 	var pollsCountries models.PollsCountrySlice
 	var numPollsCountries int64
 
@@ -16,7 +17,7 @@ func DeserializePollCountries(data []byte, cursor *int64, dataLen int64, err err
 		return pollsCountries, err
 	}
 
-	numPollsCountries, err = deserialize.RNum(data, cursor, dataLen, err)
+	numPollsCountries, err = deserialize.RNum(ctx, err)
 
 	if numPollsCountries == 0 {
 		return pollsCountries, err
@@ -25,15 +26,21 @@ func DeserializePollCountries(data []byte, cursor *int64, dataLen int64, err err
 	pollsCountries = make(models.PollsCountrySlice, numPollsCountries)
 
 	for i := int64(0); i < numPollsCountries; i++ {
-		var continentId int64
-		continentId, err = deserialize.RNum(data, cursor, dataLen, err)
+		var countryId int64
+		countryId, err = deserialize.RNum(ctx, err)
 
 		if err != nil {
 			return pollsCountries, err
 		}
 
+		_, countryExists := ctx.LocMaps.ContinentMap[countryId]
+
+		if !countryExists {
+			return pollsCountries, fmt.Errorf("invalid country id: %v", countryId)
+		}
+
 		pollsCountries[i] = &models.PollsCountry{
-			CountryID: continentId,
+			CountryID: countryId,
 		}
 	}
 
