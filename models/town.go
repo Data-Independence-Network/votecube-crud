@@ -23,7 +23,7 @@ import (
 // Town is an object representing the database table.
 type Town struct {
 	TownID   int64  `boil:"town_id" json:"town_id" toml:"town_id" yaml:"town_id"`
-	CountyID int64  `boil:"county_id" json:"county_id" toml:"county_id" yaml:"county_id"`
+	StateID  int64  `boil:"state_id" json:"state_id" toml:"state_id" yaml:"state_id"`
 	TownCode string `boil:"town_code" json:"town_code" toml:"town_code" yaml:"town_code"`
 	TownName string `boil:"town_name" json:"town_name" toml:"town_name" yaml:"town_name"`
 
@@ -33,30 +33,30 @@ type Town struct {
 
 var TownColumns = struct {
 	TownID   string
-	CountyID string
+	StateID  string
 	TownCode string
 	TownName string
 }{
 	TownID:   "town_id",
-	CountyID: "county_id",
+	StateID:  "state_id",
 	TownCode: "town_code",
 	TownName: "town_name",
 }
 
 // TownRels is where relationship names are stored.
 var TownRels = struct {
-	County     string
+	State      string
 	PollsTowns string
 	Suburbs    string
 }{
-	County:     "County",
+	State:      "State",
 	PollsTowns: "PollsTowns",
 	Suburbs:    "Suburbs",
 }
 
 // townR is where relationships are stored.
 type townR struct {
-	County     *County
+	State      *State
 	PollsTowns PollsTownSlice
 	Suburbs    SuburbSlice
 }
@@ -70,8 +70,8 @@ func (*townR) NewStruct() *townR {
 type townL struct{}
 
 var (
-	townColumns               = []string{"town_id", "county_id", "town_code", "town_name"}
-	townColumnsWithoutDefault = []string{"town_id", "county_id", "town_code", "town_name"}
+	townColumns               = []string{"town_id", "state_id", "town_code", "town_name"}
+	townColumnsWithoutDefault = []string{"town_id", "state_id", "town_code", "town_name"}
 	townColumnsWithDefault    = []string{}
 	townPrimaryKeyColumns     = []string{"town_id"}
 )
@@ -311,16 +311,16 @@ func (q townQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	return count > 0, nil
 }
 
-// County pointed to by the foreign key.
-func (o *Town) County(mods ...qm.QueryMod) countyQuery {
+// State pointed to by the foreign key.
+func (o *Town) State(mods ...qm.QueryMod) stateQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("county_id=?", o.CountyID),
+		qm.Where("state_id=?", o.StateID),
 	}
 
 	queryMods = append(queryMods, mods...)
 
-	query := Counties(queryMods...)
-	queries.SetFrom(query.Query, "\"county\"")
+	query := States(queryMods...)
+	queries.SetFrom(query.Query, "\"state\"")
 
 	return query
 }
@@ -367,9 +367,9 @@ func (o *Town) Suburbs(mods ...qm.QueryMod) suburbQuery {
 	return query
 }
 
-// LoadCounty allows an eager lookup of values, cached into the
+// LoadState allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (townL) LoadCounty(ctx context.Context, e boil.ContextExecutor, singular bool, maybeTown interface{}, mods queries.Applicator) error {
+func (townL) LoadState(ctx context.Context, e boil.ContextExecutor, singular bool, maybeTown interface{}, mods queries.Applicator) error {
 	var slice []*Town
 	var object *Town
 
@@ -384,7 +384,7 @@ func (townL) LoadCounty(ctx context.Context, e boil.ContextExecutor, singular bo
 		if object.R == nil {
 			object.R = &townR{}
 		}
-		args = append(args, object.CountyID)
+		args = append(args, object.StateID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -393,35 +393,35 @@ func (townL) LoadCounty(ctx context.Context, e boil.ContextExecutor, singular bo
 			}
 
 			for _, a := range args {
-				if a == obj.CountyID {
+				if a == obj.StateID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.CountyID)
+			args = append(args, obj.StateID)
 		}
 	}
 
-	query := NewQuery(qm.From(`county`), qm.WhereIn(`county_id in ?`, args...))
+	query := NewQuery(qm.From(`state`), qm.WhereIn(`state_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load County")
+		return errors.Wrap(err, "failed to eager load State")
 	}
 
-	var resultSlice []*County
+	var resultSlice []*State
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice County")
+		return errors.Wrap(err, "failed to bind eager loaded slice State")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for county")
+		return errors.Wrap(err, "failed to close results of eager load for state")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for county")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for state")
 	}
 
 	if len(townAfterSelectHooks) != 0 {
@@ -438,9 +438,9 @@ func (townL) LoadCounty(ctx context.Context, e boil.ContextExecutor, singular bo
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.County = foreign
+		object.R.State = foreign
 		if foreign.R == nil {
-			foreign.R = &countyR{}
+			foreign.R = &stateR{}
 		}
 		foreign.R.Towns = append(foreign.R.Towns, object)
 		return nil
@@ -448,10 +448,10 @@ func (townL) LoadCounty(ctx context.Context, e boil.ContextExecutor, singular bo
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.CountyID == foreign.CountyID {
-				local.R.County = foreign
+			if local.StateID == foreign.StateID {
+				local.R.State = foreign
 				if foreign.R == nil {
-					foreign.R = &countyR{}
+					foreign.R = &stateR{}
 				}
 				foreign.R.Towns = append(foreign.R.Towns, local)
 				break
@@ -644,10 +644,10 @@ func (townL) LoadSuburbs(ctx context.Context, e boil.ContextExecutor, singular b
 	return nil
 }
 
-// SetCounty of the town to the related item.
-// Sets o.R.County to related.
+// SetState of the town to the related item.
+// Sets o.R.State to related.
 // Adds o to related.R.Towns.
-func (o *Town) SetCounty(ctx context.Context, exec boil.ContextExecutor, insert bool, related *County) error {
+func (o *Town) SetState(ctx context.Context, exec boil.ContextExecutor, insert bool, related *State) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -657,10 +657,10 @@ func (o *Town) SetCounty(ctx context.Context, exec boil.ContextExecutor, insert 
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"town\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"county_id"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"state_id"}),
 		strmangle.WhereClause("\"", "\"", 2, townPrimaryKeyColumns),
 	)
-	values := []interface{}{related.CountyID, o.TownID}
+	values := []interface{}{related.StateID, o.TownID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -671,17 +671,17 @@ func (o *Town) SetCounty(ctx context.Context, exec boil.ContextExecutor, insert 
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.CountyID = related.CountyID
+	o.StateID = related.StateID
 	if o.R == nil {
 		o.R = &townR{
-			County: related,
+			State: related,
 		}
 	} else {
-		o.R.County = related
+		o.R.State = related
 	}
 
 	if related.R == nil {
-		related.R = &countyR{
+		related.R = &stateR{
 			Towns: TownSlice{o},
 		}
 	} else {

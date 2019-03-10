@@ -800,58 +800,58 @@ func testTownToManyAddOpSuburbs(t *testing.T) {
 		}
 	}
 }
-func testTownToOneCountyUsingCounty(t *testing.T) {
+func testTownToOneStateUsingState(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var local Town
-	var foreign County
+	var foreign State
 
 	seed := randomize.NewSeed()
 	if err := randomize.Struct(seed, &local, townDBTypes, false, townColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Town struct: %s", err)
 	}
-	if err := randomize.Struct(seed, &foreign, countyDBTypes, false, countyColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize County struct: %s", err)
+	if err := randomize.Struct(seed, &foreign, stateDBTypes, false, stateColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize State struct: %s", err)
 	}
 
 	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	local.CountyID = foreign.CountyID
+	local.StateID = foreign.StateID
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	check, err := local.County().One(ctx, tx)
+	check, err := local.State().One(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if check.CountyID != foreign.CountyID {
-		t.Errorf("want: %v, got %v", foreign.CountyID, check.CountyID)
+	if check.StateID != foreign.StateID {
+		t.Errorf("want: %v, got %v", foreign.StateID, check.StateID)
 	}
 
 	slice := TownSlice{&local}
-	if err = local.L.LoadCounty(ctx, tx, false, (*[]*Town)(&slice), nil); err != nil {
+	if err = local.L.LoadState(ctx, tx, false, (*[]*Town)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.County == nil {
+	if local.R.State == nil {
 		t.Error("struct should have been eager loaded")
 	}
 
-	local.R.County = nil
-	if err = local.L.LoadCounty(ctx, tx, true, &local, nil); err != nil {
+	local.R.State = nil
+	if err = local.L.LoadState(ctx, tx, true, &local, nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.County == nil {
+	if local.R.State == nil {
 		t.Error("struct should have been eager loaded")
 	}
 }
 
-func testTownToOneSetOpCountyUsingCounty(t *testing.T) {
+func testTownToOneSetOpStateUsingState(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -859,16 +859,16 @@ func testTownToOneSetOpCountyUsingCounty(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a Town
-	var b, c County
+	var b, c State
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, townDBTypes, false, strmangle.SetComplement(townPrimaryKeyColumns, townColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, countyDBTypes, false, strmangle.SetComplement(countyPrimaryKeyColumns, countyColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &b, stateDBTypes, false, strmangle.SetComplement(statePrimaryKeyColumns, stateColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, countyDBTypes, false, strmangle.SetComplement(countyPrimaryKeyColumns, countyColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &c, stateDBTypes, false, strmangle.SetComplement(statePrimaryKeyColumns, stateColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -879,32 +879,32 @@ func testTownToOneSetOpCountyUsingCounty(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	for i, x := range []*County{&b, &c} {
-		err = a.SetCounty(ctx, tx, i != 0, x)
+	for i, x := range []*State{&b, &c} {
+		err = a.SetState(ctx, tx, i != 0, x)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if a.R.County != x {
+		if a.R.State != x {
 			t.Error("relationship struct not set to correct value")
 		}
 
 		if x.R.Towns[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.CountyID != x.CountyID {
-			t.Error("foreign key was wrong value", a.CountyID)
+		if a.StateID != x.StateID {
+			t.Error("foreign key was wrong value", a.StateID)
 		}
 
-		zero := reflect.Zero(reflect.TypeOf(a.CountyID))
-		reflect.Indirect(reflect.ValueOf(&a.CountyID)).Set(zero)
+		zero := reflect.Zero(reflect.TypeOf(a.StateID))
+		reflect.Indirect(reflect.ValueOf(&a.StateID)).Set(zero)
 
 		if err = a.Reload(ctx, tx); err != nil {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.CountyID != x.CountyID {
-			t.Error("foreign key was wrong value", a.CountyID, x.CountyID)
+		if a.StateID != x.StateID {
+			t.Error("foreign key was wrong value", a.StateID, x.StateID)
 		}
 	}
 }
@@ -983,7 +983,7 @@ func testTownsSelect(t *testing.T) {
 }
 
 var (
-	townDBTypes = map[string]string{`CountyID`: `int8`, `TownCode`: `varchar`, `TownID`: `int8`, `TownName`: `varchar`}
+	townDBTypes = map[string]string{`StateID`: `int8`, `TownCode`: `varchar`, `TownID`: `int8`, `TownName`: `varchar`}
 	_           = bytes.MinRead
 )
 

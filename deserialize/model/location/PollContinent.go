@@ -14,7 +14,7 @@ func DeserializePollContinents(ctx *deserialize.DeserializeContext, err error) (
 	var numPollsContinents int64
 
 	if err != nil {
-		return pollsContinents, err
+		return pollsContinents, fmt.Errorf("no continents specified for the poll")
 	}
 
 	numPollsContinents, err = deserialize.RNum(ctx, err)
@@ -34,10 +34,15 @@ func DeserializePollContinents(ctx *deserialize.DeserializeContext, err error) (
 		}
 
 		_, continentExists := ctx.LocMaps.ContinentMap[continentId]
-
 		if !continentExists {
 			return pollsContinents, fmt.Errorf("invalid continent id: %v", continentId)
 		}
+
+		_, continentAlreadySpecifiedInRequest := ctx.ReqLocSets.ContinentSet[continentId]
+		if continentAlreadySpecifiedInRequest {
+			return pollsContinents, fmt.Errorf("continent specified more than once, id: %v", continentId)
+		}
+		ctx.ReqLocSets.ContinentSet[continentId] = true
 
 		pollsContinents[i] = &models.PollsContinent{
 			ContinentID: continentId,

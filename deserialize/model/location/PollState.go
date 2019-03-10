@@ -39,6 +39,18 @@ func DeserializePollStates(ctx *deserialize.DeserializeContext, err error) (mode
 			return pollsStates, fmt.Errorf("invalid state id: %v", stateId)
 		}
 
+		_, stateAlreadySpecifiedInRequest := ctx.ReqLocSets.StateSet[stateId]
+		if stateAlreadySpecifiedInRequest {
+			return pollsStates, fmt.Errorf("state specified more than once, id: %v", stateId)
+		}
+		ctx.ReqLocSets.StateSet[stateId] = true
+
+		state := ctx.LocMaps.StateMap[stateId]
+		_, countrySpecifiedInRequest := ctx.ReqLocSets.CountrySet[state.CountryID]
+		if !countrySpecifiedInRequest {
+			return pollsStates, fmt.Errorf("no matching Country specified in request for State Id %v", stateId)
+		}
+
 		pollsStates[i] = &models.PollsState{
 			StateID: stateId,
 		}

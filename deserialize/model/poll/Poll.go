@@ -22,11 +22,12 @@ func DeserializePoll(ctx *deserialize.DeserializeContext, err error) (models.Pol
 
 	poll.R.PollsContinents, err = location.DeserializePollContinents(ctx, err)
 	poll.R.PollsCountries, err = location.DeserializePollCountries(ctx, err)
+	poll.R.PollsStates, err = location.DeserializePollStates(ctx, err)
 	//poll.R.PollsCounties, err = location.DeserializePollCounties(ctx, err)
+	poll.R.PollsTowns, err = location.DeserializePollTowns(ctx, err)
 	poll.R.PollsDimensionsDirections, err = DeserializePollDimDirs(ctx, err)
 	poll.R.PollsLabels, err = DeserializePollLabels(ctx, err)
-	poll.R.PollsStates, err = location.DeserializePollStates(ctx, err)
-	poll.R.PollsTowns, err = location.DeserializePollTowns(ctx, err)
+	poll.UserAccountID = ctx.Request.UserAccountId
 
 	return poll, err
 }

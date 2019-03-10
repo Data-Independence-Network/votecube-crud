@@ -34,9 +34,20 @@ func DeserializePollCountries(ctx *deserialize.DeserializeContext, err error) (m
 		}
 
 		_, countryExists := ctx.LocMaps.ContinentMap[countryId]
-
 		if !countryExists {
 			return pollsCountries, fmt.Errorf("invalid country id: %v", countryId)
+		}
+
+		_, countryAlreadySpecifiedInRequest := ctx.ReqLocSets.CountrySet[countryId]
+		if countryAlreadySpecifiedInRequest {
+			return pollsCountries, fmt.Errorf("country specified more than once, id: %v", countryId)
+		}
+		ctx.ReqLocSets.CountrySet[countryId] = true
+
+		country := ctx.LocMaps.CountryMap[countryId]
+		_, continentSpecifiedInRequest := ctx.ReqLocSets.ContinentSet[country.ContinentID]
+		if !continentSpecifiedInRequest {
+			return pollsCountries, fmt.Errorf("no matching Continent specified in request for Country Id %v", countryId)
 		}
 
 		pollsCountries[i] = &models.PollsCountry{

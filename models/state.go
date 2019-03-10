@@ -55,11 +55,13 @@ var StateRels = struct {
 	Country     string
 	Counties    string
 	PollsStates string
+	Towns       string
 }{
 	Timezone:    "Timezone",
 	Country:     "Country",
 	Counties:    "Counties",
 	PollsStates: "PollsStates",
+	Towns:       "Towns",
 }
 
 // stateR is where relationships are stored.
@@ -68,6 +70,7 @@ type stateR struct {
 	Country     *Country
 	Counties    CountySlice
 	PollsStates PollsStateSlice
+	Towns       TownSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -385,6 +388,27 @@ func (o *State) PollsStates(mods ...qm.QueryMod) pollsStateQuery {
 
 	if len(queries.GetSelect(query.Query)) == 0 {
 		queries.SetSelect(query.Query, []string{"\"polls_state\".*"})
+	}
+
+	return query
+}
+
+// Towns retrieves all the town's Towns with an executor.
+func (o *State) Towns(mods ...qm.QueryMod) townQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"town\".\"state_id\"=?", o.StateID),
+	)
+
+	query := Towns(queryMods...)
+	queries.SetFrom(query.Query, "\"town\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"town\".*"})
 	}
 
 	return query
@@ -762,6 +786,97 @@ func (stateL) LoadPollsStates(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
+// LoadTowns allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (stateL) LoadTowns(ctx context.Context, e boil.ContextExecutor, singular bool, maybeState interface{}, mods queries.Applicator) error {
+	var slice []*State
+	var object *State
+
+	if singular {
+		object = maybeState.(*State)
+	} else {
+		slice = *maybeState.(*[]*State)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &stateR{}
+		}
+		args = append(args, object.StateID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &stateR{}
+			}
+
+			for _, a := range args {
+				if a == obj.StateID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.StateID)
+		}
+	}
+
+	query := NewQuery(qm.From(`town`), qm.WhereIn(`state_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load town")
+	}
+
+	var resultSlice []*Town
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice town")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on town")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for town")
+	}
+
+	if len(townAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Towns = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &townR{}
+			}
+			foreign.R.State = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.StateID == foreign.StateID {
+				local.R.Towns = append(local.R.Towns, foreign)
+				if foreign.R == nil {
+					foreign.R = &townR{}
+				}
+				foreign.R.State = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetTimezone of the state to the related item.
 // Sets o.R.Timezone to related.
 // Adds o to related.R.States.
@@ -953,6 +1068,59 @@ func (o *State) AddPollsStates(ctx context.Context, exec boil.ContextExecutor, i
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &pollsStateR{
+				State: o,
+			}
+		} else {
+			rel.R.State = o
+		}
+	}
+	return nil
+}
+
+// AddTowns adds the given related objects to the existing relationships
+// of the state, optionally inserting them as new records.
+// Appends related to o.R.Towns.
+// Sets related.R.State appropriately.
+func (o *State) AddTowns(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Town) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.StateID = o.StateID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"town\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"state_id"}),
+				strmangle.WhereClause("\"", "\"", 2, townPrimaryKeyColumns),
+			)
+			values := []interface{}{o.StateID, rel.TownID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.StateID = o.StateID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &stateR{
+			Towns: related,
+		}
+	} else {
+		o.R.Towns = append(o.R.Towns, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &townR{
 				State: o,
 			}
 		} else {

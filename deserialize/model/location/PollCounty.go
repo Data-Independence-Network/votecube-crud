@@ -39,6 +39,18 @@ func DeserializePollCounties(ctx *deserialize.DeserializeContext, err error) (mo
 			return pollsCounties, fmt.Errorf("invalid county id: %v", countyId)
 		}
 
+		_, countyAlreadySpecifiedInRequest := ctx.ReqLocSets.CountySet[countyId]
+		if countyAlreadySpecifiedInRequest {
+			return pollsCounties, fmt.Errorf("county specified more than once, Id: %v", countyId)
+		}
+		ctx.ReqLocSets.CountySet[countyId] = true
+
+		county := ctx.LocMaps.CountyMap[countyId]
+		_, stateSpecifiedInRequest := ctx.ReqLocSets.StateSet[county.StateID]
+		if !stateSpecifiedInRequest {
+			return pollsCounties, fmt.Errorf("no matching State specified in request for County Id %v", countyId)
+		}
+
 		pollsCounties[i] = &models.PollsCounty{
 			CountyID: countyId,
 		}

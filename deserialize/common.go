@@ -2,6 +2,7 @@ package deserialize
 
 import (
 	"fmt"
+	"github.com/diapco/votecube-crud/models"
 	"github.com/valyala/fasthttp"
 	"time"
 )
@@ -12,40 +13,44 @@ var (
 	REFERENCE byte = 2
 )
 
-type IdsToLookUp struct {
-	dimensionIds []int64
-	dimDirIds    []int64
-	directionIds []int64
-	labelIds     []int64
+type LocationMaps struct {
+	ContinentMap map[int64]models.Continent
+	CountryMap   map[int64]models.Country
+	CountyMap    map[int64]models.County
+	StateMap     map[int64]models.State
+	TownMap      map[int64]models.Town
 }
 
-type LocationMaps struct {
-	ContinentMap map[int64]bool
-	CountryMap   map[int64]bool
-	StateMap     map[int64]bool
-	TownMap      map[int64]bool
+type LocationSets struct {
+	ContinentSet map[int64]bool
+	CountrySet   map[int64]bool
+	CountySet    map[int64]bool
+	StateSet     map[int64]bool
+	TownSet      map[int64]bool
 }
 
 type DeserializeContext struct {
-	cursor        *int64
-	data          *[]byte
-	dataLen       int64
-	IdRefs        *IdReferences
-	LocMaps       *LocationMaps
-	Lookups       *IdsToLookUp
-	UserAccountId int64
+	Cursor     *int64
+	Data       *[]byte
+	DataLen    int64
+	IdRefs     *IdReferences
+	LocMaps    *LocationMaps
+	ReqLocSets *LocationSets
+	Request    *Request
 }
 
 type Request struct {
-	ctx  *fasthttp.RequestCtx
-	done chan bool
+	Ctx           *fasthttp.RequestCtx
+	Done          chan bool
+	Index         int
+	UserAccountId int64
 }
 
 type IdReferences struct {
-	dimIdRefs    map[int64][]Request
-	dimDirIdRefs map[int64][]Request
-	dirIdRefs    map[int64][]Request
-	labelIdRefs  map[int64][]Request
+	DimDirIdRefs map[int64]map[int]*Request
+	DimIdRefs    map[int64]map[int]*Request
+	DirIdRefs    map[int64]map[int]*Request
+	LabelIdRefs  map[int64]map[int]*Request
 }
 
 func RStr(ctx *DeserializeContext, err error) (string, error) {
@@ -55,15 +60,15 @@ func RStr(ctx *DeserializeContext, err error) (string, error) {
 		return "", err
 	}
 
-	nextCursor := *ctx.cursor + length
+	nextCursor := *ctx.Cursor + length
 
-	if nextCursor > ctx.dataLen {
+	if nextCursor > ctx.DataLen {
 		return "", fmt.Errorf("out of range data access")
 	}
 
-	theString := string((*ctx.data)[*ctx.cursor:nextCursor])
+	theString := string((*ctx.Data)[*ctx.Cursor:nextCursor])
 
-	*ctx.cursor = nextCursor
+	*ctx.Cursor = nextCursor
 
 	return theString, nil
 }
@@ -73,26 +78,26 @@ func RNum(ctx *DeserializeContext, err error) (int64, error) {
 		return 0, err
 	}
 
-	if *ctx.cursor+1 >= ctx.dataLen {
-		return 0, fmt.Errorf("Out of range data access")
+	if *ctx.Cursor+1 >= ctx.DataLen {
+		return 0, fmt.Errorf("out of range data access")
 	}
 
-	lengthNumBytes := int64((*ctx.data)[*ctx.cursor])
-	*ctx.cursor++
+	lengthNumBytes := int64((*ctx.Data)[*ctx.Cursor])
+	*ctx.Cursor++
 
-	maxLengthNumBytes := *ctx.cursor + lengthNumBytes
-	num := int64((*ctx.data)[*ctx.cursor])
-	*ctx.cursor++
+	maxLengthNumBytes := *ctx.Cursor + lengthNumBytes
+	num := int64((*ctx.Data)[*ctx.Cursor])
+	*ctx.Cursor++
 
-	if *ctx.cursor+maxLengthNumBytes >= ctx.dataLen {
-		return 0, fmt.Errorf("Out of range data access")
+	if *ctx.Cursor+maxLengthNumBytes >= ctx.DataLen {
+		return 0, fmt.Errorf("out of range data access")
 	}
 
-	for i := *ctx.cursor; i < maxLengthNumBytes; i++ {
-		nextByte := int64((*ctx.data)[*ctx.cursor+i])
+	for i := *ctx.Cursor; i < maxLengthNumBytes; i++ {
+		nextByte := int64((*ctx.Data)[*ctx.Cursor+i])
 		shift := uint(8 * i)
 		num = nextByte<<shift + num
-		*ctx.cursor++
+		*ctx.Cursor++
 	}
 
 	return num, nil
@@ -103,12 +108,12 @@ func RByte(ctx *DeserializeContext, err error) (byte, error) {
 		return 0, err
 	}
 
-	if *ctx.cursor+1 >= ctx.dataLen {
-		return 0, fmt.Errorf("Out of range data access")
+	if *ctx.Cursor+1 >= ctx.DataLen {
+		return 0, fmt.Errorf("out of range data access")
 	}
 
-	aByte := (*ctx.data)[*ctx.cursor]
-	*ctx.cursor++
+	aByte := (*ctx.Data)[*ctx.Cursor]
+	*ctx.Cursor++
 
 	return aByte, nil
 }

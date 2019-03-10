@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
 	"github.com/volatiletech/null"
@@ -20,10 +21,17 @@ func DeserializeDimension(ctx *deserialize.DeserializeContext, err error) (model
 	var objectType byte
 	objectType, err = deserialize.RByte(ctx, err)
 
-	var dimensionId int64
-	dimensionId, err = deserialize.RNum(ctx, err)
-
 	if objectType == deserialize.REFERENCE {
+		var dimensionId int64
+		dimensionId, err = deserialize.RNum(ctx, err)
+
+		_, dimensionAlreadySpecifiedInRequest := ctx.IdRefs.DimDirIdRefs[dimensionId][ctx.Request.Index]
+		if dimensionAlreadySpecifiedInRequest {
+			return dimension, 0, fmt.Errorf("multiple referenes to a Dimension in same Create Poll Request")
+		}
+
+		ctx.IdRefs.DimIdRefs[dimensionId][ctx.Request.Index] = ctx.Request
+
 		return dimension, dimensionId, err
 	} else {
 		//var description string
@@ -49,7 +57,7 @@ func DeserializeDimension(ctx *deserialize.DeserializeContext, err error) (model
 		return models.Dimension{
 			DimensionName:     name,
 			ParentDimensionID: parentDimIdReference,
-			UserAccountID:     ctx.UserAccountId,
+			UserAccountID:     ctx.Request.UserAccountId,
 		}, 0, nil
 	}
 

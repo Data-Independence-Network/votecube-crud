@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
 	"github.com/volatiletech/null"
@@ -23,6 +24,13 @@ func DeserializeDirection(ctx *deserialize.DeserializeContext, err error) (model
 	if objectType == deserialize.REFERENCE {
 		var directionId int64
 		directionId, err = deserialize.RNum(ctx, err)
+
+		_, directionAlreadySpecifiedInRequest := ctx.IdRefs.DimDirIdRefs[directionId][ctx.Request.Index]
+		if directionAlreadySpecifiedInRequest {
+			return direction, 0, fmt.Errorf("multiple referenes to a Direction in same Create Poll Request")
+		}
+
+		ctx.IdRefs.DimDirIdRefs[directionId][ctx.Request.Index] = ctx.Request
 
 		return direction, directionId, err
 	} else {
@@ -49,7 +57,7 @@ func DeserializeDirection(ctx *deserialize.DeserializeContext, err error) (model
 		return models.Direction{
 			DirectionDescription: name,
 			ParentDirectionID:    parentDirIdReference,
-			UserAccountID:        ctx.UserAccountId,
+			UserAccountID:        ctx.Request.UserAccountId,
 		}, 0, nil
 	}
 }

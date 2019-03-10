@@ -38,11 +38,11 @@ func DeserializePollLabels(ctx *deserialize.DeserializeContext, err error) (mode
 		if labelId != 0 {
 			pollsLabels[i] = &models.PollsLabel{
 				LabelID:       labelId,
-				UserAccountID: ctx.UserAccountId,
+				UserAccountID: ctx.Request.UserAccountId,
 			}
 		} else {
 			pollsLabel := &models.PollsLabel{
-				UserAccountID: ctx.UserAccountId,
+				UserAccountID: ctx.Request.UserAccountId,
 			}
 
 			pollsLabel.R.Label = &label

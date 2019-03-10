@@ -39,6 +39,18 @@ func DeserializePollTowns(ctx *deserialize.DeserializeContext, err error) (model
 			return pollsTowns, fmt.Errorf("invalid town id: %v", townId)
 		}
 
+		_, townAlreadySpecifiedInRequest := ctx.ReqLocSets.TownSet[townId]
+		if townAlreadySpecifiedInRequest {
+			return pollsTowns, fmt.Errorf("town specified more than once, id: %v", townId)
+		}
+		ctx.ReqLocSets.TownSet[townId] = true
+
+		town := ctx.LocMaps.TownMap[townId]
+		_, stateSpecifiedInRequest := ctx.ReqLocSets.StateSet[town.StateID]
+		if !stateSpecifiedInRequest {
+			return pollsTowns, fmt.Errorf("no matching State specified in request for Town Id %v", townId)
+		}
+
 		pollsTowns[i] = &models.PollsTown{
 			TownID: townId,
 		}

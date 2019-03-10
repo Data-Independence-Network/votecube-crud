@@ -650,6 +650,84 @@ func testStateToManyPollsStates(t *testing.T) {
 	}
 }
 
+func testStateToManyTowns(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a State
+	var b, c Town
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, stateDBTypes, true, stateColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize State struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, townDBTypes, false, townColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, townDBTypes, false, townColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.StateID = a.StateID
+	c.StateID = a.StateID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	town, err := a.Towns().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range town {
+		if v.StateID == b.StateID {
+			bFound = true
+		}
+		if v.StateID == c.StateID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := StateSlice{&a}
+	if err = a.L.LoadTowns(ctx, tx, false, (*[]*State)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Towns); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Towns = nil
+	if err = a.L.LoadTowns(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Towns); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", town)
+	}
+}
+
 func testStateToManyAddOpCounties(t *testing.T) {
 	var err error
 
@@ -792,6 +870,81 @@ func testStateToManyAddOpPollsStates(t *testing.T) {
 		}
 
 		count, err := a.PollsStates().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testStateToManyAddOpTowns(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a State
+	var b, c, d, e Town
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, stateDBTypes, false, strmangle.SetComplement(statePrimaryKeyColumns, stateColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Town{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, townDBTypes, false, strmangle.SetComplement(townPrimaryKeyColumns, townColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Town{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddTowns(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.StateID != first.StateID {
+			t.Error("foreign key was wrong value", a.StateID, first.StateID)
+		}
+		if a.StateID != second.StateID {
+			t.Error("foreign key was wrong value", a.StateID, second.StateID)
+		}
+
+		if first.R.State != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.State != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Towns[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Towns[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Towns().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}

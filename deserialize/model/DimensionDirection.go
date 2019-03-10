@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
 )
@@ -15,10 +16,17 @@ func DeserializeDimDir(ctx *deserialize.DeserializeContext, err error) (models.D
 	var objectType byte
 	objectType, err = deserialize.RByte(ctx, err)
 
-	var dimDirId int64
-	dimDirId, err = deserialize.RNum(ctx, err)
-
 	if objectType == deserialize.REFERENCE {
+		var dimDirId int64
+		dimDirId, err = deserialize.RNum(ctx, err)
+
+		_, dimDirAlreadySpecifiedInRequest := ctx.IdRefs.DimDirIdRefs[dimDirId][ctx.Request.Index]
+		if dimDirAlreadySpecifiedInRequest {
+			return dimensionDirection, 0, fmt.Errorf("multiple referenes to a DimensionDirection in same Create Poll Request")
+		}
+
+		ctx.IdRefs.DimDirIdRefs[dimDirId][ctx.Request.Index] = ctx.Request
+
 		return dimensionDirection, dimDirId, nil
 	}
 
@@ -35,7 +43,7 @@ func DeserializeDimDir(ctx *deserialize.DeserializeContext, err error) (models.D
 	}
 
 	dimensionDirection = models.DimensionDirection{
-		UserAccountID: ctx.UserAccountId,
+		UserAccountID: ctx.Request.UserAccountId,
 	}
 
 	if dimId != 0 {

@@ -1,6 +1,7 @@
 package poll
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/models"
 )
@@ -23,6 +24,13 @@ func DeserializeLabel(ctx *deserialize.DeserializeContext, err error) (models.La
 		var labelId int64
 		labelId, err = deserialize.RNum(ctx, err)
 
+		_, labelAlreadySpecifiedInRequest := ctx.IdRefs.LabelIdRefs[labelId][ctx.Request.Index]
+		if labelAlreadySpecifiedInRequest {
+			return label, 0, fmt.Errorf("multiple referenes to a Label in same Create Poll Request")
+		}
+
+		ctx.IdRefs.LabelIdRefs[labelId][ctx.Request.Index] = ctx.Request
+
 		return label, labelId, err
 	} else {
 		//var description string
@@ -32,7 +40,7 @@ func DeserializeLabel(ctx *deserialize.DeserializeContext, err error) (models.La
 
 		return models.Label{
 			Name:          name,
-			UserAccountID: ctx.UserAccountId,
+			UserAccountID: ctx.Request.UserAccountId,
 		}, 0, err
 	}
 
