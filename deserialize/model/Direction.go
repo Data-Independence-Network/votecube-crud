@@ -11,7 +11,7 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeDirection(ctx *deserialize.DeserializeContext, err error) (models.Direction, int64, error) {
+func DeserializeDirection(ctx *deserialize.CreatePollDeserializeContext, err error) (models.Direction, int64, error) {
 	var direction models.Direction
 
 	if err != nil {
@@ -27,7 +27,7 @@ func DeserializeDirection(ctx *deserialize.DeserializeContext, err error) (model
 
 		_, directionAlreadySpecifiedInRequest := ctx.IdRefs.DimDirIdRefs[directionId][ctx.Request.Index]
 		if directionAlreadySpecifiedInRequest {
-			return direction, 0, fmt.Errorf("multiple referenes to a Direction in same Create Poll Request")
+			return direction, 0, fmt.Errorf("multiple referenes to a Direction in same Create Poll CreatePollRequest")
 		}
 
 		ctx.IdRefs.DimDirIdRefs[directionId][ctx.Request.Index] = ctx.Request

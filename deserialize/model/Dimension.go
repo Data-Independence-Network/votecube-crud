@@ -11,7 +11,7 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeDimension(ctx *deserialize.DeserializeContext, err error) (models.Dimension, int64, error) {
+func DeserializeDimension(ctx *deserialize.CreatePollDeserializeContext, err error) (models.Dimension, int64, error) {
 	var dimension models.Dimension
 
 	if err != nil {
@@ -27,7 +27,7 @@ func DeserializeDimension(ctx *deserialize.DeserializeContext, err error) (model
 
 		_, dimensionAlreadySpecifiedInRequest := ctx.IdRefs.DimDirIdRefs[dimensionId][ctx.Request.Index]
 		if dimensionAlreadySpecifiedInRequest {
-			return dimension, 0, fmt.Errorf("multiple referenes to a Dimension in same Create Poll Request")
+			return dimension, 0, fmt.Errorf("multiple referenes to a Dimension in same Create Poll CreatePollRequest")
 		}
 
 		ctx.IdRefs.DimIdRefs[dimensionId][ctx.Request.Index] = ctx.Request

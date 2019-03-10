@@ -15,7 +15,7 @@ type PollDimDirRefs struct {
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializePollDimDirs(ctx *deserialize.DeserializeContext, err error) (models.PollsDimensionsDirectionSlice, error) {
+func DeserializePollDimDirs(ctx *deserialize.CreatePollDeserializeContext, err error) (models.PollsDimensionsDirectionSlice, error) {
 	var pollsDimDirRefs models.PollsDimensionsDirectionSlice
 	var numPollsDimDirs int64
 

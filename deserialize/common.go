@@ -29,31 +29,36 @@ type LocationSets struct {
 	TownSet      map[int64]bool
 }
 
-type DeserializeContext struct {
-	Cursor     *int64
-	Data       *[]byte
-	DataLen    int64
-	IdRefs     *IdReferences
-	LocMaps    *LocationMaps
-	ReqLocSets *LocationSets
-	Request    *Request
+type RequestInput struct {
+	Cursor  *int64
+	Data    *[]byte
+	DataLen int64
 }
 
-type Request struct {
+type CreatePollDeserializeContext struct {
+	RequestInput
+	IdRefs     *CreatePollIdReferences
+	LocMaps    *LocationMaps
+	ReqLocSets *LocationSets
+	Request    *CreatePollRequest
+}
+
+type CreatePollRequest struct {
 	Ctx           *fasthttp.RequestCtx
 	Done          chan bool
 	Index         int
+	Poll          models.Poll
 	UserAccountId int64
 }
 
-type IdReferences struct {
-	DimDirIdRefs map[int64]map[int]*Request
-	DimIdRefs    map[int64]map[int]*Request
-	DirIdRefs    map[int64]map[int]*Request
-	LabelIdRefs  map[int64]map[int]*Request
+type CreatePollIdReferences struct {
+	DimDirIdRefs map[int64]map[int]*CreatePollRequest
+	DimIdRefs    map[int64]map[int]*CreatePollRequest
+	DirIdRefs    map[int64]map[int]*CreatePollRequest
+	LabelIdRefs  map[int64]map[int]*CreatePollRequest
 }
 
-func RStr(ctx *DeserializeContext, err error) (string, error) {
+func RStr(ctx *CreatePollDeserializeContext, err error) (string, error) {
 	length, err := RNum(ctx, err)
 
 	if err != nil {
@@ -73,7 +78,7 @@ func RStr(ctx *DeserializeContext, err error) (string, error) {
 	return theString, nil
 }
 
-func RNum(ctx *DeserializeContext, err error) (int64, error) {
+func RNum(ctx *CreatePollDeserializeContext, err error) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
@@ -103,7 +108,7 @@ func RNum(ctx *DeserializeContext, err error) (int64, error) {
 	return num, nil
 }
 
-func RByte(ctx *DeserializeContext, err error) (byte, error) {
+func RByte(ctx *CreatePollDeserializeContext, err error) (byte, error) {
 	if err != nil {
 		return 0, err
 	}
@@ -118,7 +123,7 @@ func RByte(ctx *DeserializeContext, err error) (byte, error) {
 	return aByte, nil
 }
 
-func RTime(ctx *DeserializeContext, err error) (time.Time, error) {
+func RTime(ctx *CreatePollDeserializeContext, err error) (time.Time, error) {
 	millis, err := RNum(ctx, err)
 
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 /**
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
-func DeserializePollCountries(ctx *deserialize.DeserializeContext, err error) (models.PollsCountrySlice, error) {
+func DeserializePollCountries(ctx *deserialize.CreatePollDeserializeContext, err error) (models.PollsCountrySlice, error) {
 	var pollsCountries models.PollsCountrySlice
 	var numPollsCountries int64
 

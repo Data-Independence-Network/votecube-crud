@@ -10,7 +10,7 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeLabel(ctx *deserialize.DeserializeContext, err error) (models.Label, int64, error) {
+func DeserializeLabel(ctx *deserialize.CreatePollDeserializeContext, err error) (models.Label, int64, error) {
 	var label models.Label
 
 	if err != nil {
@@ -26,7 +26,7 @@ func DeserializeLabel(ctx *deserialize.DeserializeContext, err error) (models.La
 
 		_, labelAlreadySpecifiedInRequest := ctx.IdRefs.LabelIdRefs[labelId][ctx.Request.Index]
 		if labelAlreadySpecifiedInRequest {
-			return label, 0, fmt.Errorf("multiple referenes to a Label in same Create Poll Request")
+			return label, 0, fmt.Errorf("multiple referenes to a Label in same Create Poll CreatePollRequest")
 		}
 
 		ctx.IdRefs.LabelIdRefs[labelId][ctx.Request.Index] = ctx.Request

@@ -10,7 +10,7 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeDimDir(ctx *deserialize.DeserializeContext, err error) (models.DimensionDirection, int64, error) {
+func DeserializeDimDir(ctx *deserialize.CreatePollDeserializeContext, err error) (models.DimensionDirection, int64, error) {
 	var dimensionDirection models.DimensionDirection
 
 	var objectType byte
@@ -22,7 +22,7 @@ func DeserializeDimDir(ctx *deserialize.DeserializeContext, err error) (models.D
 
 		_, dimDirAlreadySpecifiedInRequest := ctx.IdRefs.DimDirIdRefs[dimDirId][ctx.Request.Index]
 		if dimDirAlreadySpecifiedInRequest {
-			return dimensionDirection, 0, fmt.Errorf("multiple referenes to a DimensionDirection in same Create Poll Request")
+			return dimensionDirection, 0, fmt.Errorf("multiple referenes to a DimensionDirection in same Create Poll CreatePollRequest")
 		}
 
 		ctx.IdRefs.DimDirIdRefs[dimDirId][ctx.Request.Index] = ctx.Request

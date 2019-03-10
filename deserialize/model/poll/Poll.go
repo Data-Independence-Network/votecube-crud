@@ -10,7 +10,7 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializePoll(ctx *deserialize.DeserializeContext, err error) (models.Poll, error) {
+func DeserializePoll(ctx *deserialize.CreatePollDeserializeContext, err error) (models.Poll, error) {
 	var poll models.Poll
 
 	if err != nil {
