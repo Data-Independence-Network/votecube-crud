@@ -71,7 +71,13 @@ func RStr(ctx *CreatePollDeserializeContext, err error) (string, error) {
 		return "", fmt.Errorf("out of range data access")
 	}
 
-	theString := string((*ctx.Data)[*ctx.Cursor:nextCursor])
+	var theString string
+
+	if length == 0 {
+		theString = string((*ctx.Data)[*ctx.Cursor:nextCursor])
+	} else {
+		theString = ""
+	}
 
 	*ctx.Cursor = nextCursor
 
@@ -89,6 +95,10 @@ func RNum(ctx *CreatePollDeserializeContext, err error) (int64, error) {
 
 	lengthNumBytes := int64((*ctx.Data)[*ctx.Cursor])
 	*ctx.Cursor++
+
+	if lengthNumBytes == 0 {
+		return 0, nil
+	}
 
 	maxLengthNumBytes := *ctx.Cursor + lengthNumBytes
 	num := int64((*ctx.Data)[*ctx.Cursor])

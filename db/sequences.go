@@ -2,6 +2,7 @@ package db
 
 import (
 	"github.com/diapco/votecube-crud/crud"
+	"github.com/diapco/votecube-crud/models"
 	"github.com/diapco/votecube-crud/sequence"
 )
 
@@ -26,7 +27,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "dimension_id",
+		Name:         models.DimensionColumns.DimensionID,
 	}
 
 	DimensionDirectionId = sequence.Sequence{
@@ -34,7 +35,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "dimension_direction_id",
+		Name:         models.DimensionDirectionColumns.DimensionDirectionID,
 	}
 
 	DirectionId = sequence.Sequence{
@@ -42,7 +43,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "direction_id",
+		Name:         models.DirectionColumns.DirectionID,
 	}
 
 	LabelId = sequence.Sequence{
@@ -50,7 +51,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "label_id",
+		Name:         models.LabelColumns.LabelID,
 	}
 
 	PollContinentId = sequence.Sequence{
@@ -58,7 +59,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_continent_id",
+		Name:         models.PollsContinentColumns.PollContinentID,
 	}
 
 	PollCountryId = sequence.Sequence{
@@ -66,7 +67,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_country_id",
+		Name:         models.PollsCountryColumns.PollCountryID,
 	}
 
 	PollCountyId = sequence.Sequence{
@@ -74,7 +75,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_county_id",
+		Name:         models.PollsCountyColumns.PollCountyID,
 	}
 
 	PollDimensionDirectionId = sequence.Sequence{
@@ -82,7 +83,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_dimension_direction_id",
+		Name:         models.PollsDimensionsDirectionColumns.PollDimensionDirectionID,
 	}
 
 	PollLabelId = sequence.Sequence{
@@ -90,7 +91,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_label_id",
+		Name:         models.PollsLabelColumns.PollLabelID,
 	}
 
 	PollId = sequence.Sequence{
@@ -98,7 +99,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_id",
+		Name:         models.PollColumns.PollID,
 	}
 
 	PollStateId = sequence.Sequence{
@@ -106,7 +107,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_state_id",
+		Name:         models.PollsStateColumns.PollStateID,
 	}
 
 	PollTownId = sequence.Sequence{
@@ -114,7 +115,7 @@ func SetupSequences() {
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         "poll_town_id",
+		Name:         models.PollsTownColumns.PollTownID,
 	}
 
 	numSequences := 12

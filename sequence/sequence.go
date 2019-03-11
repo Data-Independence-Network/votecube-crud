@@ -16,8 +16,31 @@ type Sequence struct {
 }
 
 type SequenceBlock struct {
+	End    int64
 	Start  int64
 	Length int64
+}
+
+type SequenceCursor struct {
+	currentBlockIndex int
+	currentBlock      *SequenceBlock
+	blocks            []SequenceBlock
+	currentId         int64
+}
+
+func (cur *SequenceCursor) Next() int64 {
+	if cur.currentId == cur.currentBlock.End {
+		cur.currentBlockIndex += 1
+		if cur.currentBlockIndex == len(cur.blocks) {
+			panic(fmt.Errorf("ran out of values in SequenceCursor"))
+		}
+		cur.currentBlock = &cur.blocks[cur.currentBlockIndex]
+		cur.currentId = cur.currentBlock.Start
+	} else {
+		cur.currentId += 1
+	}
+
+	return cur.currentId
 }
 
 type SequenceError struct {
@@ -69,11 +92,21 @@ func (seq *Sequence) getNextBlock() {
 		Start:  newMax - seq.IncrementBy,
 		Length: seq.IncrementBy,
 	}
-
 }
 
-func (seq *Sequence) GetBlocks(numVals int64) []SequenceBlock {
-	if seq.CurrentValue+numVals > seq.Max {
+func (seq *Sequence) GetCursor(numVals int) SequenceCursor {
+	blocks := seq.getBlocks(numVals)
+
+	return SequenceCursor{
+		blocks:            blocks,
+		currentBlockIndex: 0,
+		currentId:         blocks[0].Start,
+	}
+}
+
+func (seq *Sequence) getBlocks(numVals int) []SequenceBlock {
+	numValues := int64(numVals)
+	if seq.CurrentValue+numValues > seq.Max {
 		if seq.nextBlock == nil {
 			log.Fatalf("Could not obtain sequences for %s in time", seq.Name)
 			panic(nil)
@@ -90,7 +123,7 @@ func (seq *Sequence) GetBlocks(numVals int64) []SequenceBlock {
 
 		if seq.Max > seq.CurrentValue {
 			acquiredRange = seq.Max - seq.CurrentValue
-			existingSeqBlock = &SequenceBlock{Start: seq.CurrentValue + 1, Length: acquiredRange}
+			existingSeqBlock = &SequenceBlock{Start: seq.CurrentValue + 1, Length: acquiredRange, End: seq.CurrentValue + acquiredRange}
 		}
 
 		seq.CurrentValue = seq.nextBlock.Start
@@ -99,11 +132,10 @@ func (seq *Sequence) GetBlocks(numVals int64) []SequenceBlock {
 
 		go seq.getNextBlock()
 
-		newVals := numVals - acquiredRange
+		newVals := numValues - acquiredRange
+		newSeqBlock := SequenceBlock{Start: seq.CurrentValue + 1, Length: newVals, End: seq.CurrentValue + newVals}
 
-		newSeqBlock := SequenceBlock{Start: seq.CurrentValue + 1, Length: newVals}
-
-		seq.CurrentValue += newVals
+		seq.CurrentValue += numValues
 
 		if existingSeqBlock == nil {
 			return []SequenceBlock{newSeqBlock}
@@ -111,9 +143,9 @@ func (seq *Sequence) GetBlocks(numVals int64) []SequenceBlock {
 			return []SequenceBlock{*existingSeqBlock, newSeqBlock}
 		}
 	} else {
-		newSeqBlock := SequenceBlock{Start: seq.CurrentValue + 1, Length: numVals}
+		newSeqBlock := SequenceBlock{Start: seq.CurrentValue + 1, Length: numValues, End: seq.CurrentValue + numValues}
 
-		seq.CurrentValue += numVals
+		seq.CurrentValue += numValues
 
 		return []SequenceBlock{newSeqBlock}
 	}
