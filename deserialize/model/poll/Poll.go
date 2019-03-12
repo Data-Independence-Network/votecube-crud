@@ -1,6 +1,7 @@
 package poll
 
 import (
+	"fmt"
 	"github.com/diapco/votecube-crud/deserialize"
 	"github.com/diapco/votecube-crud/deserialize/model/location"
 	"github.com/diapco/votecube-crud/models"
@@ -20,6 +21,10 @@ func DeserializePoll(ctx *deserialize.CreatePollDeserializeContext, err error) (
 	poll.EndDate, err = deserialize.RTime(ctx, err)
 	poll.PollTitle, err = deserialize.RStr(ctx, err)
 
+	if len(poll.PollTitle) < 3 {
+		return poll, fmt.Errorf("poll Title is less than 3 characters long")
+	}
+
 	poll.R.PollsContinents, err = location.DeserializePollContinents(ctx, err)
 	poll.R.PollsCountries, err = location.DeserializePollCountries(ctx, err)
 	poll.R.PollsStates, err = location.DeserializePollStates(ctx, err)
@@ -27,6 +32,24 @@ func DeserializePoll(ctx *deserialize.CreatePollDeserializeContext, err error) (
 	poll.R.PollsTowns, err = location.DeserializePollTowns(ctx, err)
 	poll.R.PollsDimensionsDirections, err = DeserializePollDimDirs(ctx, err)
 	poll.R.PollsLabels, err = DeserializePollLabels(ctx, err)
+
+	poll.StartDate, err = deserialize.RTime(ctx, err)
+
+	if poll.StartDate.Before(ctx.Tomorrow) {
+		return poll, fmt.Errorf("provided Start Date is before tomorrow: %v", poll.StartDate)
+	}
+
+	if poll.EndDate.Before(poll.StartDate) {
+		return poll, fmt.Errorf("provided End Date is before Start Date: %v", poll.StartDate)
+	}
+
+	poll.ThemeID, err = deserialize.RNum(ctx, err)
+	_, themeIdExists := ctx.LocMaps.ThemeMap[poll.ThemeID]
+
+	if !themeIdExists {
+		return poll, fmt.Errorf("provided Theme ID does not exist: %v", poll.ThemeID)
+	}
+
 	poll.UserAccountID = ctx.Request.UserAccountId
 
 	return poll, err

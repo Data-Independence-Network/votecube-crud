@@ -26,30 +26,18 @@ func DeserializePollLabels(ctx *deserialize.CreatePollDeserializeContext, err er
 	pollsLabels = make(models.PollsLabelSlice, numPollsLabels)
 
 	for i := int64(0); i < numPollsLabels; i++ {
-		var label models.Label
-		var labelId int64
+		pollLabel := models.PollsLabel{
+			UserAccountID: ctx.Request.UserAccountId,
+		}
 
-		label, labelId, err = DeserializeLabel(ctx, err)
+		err = DeserializeLabel(&pollLabel, ctx, err)
 
 		if err != nil {
 			return pollsLabels, err
 		}
 
-		if labelId != 0 {
-			pollsLabels[i] = &models.PollsLabel{
-				LabelID:       labelId,
-				UserAccountID: ctx.Request.UserAccountId,
-			}
-		} else {
-			pollsLabel := &models.PollsLabel{
-				UserAccountID: ctx.Request.UserAccountId,
-			}
-
-			pollsLabel.R.Label = &label
-
-			pollsLabels[i] = pollsLabel
-		}
-
+		pollLabel.UserAccountID = ctx.Request.UserAccountId
+		pollsLabels[i] = &pollLabel
 	}
 
 	return pollsLabels, err

@@ -10,11 +10,9 @@ import (
  * Please try to keep properties serialized in UI-model alphabetic order. :)
  */
 
-func DeserializeLabel(ctx *deserialize.CreatePollDeserializeContext, err error) (models.Label, int64, error) {
-	var label models.Label
-
+func DeserializeLabel(pollLabel *models.PollsLabel, ctx *deserialize.CreatePollDeserializeContext, err error) error {
 	if err != nil {
-		return label, 0, err
+		return err
 	}
 
 	var objectType byte
@@ -26,22 +24,54 @@ func DeserializeLabel(ctx *deserialize.CreatePollDeserializeContext, err error) 
 
 		_, labelAlreadySpecifiedInRequest := ctx.IdRefs.LabelIdRefs[labelId][ctx.Request.Index]
 		if labelAlreadySpecifiedInRequest {
-			return label, 0, fmt.Errorf("multiple referenes to a Label in same Create Poll CreatePollRequest")
+			return fmt.Errorf("multiple references to a Label in same Create Poll CreatePollRequest")
 		}
+
+		pollLabel.LabelID = labelId
 
 		ctx.IdRefs.LabelIdRefs[labelId][ctx.Request.Index] = ctx.Request
 
-		return label, labelId, err
+		return nil
 	} else {
 		//var description string
 		//description, err = deserialize.RStr(data, cursor, dataLen, err)
 		var name string
 		name, err = deserialize.RStr(ctx, err)
 
-		return models.Label{
-			Name:          name,
-			UserAccountID: ctx.Request.UserAccountId,
-		}, 0, err
+		if err != nil {
+			return err
+		}
+
+		nameLength := len(name)
+
+		if nameLength < 3 {
+			return fmt.Errorf("the Label Name is less than 3 characters long")
+		} else if nameLength > 40 {
+			return fmt.Errorf("the Label Name is greater than 40 characters long")
+		}
+
+		_, requestAlreadyHasLabel := ctx.RequestNewLabelMapByName[name]
+
+		if requestAlreadyHasLabel {
+			return fmt.Errorf("the Label Name is specified more than once in the Request")
+		}
+		ctx.RequestNewLabelMapByName[name] = pollLabel
+
+		ctxForName, pollLabelsForNameExist := ctx.CtxMapByLabelName[name]
+
+		if pollLabelsForNameExist {
+			pollLabel.R.Label = ctxForName[0].RequestNewLabelMapByName[name].R.Label
+		} else {
+			pollLabel.R.Label = &models.Label{
+				Name:          name,
+				UserAccountID: ctx.Request.UserAccountId,
+			}
+			ctxForName = make([]*deserialize.CreatePollDeserializeContext, 1)
+			ctxForName[0] = ctx
+			ctx.CtxMapByLabelName[name] = ctxForName
+		}
+
+		return nil
 	}
 
 }

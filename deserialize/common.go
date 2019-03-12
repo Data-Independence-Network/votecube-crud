@@ -36,11 +36,16 @@ type RequestInput struct {
 }
 
 type CreatePollDeserializeContext struct {
+	IdRefs            *CreatePollIdReferences
+	Index             int
+	LocMaps           *LocationMaps
+	CtxMapByLabelName map[string][]*CreatePollDeserializeContext
+	ReqLocSets        *LocationSets
+	Request           *CreatePollRequest
 	RequestInput
-	IdRefs     *CreatePollIdReferences
-	LocMaps    *LocationMaps
-	ReqLocSets *LocationSets
-	Request    *CreatePollRequest
+	RequestNewLabelMapByName map[string]*models.PollsLabel
+	ThemeMap                 *map[int64]models.Theme
+	Tomorrow                 time.Time
 }
 
 type CreatePollRequest struct {
@@ -52,10 +57,11 @@ type CreatePollRequest struct {
 }
 
 type CreatePollIdReferences struct {
-	DimDirIdRefs map[int64]map[int]*CreatePollRequest
-	DimIdRefs    map[int64]map[int]*CreatePollRequest
-	DirIdRefs    map[int64]map[int]*CreatePollRequest
-	LabelIdRefs  map[int64]map[int]*CreatePollRequest
+	DimDirIdRefs     map[int64]map[int]*CreatePollRequest
+	DimIdRefs        map[int64]map[int]*CreatePollRequest
+	DirIdRefs        map[int64]map[int]*CreatePollRequest
+	LabelIdRefs      map[int64]map[int]*CreatePollRequest
+	ParentPollIdRefs map[int64]map[int]*CreatePollRequest
 }
 
 func RStr(ctx *CreatePollDeserializeContext, err error) (string, error) {
