@@ -22,67 +22,67 @@ import (
 
 // Vote is an object representing the database table.
 type Vote struct {
-	VoteID                    int64     `boil:"vote_id" json:"vote_id" toml:"vote_id" yaml:"vote_id"`
-	UserAccountID             int64     `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
-	PollID                    int64     `boil:"poll_id" json:"poll_id" toml:"poll_id" yaml:"poll_id"`
-	XPollDimensionDirectionID int64     `boil:"x_poll_dimension_direction_id" json:"x_poll_dimension_direction_id" toml:"x_poll_dimension_direction_id" yaml:"x_poll_dimension_direction_id"`
-	YPollDimensionDirectionID int64     `boil:"y_poll_dimension_direction_id" json:"y_poll_dimension_direction_id" toml:"y_poll_dimension_direction_id" yaml:"y_poll_dimension_direction_id"`
-	ZPollDimensionDirectionID int64     `boil:"z_poll_dimension_direction_id" json:"z_poll_dimension_direction_id" toml:"z_poll_dimension_direction_id" yaml:"z_poll_dimension_direction_id"`
-	XShare                    int16     `boil:"x_share" json:"x_share" toml:"x_share" yaml:"x_share"`
-	YShare                    int16     `boil:"y_share" json:"y_share" toml:"y_share" yaml:"y_share"`
-	ZShare                    int16     `boil:"z_share" json:"z_share" toml:"z_share" yaml:"z_share"`
-	CreatedAt                 time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	VoteID                int64     `boil:"vote_id" json:"vote_id" toml:"vote_id" yaml:"vote_id"`
+	UserAccountID         int64     `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
+	PollID                int64     `boil:"poll_id" json:"poll_id" toml:"poll_id" yaml:"poll_id"`
+	XPollFactorPositionID int64     `boil:"x_poll_factor_position_id" json:"x_poll_factor_position_id" toml:"x_poll_factor_position_id" yaml:"x_poll_factor_position_id"`
+	YPollFactorPositionID int64     `boil:"y_poll_factor_position_id" json:"y_poll_factor_position_id" toml:"y_poll_factor_position_id" yaml:"y_poll_factor_position_id"`
+	ZPollFactorPositionID int64     `boil:"z_poll_factor_position_id" json:"z_poll_factor_position_id" toml:"z_poll_factor_position_id" yaml:"z_poll_factor_position_id"`
+	XShare                int16     `boil:"x_share" json:"x_share" toml:"x_share" yaml:"x_share"`
+	YShare                int16     `boil:"y_share" json:"y_share" toml:"y_share" yaml:"y_share"`
+	ZShare                int16     `boil:"z_share" json:"z_share" toml:"z_share" yaml:"z_share"`
+	CreatedAt             time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
 	R *voteR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L voteL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var VoteColumns = struct {
-	VoteID                    string
-	UserAccountID             string
-	PollID                    string
-	XPollDimensionDirectionID string
-	YPollDimensionDirectionID string
-	ZPollDimensionDirectionID string
-	XShare                    string
-	YShare                    string
-	ZShare                    string
-	CreatedAt                 string
+	VoteID                string
+	UserAccountID         string
+	PollID                string
+	XPollFactorPositionID string
+	YPollFactorPositionID string
+	ZPollFactorPositionID string
+	XShare                string
+	YShare                string
+	ZShare                string
+	CreatedAt             string
 }{
-	VoteID:                    "vote_id",
-	UserAccountID:             "user_account_id",
-	PollID:                    "poll_id",
-	XPollDimensionDirectionID: "x_poll_dimension_direction_id",
-	YPollDimensionDirectionID: "y_poll_dimension_direction_id",
-	ZPollDimensionDirectionID: "z_poll_dimension_direction_id",
-	XShare:                    "x_share",
-	YShare:                    "y_share",
-	ZShare:                    "z_share",
-	CreatedAt:                 "created_at",
+	VoteID:                "vote_id",
+	UserAccountID:         "user_account_id",
+	PollID:                "poll_id",
+	XPollFactorPositionID: "x_poll_factor_position_id",
+	YPollFactorPositionID: "y_poll_factor_position_id",
+	ZPollFactorPositionID: "z_poll_factor_position_id",
+	XShare:                "x_share",
+	YShare:                "y_share",
+	ZShare:                "z_share",
+	CreatedAt:             "created_at",
 }
 
 // VoteRels is where relationship names are stored.
 var VoteRels = struct {
-	UserAccount             string
-	Poll                    string
-	ZPollDimensionDirection string
-	YPollDimensionDirection string
-	XPollDimensionDirection string
+	UserAccount         string
+	Poll                string
+	ZPollFactorPosition string
+	YPollFactorPosition string
+	XPollFactorPosition string
 }{
-	UserAccount:             "UserAccount",
-	Poll:                    "Poll",
-	ZPollDimensionDirection: "ZPollDimensionDirection",
-	YPollDimensionDirection: "YPollDimensionDirection",
-	XPollDimensionDirection: "XPollDimensionDirection",
+	UserAccount:         "UserAccount",
+	Poll:                "Poll",
+	ZPollFactorPosition: "ZPollFactorPosition",
+	YPollFactorPosition: "YPollFactorPosition",
+	XPollFactorPosition: "XPollFactorPosition",
 }
 
 // voteR is where relationships are stored.
 type voteR struct {
-	UserAccount             *UserAccount
-	Poll                    *Poll
-	ZPollDimensionDirection *PollsDimensionsDirection
-	YPollDimensionDirection *PollsDimensionsDirection
-	XPollDimensionDirection *PollsDimensionsDirection
+	UserAccount         *UserAccount
+	Poll                *Poll
+	ZPollFactorPosition *PollsFactorsPosition
+	YPollFactorPosition *PollsFactorsPosition
+	XPollFactorPosition *PollsFactorsPosition
 }
 
 // NewStruct creates a new relationship struct
@@ -94,8 +94,8 @@ func (*voteR) NewStruct() *voteR {
 type voteL struct{}
 
 var (
-	voteColumns               = []string{"vote_id", "user_account_id", "poll_id", "x_poll_dimension_direction_id", "y_poll_dimension_direction_id", "z_poll_dimension_direction_id", "x_share", "y_share", "z_share", "created_at"}
-	voteColumnsWithoutDefault = []string{"vote_id", "user_account_id", "poll_id", "x_poll_dimension_direction_id", "y_poll_dimension_direction_id", "z_poll_dimension_direction_id", "x_share", "y_share", "z_share", "created_at"}
+	voteColumns               = []string{"vote_id", "user_account_id", "poll_id", "x_poll_factor_position_id", "y_poll_factor_position_id", "z_poll_factor_position_id", "x_share", "y_share", "z_share", "created_at"}
+	voteColumnsWithoutDefault = []string{"vote_id", "user_account_id", "poll_id", "x_poll_factor_position_id", "y_poll_factor_position_id", "z_poll_factor_position_id", "x_share", "y_share", "z_share", "created_at"}
 	voteColumnsWithDefault    = []string{}
 	votePrimaryKeyColumns     = []string{"vote_id"}
 )
@@ -363,44 +363,44 @@ func (o *Vote) Poll(mods ...qm.QueryMod) pollQuery {
 	return query
 }
 
-// ZPollDimensionDirection pointed to by the foreign key.
-func (o *Vote) ZPollDimensionDirection(mods ...qm.QueryMod) pollsDimensionsDirectionQuery {
+// ZPollFactorPosition pointed to by the foreign key.
+func (o *Vote) ZPollFactorPosition(mods ...qm.QueryMod) pollsFactorsPositionQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("poll_dimension_direction_id=?", o.ZPollDimensionDirectionID),
+		qm.Where("poll_factor_position_id=?", o.ZPollFactorPositionID),
 	}
 
 	queryMods = append(queryMods, mods...)
 
-	query := PollsDimensionsDirections(queryMods...)
-	queries.SetFrom(query.Query, "\"polls_dimensions_directions\"")
+	query := PollsFactorsPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"polls_factors_positions\"")
 
 	return query
 }
 
-// YPollDimensionDirection pointed to by the foreign key.
-func (o *Vote) YPollDimensionDirection(mods ...qm.QueryMod) pollsDimensionsDirectionQuery {
+// YPollFactorPosition pointed to by the foreign key.
+func (o *Vote) YPollFactorPosition(mods ...qm.QueryMod) pollsFactorsPositionQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("poll_dimension_direction_id=?", o.YPollDimensionDirectionID),
+		qm.Where("poll_factor_position_id=?", o.YPollFactorPositionID),
 	}
 
 	queryMods = append(queryMods, mods...)
 
-	query := PollsDimensionsDirections(queryMods...)
-	queries.SetFrom(query.Query, "\"polls_dimensions_directions\"")
+	query := PollsFactorsPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"polls_factors_positions\"")
 
 	return query
 }
 
-// XPollDimensionDirection pointed to by the foreign key.
-func (o *Vote) XPollDimensionDirection(mods ...qm.QueryMod) pollsDimensionsDirectionQuery {
+// XPollFactorPosition pointed to by the foreign key.
+func (o *Vote) XPollFactorPosition(mods ...qm.QueryMod) pollsFactorsPositionQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("poll_dimension_direction_id=?", o.XPollDimensionDirectionID),
+		qm.Where("poll_factor_position_id=?", o.XPollFactorPositionID),
 	}
 
 	queryMods = append(queryMods, mods...)
 
-	query := PollsDimensionsDirections(queryMods...)
-	queries.SetFrom(query.Query, "\"polls_dimensions_directions\"")
+	query := PollsFactorsPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"polls_factors_positions\"")
 
 	return query
 }
@@ -595,9 +595,9 @@ func (voteL) LoadPoll(ctx context.Context, e boil.ContextExecutor, singular bool
 	return nil
 }
 
-// LoadZPollDimensionDirection allows an eager lookup of values, cached into the
+// LoadZPollFactorPosition allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (voteL) LoadZPollDimensionDirection(ctx context.Context, e boil.ContextExecutor, singular bool, maybeVote interface{}, mods queries.Applicator) error {
+func (voteL) LoadZPollFactorPosition(ctx context.Context, e boil.ContextExecutor, singular bool, maybeVote interface{}, mods queries.Applicator) error {
 	var slice []*Vote
 	var object *Vote
 
@@ -612,7 +612,7 @@ func (voteL) LoadZPollDimensionDirection(ctx context.Context, e boil.ContextExec
 		if object.R == nil {
 			object.R = &voteR{}
 		}
-		args = append(args, object.ZPollDimensionDirectionID)
+		args = append(args, object.ZPollFactorPositionID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -621,35 +621,35 @@ func (voteL) LoadZPollDimensionDirection(ctx context.Context, e boil.ContextExec
 			}
 
 			for _, a := range args {
-				if a == obj.ZPollDimensionDirectionID {
+				if a == obj.ZPollFactorPositionID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.ZPollDimensionDirectionID)
+			args = append(args, obj.ZPollFactorPositionID)
 		}
 	}
 
-	query := NewQuery(qm.From(`polls_dimensions_directions`), qm.WhereIn(`poll_dimension_direction_id in ?`, args...))
+	query := NewQuery(qm.From(`polls_factors_positions`), qm.WhereIn(`poll_factor_position_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load PollsDimensionsDirection")
+		return errors.Wrap(err, "failed to eager load PollsFactorsPosition")
 	}
 
-	var resultSlice []*PollsDimensionsDirection
+	var resultSlice []*PollsFactorsPosition
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice PollsDimensionsDirection")
+		return errors.Wrap(err, "failed to bind eager loaded slice PollsFactorsPosition")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for polls_dimensions_directions")
+		return errors.Wrap(err, "failed to close results of eager load for polls_factors_positions")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_dimensions_directions")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_factors_positions")
 	}
 
 	if len(voteAfterSelectHooks) != 0 {
@@ -666,22 +666,22 @@ func (voteL) LoadZPollDimensionDirection(ctx context.Context, e boil.ContextExec
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.ZPollDimensionDirection = foreign
+		object.R.ZPollFactorPosition = foreign
 		if foreign.R == nil {
-			foreign.R = &pollsDimensionsDirectionR{}
+			foreign.R = &pollsFactorsPositionR{}
 		}
-		foreign.R.ZPollDimensionDirectionVotes = append(foreign.R.ZPollDimensionDirectionVotes, object)
+		foreign.R.ZPollFactorPositionVotes = append(foreign.R.ZPollFactorPositionVotes, object)
 		return nil
 	}
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.ZPollDimensionDirectionID == foreign.PollDimensionDirectionID {
-				local.R.ZPollDimensionDirection = foreign
+			if local.ZPollFactorPositionID == foreign.PollFactorPositionID {
+				local.R.ZPollFactorPosition = foreign
 				if foreign.R == nil {
-					foreign.R = &pollsDimensionsDirectionR{}
+					foreign.R = &pollsFactorsPositionR{}
 				}
-				foreign.R.ZPollDimensionDirectionVotes = append(foreign.R.ZPollDimensionDirectionVotes, local)
+				foreign.R.ZPollFactorPositionVotes = append(foreign.R.ZPollFactorPositionVotes, local)
 				break
 			}
 		}
@@ -690,9 +690,9 @@ func (voteL) LoadZPollDimensionDirection(ctx context.Context, e boil.ContextExec
 	return nil
 }
 
-// LoadYPollDimensionDirection allows an eager lookup of values, cached into the
+// LoadYPollFactorPosition allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (voteL) LoadYPollDimensionDirection(ctx context.Context, e boil.ContextExecutor, singular bool, maybeVote interface{}, mods queries.Applicator) error {
+func (voteL) LoadYPollFactorPosition(ctx context.Context, e boil.ContextExecutor, singular bool, maybeVote interface{}, mods queries.Applicator) error {
 	var slice []*Vote
 	var object *Vote
 
@@ -707,7 +707,7 @@ func (voteL) LoadYPollDimensionDirection(ctx context.Context, e boil.ContextExec
 		if object.R == nil {
 			object.R = &voteR{}
 		}
-		args = append(args, object.YPollDimensionDirectionID)
+		args = append(args, object.YPollFactorPositionID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -716,35 +716,35 @@ func (voteL) LoadYPollDimensionDirection(ctx context.Context, e boil.ContextExec
 			}
 
 			for _, a := range args {
-				if a == obj.YPollDimensionDirectionID {
+				if a == obj.YPollFactorPositionID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.YPollDimensionDirectionID)
+			args = append(args, obj.YPollFactorPositionID)
 		}
 	}
 
-	query := NewQuery(qm.From(`polls_dimensions_directions`), qm.WhereIn(`poll_dimension_direction_id in ?`, args...))
+	query := NewQuery(qm.From(`polls_factors_positions`), qm.WhereIn(`poll_factor_position_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load PollsDimensionsDirection")
+		return errors.Wrap(err, "failed to eager load PollsFactorsPosition")
 	}
 
-	var resultSlice []*PollsDimensionsDirection
+	var resultSlice []*PollsFactorsPosition
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice PollsDimensionsDirection")
+		return errors.Wrap(err, "failed to bind eager loaded slice PollsFactorsPosition")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for polls_dimensions_directions")
+		return errors.Wrap(err, "failed to close results of eager load for polls_factors_positions")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_dimensions_directions")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_factors_positions")
 	}
 
 	if len(voteAfterSelectHooks) != 0 {
@@ -761,22 +761,22 @@ func (voteL) LoadYPollDimensionDirection(ctx context.Context, e boil.ContextExec
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.YPollDimensionDirection = foreign
+		object.R.YPollFactorPosition = foreign
 		if foreign.R == nil {
-			foreign.R = &pollsDimensionsDirectionR{}
+			foreign.R = &pollsFactorsPositionR{}
 		}
-		foreign.R.YPollDimensionDirectionVotes = append(foreign.R.YPollDimensionDirectionVotes, object)
+		foreign.R.YPollFactorPositionVotes = append(foreign.R.YPollFactorPositionVotes, object)
 		return nil
 	}
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.YPollDimensionDirectionID == foreign.PollDimensionDirectionID {
-				local.R.YPollDimensionDirection = foreign
+			if local.YPollFactorPositionID == foreign.PollFactorPositionID {
+				local.R.YPollFactorPosition = foreign
 				if foreign.R == nil {
-					foreign.R = &pollsDimensionsDirectionR{}
+					foreign.R = &pollsFactorsPositionR{}
 				}
-				foreign.R.YPollDimensionDirectionVotes = append(foreign.R.YPollDimensionDirectionVotes, local)
+				foreign.R.YPollFactorPositionVotes = append(foreign.R.YPollFactorPositionVotes, local)
 				break
 			}
 		}
@@ -785,9 +785,9 @@ func (voteL) LoadYPollDimensionDirection(ctx context.Context, e boil.ContextExec
 	return nil
 }
 
-// LoadXPollDimensionDirection allows an eager lookup of values, cached into the
+// LoadXPollFactorPosition allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (voteL) LoadXPollDimensionDirection(ctx context.Context, e boil.ContextExecutor, singular bool, maybeVote interface{}, mods queries.Applicator) error {
+func (voteL) LoadXPollFactorPosition(ctx context.Context, e boil.ContextExecutor, singular bool, maybeVote interface{}, mods queries.Applicator) error {
 	var slice []*Vote
 	var object *Vote
 
@@ -802,7 +802,7 @@ func (voteL) LoadXPollDimensionDirection(ctx context.Context, e boil.ContextExec
 		if object.R == nil {
 			object.R = &voteR{}
 		}
-		args = append(args, object.XPollDimensionDirectionID)
+		args = append(args, object.XPollFactorPositionID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -811,35 +811,35 @@ func (voteL) LoadXPollDimensionDirection(ctx context.Context, e boil.ContextExec
 			}
 
 			for _, a := range args {
-				if a == obj.XPollDimensionDirectionID {
+				if a == obj.XPollFactorPositionID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.XPollDimensionDirectionID)
+			args = append(args, obj.XPollFactorPositionID)
 		}
 	}
 
-	query := NewQuery(qm.From(`polls_dimensions_directions`), qm.WhereIn(`poll_dimension_direction_id in ?`, args...))
+	query := NewQuery(qm.From(`polls_factors_positions`), qm.WhereIn(`poll_factor_position_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load PollsDimensionsDirection")
+		return errors.Wrap(err, "failed to eager load PollsFactorsPosition")
 	}
 
-	var resultSlice []*PollsDimensionsDirection
+	var resultSlice []*PollsFactorsPosition
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice PollsDimensionsDirection")
+		return errors.Wrap(err, "failed to bind eager loaded slice PollsFactorsPosition")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for polls_dimensions_directions")
+		return errors.Wrap(err, "failed to close results of eager load for polls_factors_positions")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_dimensions_directions")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_factors_positions")
 	}
 
 	if len(voteAfterSelectHooks) != 0 {
@@ -856,22 +856,22 @@ func (voteL) LoadXPollDimensionDirection(ctx context.Context, e boil.ContextExec
 
 	if singular {
 		foreign := resultSlice[0]
-		object.R.XPollDimensionDirection = foreign
+		object.R.XPollFactorPosition = foreign
 		if foreign.R == nil {
-			foreign.R = &pollsDimensionsDirectionR{}
+			foreign.R = &pollsFactorsPositionR{}
 		}
-		foreign.R.XPollDimensionDirectionVotes = append(foreign.R.XPollDimensionDirectionVotes, object)
+		foreign.R.XPollFactorPositionVotes = append(foreign.R.XPollFactorPositionVotes, object)
 		return nil
 	}
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.XPollDimensionDirectionID == foreign.PollDimensionDirectionID {
-				local.R.XPollDimensionDirection = foreign
+			if local.XPollFactorPositionID == foreign.PollFactorPositionID {
+				local.R.XPollFactorPosition = foreign
 				if foreign.R == nil {
-					foreign.R = &pollsDimensionsDirectionR{}
+					foreign.R = &pollsFactorsPositionR{}
 				}
-				foreign.R.XPollDimensionDirectionVotes = append(foreign.R.XPollDimensionDirectionVotes, local)
+				foreign.R.XPollFactorPositionVotes = append(foreign.R.XPollFactorPositionVotes, local)
 				break
 			}
 		}
@@ -974,10 +974,10 @@ func (o *Vote) SetPoll(ctx context.Context, exec boil.ContextExecutor, insert bo
 	return nil
 }
 
-// SetZPollDimensionDirection of the vote to the related item.
-// Sets o.R.ZPollDimensionDirection to related.
-// Adds o to related.R.ZPollDimensionDirectionVotes.
-func (o *Vote) SetZPollDimensionDirection(ctx context.Context, exec boil.ContextExecutor, insert bool, related *PollsDimensionsDirection) error {
+// SetZPollFactorPosition of the vote to the related item.
+// Sets o.R.ZPollFactorPosition to related.
+// Adds o to related.R.ZPollFactorPositionVotes.
+func (o *Vote) SetZPollFactorPosition(ctx context.Context, exec boil.ContextExecutor, insert bool, related *PollsFactorsPosition) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -987,10 +987,10 @@ func (o *Vote) SetZPollDimensionDirection(ctx context.Context, exec boil.Context
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"vote\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"z_poll_dimension_direction_id"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"z_poll_factor_position_id"}),
 		strmangle.WhereClause("\"", "\"", 2, votePrimaryKeyColumns),
 	)
-	values := []interface{}{related.PollDimensionDirectionID, o.VoteID}
+	values := []interface{}{related.PollFactorPositionID, o.VoteID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -1001,30 +1001,30 @@ func (o *Vote) SetZPollDimensionDirection(ctx context.Context, exec boil.Context
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.ZPollDimensionDirectionID = related.PollDimensionDirectionID
+	o.ZPollFactorPositionID = related.PollFactorPositionID
 	if o.R == nil {
 		o.R = &voteR{
-			ZPollDimensionDirection: related,
+			ZPollFactorPosition: related,
 		}
 	} else {
-		o.R.ZPollDimensionDirection = related
+		o.R.ZPollFactorPosition = related
 	}
 
 	if related.R == nil {
-		related.R = &pollsDimensionsDirectionR{
-			ZPollDimensionDirectionVotes: VoteSlice{o},
+		related.R = &pollsFactorsPositionR{
+			ZPollFactorPositionVotes: VoteSlice{o},
 		}
 	} else {
-		related.R.ZPollDimensionDirectionVotes = append(related.R.ZPollDimensionDirectionVotes, o)
+		related.R.ZPollFactorPositionVotes = append(related.R.ZPollFactorPositionVotes, o)
 	}
 
 	return nil
 }
 
-// SetYPollDimensionDirection of the vote to the related item.
-// Sets o.R.YPollDimensionDirection to related.
-// Adds o to related.R.YPollDimensionDirectionVotes.
-func (o *Vote) SetYPollDimensionDirection(ctx context.Context, exec boil.ContextExecutor, insert bool, related *PollsDimensionsDirection) error {
+// SetYPollFactorPosition of the vote to the related item.
+// Sets o.R.YPollFactorPosition to related.
+// Adds o to related.R.YPollFactorPositionVotes.
+func (o *Vote) SetYPollFactorPosition(ctx context.Context, exec boil.ContextExecutor, insert bool, related *PollsFactorsPosition) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -1034,10 +1034,10 @@ func (o *Vote) SetYPollDimensionDirection(ctx context.Context, exec boil.Context
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"vote\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"y_poll_dimension_direction_id"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"y_poll_factor_position_id"}),
 		strmangle.WhereClause("\"", "\"", 2, votePrimaryKeyColumns),
 	)
-	values := []interface{}{related.PollDimensionDirectionID, o.VoteID}
+	values := []interface{}{related.PollFactorPositionID, o.VoteID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -1048,30 +1048,30 @@ func (o *Vote) SetYPollDimensionDirection(ctx context.Context, exec boil.Context
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.YPollDimensionDirectionID = related.PollDimensionDirectionID
+	o.YPollFactorPositionID = related.PollFactorPositionID
 	if o.R == nil {
 		o.R = &voteR{
-			YPollDimensionDirection: related,
+			YPollFactorPosition: related,
 		}
 	} else {
-		o.R.YPollDimensionDirection = related
+		o.R.YPollFactorPosition = related
 	}
 
 	if related.R == nil {
-		related.R = &pollsDimensionsDirectionR{
-			YPollDimensionDirectionVotes: VoteSlice{o},
+		related.R = &pollsFactorsPositionR{
+			YPollFactorPositionVotes: VoteSlice{o},
 		}
 	} else {
-		related.R.YPollDimensionDirectionVotes = append(related.R.YPollDimensionDirectionVotes, o)
+		related.R.YPollFactorPositionVotes = append(related.R.YPollFactorPositionVotes, o)
 	}
 
 	return nil
 }
 
-// SetXPollDimensionDirection of the vote to the related item.
-// Sets o.R.XPollDimensionDirection to related.
-// Adds o to related.R.XPollDimensionDirectionVotes.
-func (o *Vote) SetXPollDimensionDirection(ctx context.Context, exec boil.ContextExecutor, insert bool, related *PollsDimensionsDirection) error {
+// SetXPollFactorPosition of the vote to the related item.
+// Sets o.R.XPollFactorPosition to related.
+// Adds o to related.R.XPollFactorPositionVotes.
+func (o *Vote) SetXPollFactorPosition(ctx context.Context, exec boil.ContextExecutor, insert bool, related *PollsFactorsPosition) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -1081,10 +1081,10 @@ func (o *Vote) SetXPollDimensionDirection(ctx context.Context, exec boil.Context
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"vote\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"x_poll_dimension_direction_id"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"x_poll_factor_position_id"}),
 		strmangle.WhereClause("\"", "\"", 2, votePrimaryKeyColumns),
 	)
-	values := []interface{}{related.PollDimensionDirectionID, o.VoteID}
+	values := []interface{}{related.PollFactorPositionID, o.VoteID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -1095,21 +1095,21 @@ func (o *Vote) SetXPollDimensionDirection(ctx context.Context, exec boil.Context
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.XPollDimensionDirectionID = related.PollDimensionDirectionID
+	o.XPollFactorPositionID = related.PollFactorPositionID
 	if o.R == nil {
 		o.R = &voteR{
-			XPollDimensionDirection: related,
+			XPollFactorPosition: related,
 		}
 	} else {
-		o.R.XPollDimensionDirection = related
+		o.R.XPollFactorPosition = related
 	}
 
 	if related.R == nil {
-		related.R = &pollsDimensionsDirectionR{
-			XPollDimensionDirectionVotes: VoteSlice{o},
+		related.R = &pollsFactorsPositionR{
+			XPollFactorPositionVotes: VoteSlice{o},
 		}
 	} else {
-		related.R.XPollDimensionDirectionVotes = append(related.R.XPollDimensionDirectionVotes, o)
+		related.R.XPollFactorPositionVotes = append(related.R.XPollFactorPositionVotes, o)
 	}
 
 	return nil

@@ -10,16 +10,15 @@ var TableNames = struct {
 	Country                            string
 	County                             string
 	DesignPatterns                     string
-	DimensionDirections                string
-	Dimensions                         string
-	DimensionsLinks                    string
-	Directions                         string
 	EmailAddress                       string
 	EmailDomain                        string
 	Emoji                              string
 	EthnicGroup                        string
 	EthnicGroupCountry                 string
 	EthnicSubgroup                     string
+	FactorPositions                    string
+	Factors                            string
+	FactorsLinks                       string
 	Honors                             string
 	Labels                             string
 	Links                              string
@@ -31,7 +30,7 @@ var TableNames = struct {
 	PollsContinent                     string
 	PollsCountry                       string
 	PollsCounty                        string
-	PollsDimensionsDirections          string
+	PollsFactorsPositions              string
 	PollsGroups                        string
 	PollsGroupsLinks                   string
 	PollsLabels                        string
@@ -40,6 +39,7 @@ var TableNames = struct {
 	PollsPollsGroups                   string
 	PollsState                         string
 	PollsTown                          string
+	Positions                          string
 	PrefixLastName                     string
 	State                              string
 	Street                             string
@@ -67,16 +67,15 @@ var TableNames = struct {
 	Country:                            "country",
 	County:                             "county",
 	DesignPatterns:                     "design_patterns",
-	DimensionDirections:                "dimension_directions",
-	Dimensions:                         "dimensions",
-	DimensionsLinks:                    "dimensions_links",
-	Directions:                         "directions",
 	EmailAddress:                       "email_address",
 	EmailDomain:                        "email_domain",
 	Emoji:                              "emoji",
 	EthnicGroup:                        "ethnic_group",
 	EthnicGroupCountry:                 "ethnic_group_country",
 	EthnicSubgroup:                     "ethnic_subgroup",
+	FactorPositions:                    "factor_positions",
+	Factors:                            "factors",
+	FactorsLinks:                       "factors_links",
 	Honors:                             "honors",
 	Labels:                             "labels",
 	Links:                              "links",
@@ -88,7 +87,7 @@ var TableNames = struct {
 	PollsContinent:                     "polls_continent",
 	PollsCountry:                       "polls_country",
 	PollsCounty:                        "polls_county",
-	PollsDimensionsDirections:          "polls_dimensions_directions",
+	PollsFactorsPositions:              "polls_factors_positions",
 	PollsGroups:                        "polls_groups",
 	PollsGroupsLinks:                   "polls_groups_links",
 	PollsLabels:                        "polls_labels",
@@ -97,6 +96,7 @@ var TableNames = struct {
 	PollsPollsGroups:                   "polls_polls_groups",
 	PollsState:                         "polls_state",
 	PollsTown:                          "polls_town",
+	Positions:                          "positions",
 	PrefixLastName:                     "prefix_last_name",
 	State:                              "state",
 	Street:                             "street",

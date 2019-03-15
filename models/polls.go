@@ -60,56 +60,56 @@ var PollColumns = struct {
 
 // PollRels is where relationship names are stored.
 var PollRels = struct {
-	UserAccount               string
-	ParentPoll                string
-	Theme                     string
-	ParentPollPoll            string
-	PollsContinents           string
-	PollsCountries            string
-	PollsCounties             string
-	PollsDimensionsDirections string
-	PollsLabels               string
-	PollsLinks                string
-	PollsMessages             string
-	PollsPollsGroups          string
-	PollsStates               string
-	PollsTowns                string
-	Votes                     string
+	UserAccount           string
+	ParentPoll            string
+	Theme                 string
+	ParentPollPoll        string
+	PollsContinents       string
+	PollsCountries        string
+	PollsCounties         string
+	PollsFactorsPositions string
+	PollsLabels           string
+	PollsLinks            string
+	PollsMessages         string
+	PollsPollsGroups      string
+	PollsStates           string
+	PollsTowns            string
+	Votes                 string
 }{
-	UserAccount:               "UserAccount",
-	ParentPoll:                "ParentPoll",
-	Theme:                     "Theme",
-	ParentPollPoll:            "ParentPollPoll",
-	PollsContinents:           "PollsContinents",
-	PollsCountries:            "PollsCountries",
-	PollsCounties:             "PollsCounties",
-	PollsDimensionsDirections: "PollsDimensionsDirections",
-	PollsLabels:               "PollsLabels",
-	PollsLinks:                "PollsLinks",
-	PollsMessages:             "PollsMessages",
-	PollsPollsGroups:          "PollsPollsGroups",
-	PollsStates:               "PollsStates",
-	PollsTowns:                "PollsTowns",
-	Votes:                     "Votes",
+	UserAccount:           "UserAccount",
+	ParentPoll:            "ParentPoll",
+	Theme:                 "Theme",
+	ParentPollPoll:        "ParentPollPoll",
+	PollsContinents:       "PollsContinents",
+	PollsCountries:        "PollsCountries",
+	PollsCounties:         "PollsCounties",
+	PollsFactorsPositions: "PollsFactorsPositions",
+	PollsLabels:           "PollsLabels",
+	PollsLinks:            "PollsLinks",
+	PollsMessages:         "PollsMessages",
+	PollsPollsGroups:      "PollsPollsGroups",
+	PollsStates:           "PollsStates",
+	PollsTowns:            "PollsTowns",
+	Votes:                 "Votes",
 }
 
 // pollR is where relationships are stored.
 type pollR struct {
-	UserAccount               *UserAccount
-	ParentPoll                *Poll
-	Theme                     *Theme
-	ParentPollPoll            *Poll
-	PollsContinents           PollsContinentSlice
-	PollsCountries            PollsCountrySlice
-	PollsCounties             PollsCountySlice
-	PollsDimensionsDirections PollsDimensionsDirectionSlice
-	PollsLabels               PollsLabelSlice
-	PollsLinks                PollsLinkSlice
-	PollsMessages             PollsMessageSlice
-	PollsPollsGroups          PollsPollsGroupSlice
-	PollsStates               PollsStateSlice
-	PollsTowns                PollsTownSlice
-	Votes                     VoteSlice
+	UserAccount           *UserAccount
+	ParentPoll            *Poll
+	Theme                 *Theme
+	ParentPollPoll        *Poll
+	PollsContinents       PollsContinentSlice
+	PollsCountries        PollsCountrySlice
+	PollsCounties         PollsCountySlice
+	PollsFactorsPositions PollsFactorsPositionSlice
+	PollsLabels           PollsLabelSlice
+	PollsLinks            PollsLinkSlice
+	PollsMessages         PollsMessageSlice
+	PollsPollsGroups      PollsPollsGroupSlice
+	PollsStates           PollsStateSlice
+	PollsTowns            PollsTownSlice
+	Votes                 VoteSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -481,22 +481,22 @@ func (o *Poll) PollsCounties(mods ...qm.QueryMod) pollsCountyQuery {
 	return query
 }
 
-// PollsDimensionsDirections retrieves all the polls_dimensions_direction's PollsDimensionsDirections with an executor.
-func (o *Poll) PollsDimensionsDirections(mods ...qm.QueryMod) pollsDimensionsDirectionQuery {
+// PollsFactorsPositions retrieves all the polls_factors_position's PollsFactorsPositions with an executor.
+func (o *Poll) PollsFactorsPositions(mods ...qm.QueryMod) pollsFactorsPositionQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"polls_dimensions_directions\".\"poll_id\"=?", o.ParentPollID),
+		qm.Where("\"polls_factors_positions\".\"poll_id\"=?", o.ParentPollID),
 	)
 
-	query := PollsDimensionsDirections(queryMods...)
-	queries.SetFrom(query.Query, "\"polls_dimensions_directions\"")
+	query := PollsFactorsPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"polls_factors_positions\"")
 
 	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"polls_dimensions_directions\".*"})
+		queries.SetSelect(query.Query, []string{"\"polls_factors_positions\".*"})
 	}
 
 	return query
@@ -1301,9 +1301,9 @@ func (pollL) LoadPollsCounties(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
-// LoadPollsDimensionsDirections allows an eager lookup of values, cached into the
+// LoadPollsFactorsPositions allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (pollL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextExecutor, singular bool, maybePoll interface{}, mods queries.Applicator) error {
+func (pollL) LoadPollsFactorsPositions(ctx context.Context, e boil.ContextExecutor, singular bool, maybePoll interface{}, mods queries.Applicator) error {
 	var slice []*Poll
 	var object *Poll
 
@@ -1336,29 +1336,29 @@ func (pollL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextEx
 		}
 	}
 
-	query := NewQuery(qm.From(`polls_dimensions_directions`), qm.WhereIn(`poll_id in ?`, args...))
+	query := NewQuery(qm.From(`polls_factors_positions`), qm.WhereIn(`poll_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load polls_dimensions_directions")
+		return errors.Wrap(err, "failed to eager load polls_factors_positions")
 	}
 
-	var resultSlice []*PollsDimensionsDirection
+	var resultSlice []*PollsFactorsPosition
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice polls_dimensions_directions")
+		return errors.Wrap(err, "failed to bind eager loaded slice polls_factors_positions")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on polls_dimensions_directions")
+		return errors.Wrap(err, "failed to close results in eager load on polls_factors_positions")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_dimensions_directions")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_factors_positions")
 	}
 
-	if len(pollsDimensionsDirectionAfterSelectHooks) != 0 {
+	if len(pollsFactorsPositionAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -1366,10 +1366,10 @@ func (pollL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextEx
 		}
 	}
 	if singular {
-		object.R.PollsDimensionsDirections = resultSlice
+		object.R.PollsFactorsPositions = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &pollsDimensionsDirectionR{}
+				foreign.R = &pollsFactorsPositionR{}
 			}
 			foreign.R.Poll = object
 		}
@@ -1379,9 +1379,9 @@ func (pollL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextEx
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.ParentPollID == foreign.PollID {
-				local.R.PollsDimensionsDirections = append(local.R.PollsDimensionsDirections, foreign)
+				local.R.PollsFactorsPositions = append(local.R.PollsFactorsPositions, foreign)
 				if foreign.R == nil {
-					foreign.R = &pollsDimensionsDirectionR{}
+					foreign.R = &pollsFactorsPositionR{}
 				}
 				foreign.R.Poll = local
 				break
@@ -2380,11 +2380,11 @@ func (o *Poll) AddPollsCounties(ctx context.Context, exec boil.ContextExecutor, 
 	return nil
 }
 
-// AddPollsDimensionsDirections adds the given related objects to the existing relationships
+// AddPollsFactorsPositions adds the given related objects to the existing relationships
 // of the poll, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
+// Appends related to o.R.PollsFactorsPositions.
 // Sets related.R.Poll appropriately.
-func (o *Poll) AddPollsDimensionsDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PollsDimensionsDirection) error {
+func (o *Poll) AddPollsFactorsPositions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PollsFactorsPosition) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -2394,11 +2394,11 @@ func (o *Poll) AddPollsDimensionsDirections(ctx context.Context, exec boil.Conte
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"polls_dimensions_directions\" SET %s WHERE %s",
+				"UPDATE \"polls_factors_positions\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"poll_id"}),
-				strmangle.WhereClause("\"", "\"", 2, pollsDimensionsDirectionPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, pollsFactorsPositionPrimaryKeyColumns),
 			)
-			values := []interface{}{o.ParentPollID, rel.PollDimensionDirectionID}
+			values := []interface{}{o.ParentPollID, rel.PollFactorPositionID}
 
 			if boil.DebugMode {
 				fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -2415,15 +2415,15 @@ func (o *Poll) AddPollsDimensionsDirections(ctx context.Context, exec boil.Conte
 
 	if o.R == nil {
 		o.R = &pollR{
-			PollsDimensionsDirections: related,
+			PollsFactorsPositions: related,
 		}
 	} else {
-		o.R.PollsDimensionsDirections = append(o.R.PollsDimensionsDirections, related...)
+		o.R.PollsFactorsPositions = append(o.R.PollsFactorsPositions, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &pollsDimensionsDirectionR{
+			rel.R = &pollsFactorsPositionR{
 				Poll: o,
 			}
 		} else {

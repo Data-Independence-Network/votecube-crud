@@ -21,24 +21,24 @@ var (
 	_ = queries.Equal
 )
 
-func testDimensions(t *testing.T) {
+func testFactors(t *testing.T) {
 	t.Parallel()
 
-	query := Dimensions()
+	query := Factors()
 
 	if query.Query == nil {
 		t.Error("expected a query, got nothing")
 	}
 }
 
-func testDimensionsDelete(t *testing.T) {
+func testFactorsDelete(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -54,7 +54,7 @@ func testDimensionsDelete(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,14 +64,14 @@ func testDimensionsDelete(t *testing.T) {
 	}
 }
 
-func testDimensionsQueryDeleteAll(t *testing.T) {
+func testFactorsQueryDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -81,13 +81,13 @@ func testDimensionsQueryDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if rowsAff, err := Dimensions().DeleteAll(ctx, tx); err != nil {
+	if rowsAff, err := Factors().DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,14 +97,14 @@ func testDimensionsQueryDeleteAll(t *testing.T) {
 	}
 }
 
-func testDimensionsSliceDeleteAll(t *testing.T) {
+func testFactorsSliceDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func testDimensionsSliceDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := DimensionSlice{o}
+	slice := FactorSlice{o}
 
 	if rowsAff, err := slice.DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
@@ -122,7 +122,7 @@ func testDimensionsSliceDeleteAll(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,14 +132,14 @@ func testDimensionsSliceDeleteAll(t *testing.T) {
 	}
 }
 
-func testDimensionsExists(t *testing.T) {
+func testFactorsExists(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -149,23 +149,23 @@ func testDimensionsExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := DimensionExists(ctx, tx, o.DimensionID)
+	e, err := FactorExists(ctx, tx, o.FactorID)
 	if err != nil {
-		t.Errorf("Unable to check if Dimension exists: %s", err)
+		t.Errorf("Unable to check if Factor exists: %s", err)
 	}
 	if !e {
-		t.Errorf("Expected DimensionExists to return true, but got false.")
+		t.Errorf("Expected FactorExists to return true, but got false.")
 	}
 }
 
-func testDimensionsFind(t *testing.T) {
+func testFactorsFind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -175,24 +175,24 @@ func testDimensionsFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	dimensionFound, err := FindDimension(ctx, tx, o.DimensionID)
+	factorFound, err := FindFactor(ctx, tx, o.FactorID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if dimensionFound == nil {
+	if factorFound == nil {
 		t.Error("want a record, got nil")
 	}
 }
 
-func testDimensionsBind(t *testing.T) {
+func testFactorsBind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -202,19 +202,19 @@ func testDimensionsBind(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err = Dimensions().Bind(ctx, tx, o); err != nil {
+	if err = Factors().Bind(ctx, tx, o); err != nil {
 		t.Error(err)
 	}
 }
 
-func testDimensionsOne(t *testing.T) {
+func testFactorsOne(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -224,38 +224,38 @@ func testDimensionsOne(t *testing.T) {
 		t.Error(err)
 	}
 
-	if x, err := Dimensions().One(ctx, tx); err != nil {
+	if x, err := Factors().One(ctx, tx); err != nil {
 		t.Error(err)
 	} else if x == nil {
 		t.Error("expected to get a non nil record")
 	}
 }
 
-func testDimensionsAll(t *testing.T) {
+func testFactorsAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	dimensionOne := &Dimension{}
-	dimensionTwo := &Dimension{}
-	if err = randomize.Struct(seed, dimensionOne, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	factorOne := &Factor{}
+	factorTwo := &Factor{}
+	if err = randomize.Struct(seed, factorOne, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
-	if err = randomize.Struct(seed, dimensionTwo, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, factorTwo, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = dimensionOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = factorOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = dimensionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = factorTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	slice, err := Dimensions().All(ctx, tx)
+	slice, err := Factors().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -265,31 +265,31 @@ func testDimensionsAll(t *testing.T) {
 	}
 }
 
-func testDimensionsCount(t *testing.T) {
+func testFactorsCount(t *testing.T) {
 	t.Parallel()
 
 	var err error
 	seed := randomize.NewSeed()
-	dimensionOne := &Dimension{}
-	dimensionTwo := &Dimension{}
-	if err = randomize.Struct(seed, dimensionOne, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	factorOne := &Factor{}
+	factorTwo := &Factor{}
+	if err = randomize.Struct(seed, factorOne, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
-	if err = randomize.Struct(seed, dimensionTwo, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, factorTwo, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = dimensionOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = factorOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = dimensionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = factorTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,155 +299,155 @@ func testDimensionsCount(t *testing.T) {
 	}
 }
 
-func dimensionBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func dimensionAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Dimension) error {
-	*o = Dimension{}
+func factorAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Factor) error {
+	*o = Factor{}
 	return nil
 }
 
-func testDimensionsHooks(t *testing.T) {
+func testFactorsHooks(t *testing.T) {
 	t.Parallel()
 
 	var err error
 
 	ctx := context.Background()
-	empty := &Dimension{}
-	o := &Dimension{}
+	empty := &Factor{}
+	o := &Factor{}
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, o, dimensionDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize Dimension object: %s", err)
+	if err = randomize.Struct(seed, o, factorDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize Factor object: %s", err)
 	}
 
-	AddDimensionHook(boil.BeforeInsertHook, dimensionBeforeInsertHook)
+	AddFactorHook(boil.BeforeInsertHook, factorBeforeInsertHook)
 	if err = o.doBeforeInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeInsertHook function to empty object, but got: %#v", o)
 	}
-	dimensionBeforeInsertHooks = []DimensionHook{}
+	factorBeforeInsertHooks = []FactorHook{}
 
-	AddDimensionHook(boil.AfterInsertHook, dimensionAfterInsertHook)
+	AddFactorHook(boil.AfterInsertHook, factorAfterInsertHook)
 	if err = o.doAfterInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterInsertHook function to empty object, but got: %#v", o)
 	}
-	dimensionAfterInsertHooks = []DimensionHook{}
+	factorAfterInsertHooks = []FactorHook{}
 
-	AddDimensionHook(boil.AfterSelectHook, dimensionAfterSelectHook)
+	AddFactorHook(boil.AfterSelectHook, factorAfterSelectHook)
 	if err = o.doAfterSelectHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterSelectHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterSelectHook function to empty object, but got: %#v", o)
 	}
-	dimensionAfterSelectHooks = []DimensionHook{}
+	factorAfterSelectHooks = []FactorHook{}
 
-	AddDimensionHook(boil.BeforeUpdateHook, dimensionBeforeUpdateHook)
+	AddFactorHook(boil.BeforeUpdateHook, factorBeforeUpdateHook)
 	if err = o.doBeforeUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpdateHook function to empty object, but got: %#v", o)
 	}
-	dimensionBeforeUpdateHooks = []DimensionHook{}
+	factorBeforeUpdateHooks = []FactorHook{}
 
-	AddDimensionHook(boil.AfterUpdateHook, dimensionAfterUpdateHook)
+	AddFactorHook(boil.AfterUpdateHook, factorAfterUpdateHook)
 	if err = o.doAfterUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpdateHook function to empty object, but got: %#v", o)
 	}
-	dimensionAfterUpdateHooks = []DimensionHook{}
+	factorAfterUpdateHooks = []FactorHook{}
 
-	AddDimensionHook(boil.BeforeDeleteHook, dimensionBeforeDeleteHook)
+	AddFactorHook(boil.BeforeDeleteHook, factorBeforeDeleteHook)
 	if err = o.doBeforeDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeDeleteHook function to empty object, but got: %#v", o)
 	}
-	dimensionBeforeDeleteHooks = []DimensionHook{}
+	factorBeforeDeleteHooks = []FactorHook{}
 
-	AddDimensionHook(boil.AfterDeleteHook, dimensionAfterDeleteHook)
+	AddFactorHook(boil.AfterDeleteHook, factorAfterDeleteHook)
 	if err = o.doAfterDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterDeleteHook function to empty object, but got: %#v", o)
 	}
-	dimensionAfterDeleteHooks = []DimensionHook{}
+	factorAfterDeleteHooks = []FactorHook{}
 
-	AddDimensionHook(boil.BeforeUpsertHook, dimensionBeforeUpsertHook)
+	AddFactorHook(boil.BeforeUpsertHook, factorBeforeUpsertHook)
 	if err = o.doBeforeUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpsertHook function to empty object, but got: %#v", o)
 	}
-	dimensionBeforeUpsertHooks = []DimensionHook{}
+	factorBeforeUpsertHooks = []FactorHook{}
 
-	AddDimensionHook(boil.AfterUpsertHook, dimensionAfterUpsertHook)
+	AddFactorHook(boil.AfterUpsertHook, factorAfterUpsertHook)
 	if err = o.doAfterUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpsertHook function to empty object, but got: %#v", o)
 	}
-	dimensionAfterUpsertHooks = []DimensionHook{}
+	factorAfterUpsertHooks = []FactorHook{}
 }
 
-func testDimensionsInsert(t *testing.T) {
+func testFactorsInsert(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -457,7 +457,7 @@ func testDimensionsInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -467,24 +467,24 @@ func testDimensionsInsert(t *testing.T) {
 	}
 }
 
-func testDimensionsInsertWhitelist(t *testing.T) {
+func testFactorsInsertWhitelist(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = o.Insert(ctx, tx, boil.Whitelist(dimensionColumnsWithoutDefault...)); err != nil {
+	if err = o.Insert(ctx, tx, boil.Whitelist(factorColumnsWithoutDefault...)); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,33 +494,33 @@ func testDimensionsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testDimensionToManyDimensionDirections(t *testing.T) {
+func testFactorToManyFactorPositions(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c DimensionDirection
+	var a Factor
+	var b, c FactorPosition
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, &a, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, dimensionDirectionDBTypes, false, dimensionDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, factorPositionDBTypes, false, factorPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, dimensionDirectionDBTypes, false, dimensionDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, factorPositionDBTypes, false, factorPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.DimensionID = a.DimensionID
-	c.DimensionID = a.DimensionID
+	b.FactorID = a.FactorID
+	c.FactorID = a.FactorID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -529,17 +529,17 @@ func testDimensionToManyDimensionDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dimensionDirection, err := a.DimensionDirections().All(ctx, tx)
+	factorPosition, err := a.FactorPositions().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range dimensionDirection {
-		if v.DimensionID == b.DimensionID {
+	for _, v := range factorPosition {
+		if v.FactorID == b.FactorID {
 			bFound = true
 		}
-		if v.DimensionID == c.DimensionID {
+		if v.FactorID == c.FactorID {
 			cFound = true
 		}
 	}
@@ -551,54 +551,54 @@ func testDimensionToManyDimensionDirections(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := DimensionSlice{&a}
-	if err = a.L.LoadDimensionDirections(ctx, tx, false, (*[]*Dimension)(&slice), nil); err != nil {
+	slice := FactorSlice{&a}
+	if err = a.L.LoadFactorPositions(ctx, tx, false, (*[]*Factor)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionDirections); got != 2 {
+	if got := len(a.R.FactorPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.DimensionDirections = nil
-	if err = a.L.LoadDimensionDirections(ctx, tx, true, &a, nil); err != nil {
+	a.R.FactorPositions = nil
+	if err = a.L.LoadFactorPositions(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionDirections); got != 2 {
+	if got := len(a.R.FactorPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", dimensionDirection)
+		t.Logf("%#v", factorPosition)
 	}
 }
 
-func testDimensionToManyParentDimensionDimensions(t *testing.T) {
+func testFactorToManyParentFactorFactors(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c Dimension
+	var a Factor
+	var b, c Factor
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, &a, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	queries.Assign(&b.ParentDimensionID, a.DimensionID)
-	queries.Assign(&c.ParentDimensionID, a.DimensionID)
+	queries.Assign(&b.ParentFactorID, a.FactorID)
+	queries.Assign(&c.ParentFactorID, a.FactorID)
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -606,17 +606,17 @@ func testDimensionToManyParentDimensionDimensions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dimension, err := a.ParentDimensionDimensions().All(ctx, tx)
+	factor, err := a.ParentFactorFactors().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range dimension {
-		if queries.Equal(v.ParentDimensionID, b.ParentDimensionID) {
+	for _, v := range factor {
+		if queries.Equal(v.ParentFactorID, b.ParentFactorID) {
 			bFound = true
 		}
-		if queries.Equal(v.ParentDimensionID, c.ParentDimensionID) {
+		if queries.Equal(v.ParentFactorID, c.ParentFactorID) {
 			cFound = true
 		}
 	}
@@ -628,54 +628,54 @@ func testDimensionToManyParentDimensionDimensions(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := DimensionSlice{&a}
-	if err = a.L.LoadParentDimensionDimensions(ctx, tx, false, (*[]*Dimension)(&slice), nil); err != nil {
+	slice := FactorSlice{&a}
+	if err = a.L.LoadParentFactorFactors(ctx, tx, false, (*[]*Factor)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ParentDimensionDimensions); got != 2 {
+	if got := len(a.R.ParentFactorFactors); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.ParentDimensionDimensions = nil
-	if err = a.L.LoadParentDimensionDimensions(ctx, tx, true, &a, nil); err != nil {
+	a.R.ParentFactorFactors = nil
+	if err = a.L.LoadParentFactorFactors(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.ParentDimensionDimensions); got != 2 {
+	if got := len(a.R.ParentFactorFactors); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", dimension)
+		t.Logf("%#v", factor)
 	}
 }
 
-func testDimensionToManyDimensionsLinks(t *testing.T) {
+func testFactorToManyFactorsLinks(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c DimensionsLink
+	var a Factor
+	var b, c FactorsLink
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, &a, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, dimensionsLinkDBTypes, false, dimensionsLinkColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, factorsLinkDBTypes, false, factorsLinkColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, dimensionsLinkDBTypes, false, dimensionsLinkColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, factorsLinkDBTypes, false, factorsLinkColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.DimensionsID = a.DimensionID
-	c.DimensionsID = a.DimensionID
+	b.FactorsID = a.FactorID
+	c.FactorsID = a.FactorID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -684,17 +684,17 @@ func testDimensionToManyDimensionsLinks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dimensionsLink, err := a.DimensionsLinks().All(ctx, tx)
+	factorsLink, err := a.FactorsLinks().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range dimensionsLink {
-		if v.DimensionsID == b.DimensionsID {
+	for _, v := range factorsLink {
+		if v.FactorsID == b.FactorsID {
 			bFound = true
 		}
-		if v.DimensionsID == c.DimensionsID {
+		if v.FactorsID == c.FactorsID {
 			cFound = true
 		}
 	}
@@ -706,44 +706,44 @@ func testDimensionToManyDimensionsLinks(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := DimensionSlice{&a}
-	if err = a.L.LoadDimensionsLinks(ctx, tx, false, (*[]*Dimension)(&slice), nil); err != nil {
+	slice := FactorSlice{&a}
+	if err = a.L.LoadFactorsLinks(ctx, tx, false, (*[]*Factor)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionsLinks); got != 2 {
+	if got := len(a.R.FactorsLinks); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.DimensionsLinks = nil
-	if err = a.L.LoadDimensionsLinks(ctx, tx, true, &a, nil); err != nil {
+	a.R.FactorsLinks = nil
+	if err = a.L.LoadFactorsLinks(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionsLinks); got != 2 {
+	if got := len(a.R.FactorsLinks); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", dimensionsLink)
+		t.Logf("%#v", factorsLink)
 	}
 }
 
-func testDimensionToManyAddOpDimensionDirections(t *testing.T) {
+func testFactorToManyAddOpFactorPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c, d, e DimensionDirection
+	var a Factor
+	var b, c, d, e FactorPosition
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*DimensionDirection{&b, &c, &d, &e}
+	foreigners := []*FactorPosition{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionDirectionDBTypes, false, strmangle.SetComplement(dimensionDirectionPrimaryKeyColumns, dimensionDirectionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorPositionDBTypes, false, strmangle.SetComplement(factorPositionPrimaryKeyColumns, factorPositionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -758,13 +758,13 @@ func testDimensionToManyAddOpDimensionDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*DimensionDirection{
+	foreignersSplitByInsertion := [][]*FactorPosition{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddDimensionDirections(ctx, tx, i != 0, x...)
+		err = a.AddFactorPositions(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -772,28 +772,28 @@ func testDimensionToManyAddOpDimensionDirections(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.DimensionID != first.DimensionID {
-			t.Error("foreign key was wrong value", a.DimensionID, first.DimensionID)
+		if a.FactorID != first.FactorID {
+			t.Error("foreign key was wrong value", a.FactorID, first.FactorID)
 		}
-		if a.DimensionID != second.DimensionID {
-			t.Error("foreign key was wrong value", a.DimensionID, second.DimensionID)
+		if a.FactorID != second.FactorID {
+			t.Error("foreign key was wrong value", a.FactorID, second.FactorID)
 		}
 
-		if first.R.Dimension != &a {
+		if first.R.Factor != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Dimension != &a {
+		if second.R.Factor != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.DimensionDirections[i*2] != first {
+		if a.R.FactorPositions[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.DimensionDirections[i*2+1] != second {
+		if a.R.FactorPositions[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.DimensionDirections().Count(ctx, tx)
+		count, err := a.FactorPositions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -802,23 +802,23 @@ func testDimensionToManyAddOpDimensionDirections(t *testing.T) {
 		}
 	}
 }
-func testDimensionToManyAddOpParentDimensionDimensions(t *testing.T) {
+func testFactorToManyAddOpParentFactorFactors(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c, d, e Dimension
+	var a Factor
+	var b, c, d, e Factor
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Dimension{&b, &c, &d, &e}
+	foreigners := []*Factor{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -833,13 +833,13 @@ func testDimensionToManyAddOpParentDimensionDimensions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*Dimension{
+	foreignersSplitByInsertion := [][]*Factor{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddParentDimensionDimensions(ctx, tx, i != 0, x...)
+		err = a.AddParentFactorFactors(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -847,28 +847,28 @@ func testDimensionToManyAddOpParentDimensionDimensions(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if !queries.Equal(a.DimensionID, first.ParentDimensionID) {
-			t.Error("foreign key was wrong value", a.DimensionID, first.ParentDimensionID)
+		if !queries.Equal(a.FactorID, first.ParentFactorID) {
+			t.Error("foreign key was wrong value", a.FactorID, first.ParentFactorID)
 		}
-		if !queries.Equal(a.DimensionID, second.ParentDimensionID) {
-			t.Error("foreign key was wrong value", a.DimensionID, second.ParentDimensionID)
+		if !queries.Equal(a.FactorID, second.ParentFactorID) {
+			t.Error("foreign key was wrong value", a.FactorID, second.ParentFactorID)
 		}
 
-		if first.R.ParentDimension != &a {
+		if first.R.ParentFactor != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.ParentDimension != &a {
+		if second.R.ParentFactor != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.ParentDimensionDimensions[i*2] != first {
+		if a.R.ParentFactorFactors[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.ParentDimensionDimensions[i*2+1] != second {
+		if a.R.ParentFactorFactors[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.ParentDimensionDimensions().Count(ctx, tx)
+		count, err := a.ParentFactorFactors().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -878,23 +878,23 @@ func testDimensionToManyAddOpParentDimensionDimensions(t *testing.T) {
 	}
 }
 
-func testDimensionToManySetOpParentDimensionDimensions(t *testing.T) {
+func testFactorToManySetOpParentFactorFactors(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c, d, e Dimension
+	var a Factor
+	var b, c, d, e Factor
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Dimension{&b, &c, &d, &e}
+	foreigners := []*Factor{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -909,25 +909,12 @@ func testDimensionToManySetOpParentDimensionDimensions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = a.SetParentDimensionDimensions(ctx, tx, false, &b, &c)
+	err = a.SetParentFactorFactors(ctx, tx, false, &b, &c)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err := a.ParentDimensionDimensions().Count(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if count != 2 {
-		t.Error("count was wrong:", count)
-	}
-
-	err = a.SetParentDimensionDimensions(ctx, tx, true, &d, &e)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	count, err = a.ParentDimensionDimensions().Count(ctx, tx)
+	count, err := a.ParentFactorFactors().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -935,57 +922,70 @@ func testDimensionToManySetOpParentDimensionDimensions(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	if !queries.IsValuerNil(b.ParentDimensionID) {
+	err = a.SetParentFactorFactors(ctx, tx, true, &d, &e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.ParentFactorFactors().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.ParentFactorID) {
 		t.Error("want b's foreign key value to be nil")
 	}
-	if !queries.IsValuerNil(c.ParentDimensionID) {
+	if !queries.IsValuerNil(c.ParentFactorID) {
 		t.Error("want c's foreign key value to be nil")
 	}
-	if !queries.Equal(a.DimensionID, d.ParentDimensionID) {
-		t.Error("foreign key was wrong value", a.DimensionID, d.ParentDimensionID)
+	if !queries.Equal(a.FactorID, d.ParentFactorID) {
+		t.Error("foreign key was wrong value", a.FactorID, d.ParentFactorID)
 	}
-	if !queries.Equal(a.DimensionID, e.ParentDimensionID) {
-		t.Error("foreign key was wrong value", a.DimensionID, e.ParentDimensionID)
-	}
-
-	if b.R.ParentDimension != nil {
-		t.Error("relationship was not removed properly from the foreign struct")
-	}
-	if c.R.ParentDimension != nil {
-		t.Error("relationship was not removed properly from the foreign struct")
-	}
-	if d.R.ParentDimension != &a {
-		t.Error("relationship was not added properly to the foreign struct")
-	}
-	if e.R.ParentDimension != &a {
-		t.Error("relationship was not added properly to the foreign struct")
+	if !queries.Equal(a.FactorID, e.ParentFactorID) {
+		t.Error("foreign key was wrong value", a.FactorID, e.ParentFactorID)
 	}
 
-	if a.R.ParentDimensionDimensions[0] != &d {
+	if b.R.ParentFactor != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.ParentFactor != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.ParentFactor != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+	if e.R.ParentFactor != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+
+	if a.R.ParentFactorFactors[0] != &d {
 		t.Error("relationship struct slice not set to correct value")
 	}
-	if a.R.ParentDimensionDimensions[1] != &e {
+	if a.R.ParentFactorFactors[1] != &e {
 		t.Error("relationship struct slice not set to correct value")
 	}
 }
 
-func testDimensionToManyRemoveOpParentDimensionDimensions(t *testing.T) {
+func testFactorToManyRemoveOpParentFactorFactors(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c, d, e Dimension
+	var a Factor
+	var b, c, d, e Factor
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Dimension{&b, &c, &d, &e}
+	foreigners := []*Factor{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -994,12 +994,12 @@ func testDimensionToManyRemoveOpParentDimensionDimensions(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = a.AddParentDimensionDimensions(ctx, tx, true, foreigners...)
+	err = a.AddParentFactorFactors(ctx, tx, true, foreigners...)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err := a.ParentDimensionDimensions().Count(ctx, tx)
+	count, err := a.ParentFactorFactors().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1007,12 +1007,12 @@ func testDimensionToManyRemoveOpParentDimensionDimensions(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	err = a.RemoveParentDimensionDimensions(ctx, tx, foreigners[:2]...)
+	err = a.RemoveParentFactorFactors(ctx, tx, foreigners[:2]...)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err = a.ParentDimensionDimensions().Count(ctx, tx)
+	count, err = a.ParentFactorFactors().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1020,56 +1020,56 @@ func testDimensionToManyRemoveOpParentDimensionDimensions(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	if !queries.IsValuerNil(b.ParentDimensionID) {
+	if !queries.IsValuerNil(b.ParentFactorID) {
 		t.Error("want b's foreign key value to be nil")
 	}
-	if !queries.IsValuerNil(c.ParentDimensionID) {
+	if !queries.IsValuerNil(c.ParentFactorID) {
 		t.Error("want c's foreign key value to be nil")
 	}
 
-	if b.R.ParentDimension != nil {
+	if b.R.ParentFactor != nil {
 		t.Error("relationship was not removed properly from the foreign struct")
 	}
-	if c.R.ParentDimension != nil {
+	if c.R.ParentFactor != nil {
 		t.Error("relationship was not removed properly from the foreign struct")
 	}
-	if d.R.ParentDimension != &a {
+	if d.R.ParentFactor != &a {
 		t.Error("relationship to a should have been preserved")
 	}
-	if e.R.ParentDimension != &a {
+	if e.R.ParentFactor != &a {
 		t.Error("relationship to a should have been preserved")
 	}
 
-	if len(a.R.ParentDimensionDimensions) != 2 {
+	if len(a.R.ParentFactorFactors) != 2 {
 		t.Error("should have preserved two relationships")
 	}
 
 	// Removal doesn't do a stable deletion for performance so we have to flip the order
-	if a.R.ParentDimensionDimensions[1] != &d {
+	if a.R.ParentFactorFactors[1] != &d {
 		t.Error("relationship to d should have been preserved")
 	}
-	if a.R.ParentDimensionDimensions[0] != &e {
+	if a.R.ParentFactorFactors[0] != &e {
 		t.Error("relationship to e should have been preserved")
 	}
 }
 
-func testDimensionToManyAddOpDimensionsLinks(t *testing.T) {
+func testFactorToManyAddOpFactorsLinks(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c, d, e DimensionsLink
+	var a Factor
+	var b, c, d, e FactorsLink
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*DimensionsLink{&b, &c, &d, &e}
+	foreigners := []*FactorsLink{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionsLinkDBTypes, false, strmangle.SetComplement(dimensionsLinkPrimaryKeyColumns, dimensionsLinkColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorsLinkDBTypes, false, strmangle.SetComplement(factorsLinkPrimaryKeyColumns, factorsLinkColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -1084,13 +1084,13 @@ func testDimensionToManyAddOpDimensionsLinks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*DimensionsLink{
+	foreignersSplitByInsertion := [][]*FactorsLink{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddDimensionsLinks(ctx, tx, i != 0, x...)
+		err = a.AddFactorsLinks(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -1098,28 +1098,28 @@ func testDimensionToManyAddOpDimensionsLinks(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.DimensionID != first.DimensionsID {
-			t.Error("foreign key was wrong value", a.DimensionID, first.DimensionsID)
+		if a.FactorID != first.FactorsID {
+			t.Error("foreign key was wrong value", a.FactorID, first.FactorsID)
 		}
-		if a.DimensionID != second.DimensionsID {
-			t.Error("foreign key was wrong value", a.DimensionID, second.DimensionsID)
+		if a.FactorID != second.FactorsID {
+			t.Error("foreign key was wrong value", a.FactorID, second.FactorsID)
 		}
 
-		if first.R.Dimension != &a {
+		if first.R.Factor != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Dimension != &a {
+		if second.R.Factor != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.DimensionsLinks[i*2] != first {
+		if a.R.FactorsLinks[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.DimensionsLinks[i*2+1] != second {
+		if a.R.FactorsLinks[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.DimensionsLinks().Count(ctx, tx)
+		count, err := a.FactorsLinks().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -1128,17 +1128,17 @@ func testDimensionToManyAddOpDimensionsLinks(t *testing.T) {
 		}
 	}
 }
-func testDimensionToOneUserAccountUsingUserAccount(t *testing.T) {
+func testFactorToOneUserAccountUsingUserAccount(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local Dimension
+	var local Factor
 	var foreign UserAccount
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err := randomize.Struct(seed, &local, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, userAccountDBTypes, false, userAccountColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize UserAccount struct: %s", err)
@@ -1162,8 +1162,8 @@ func testDimensionToOneUserAccountUsingUserAccount(t *testing.T) {
 		t.Errorf("want: %v, got %v", foreign.UserAccountID, check.UserAccountID)
 	}
 
-	slice := DimensionSlice{&local}
-	if err = local.L.LoadUserAccount(ctx, tx, false, (*[]*Dimension)(&slice), nil); err != nil {
+	slice := FactorSlice{&local}
+	if err = local.L.LoadUserAccount(ctx, tx, false, (*[]*Factor)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if local.R.UserAccount == nil {
@@ -1179,69 +1179,69 @@ func testDimensionToOneUserAccountUsingUserAccount(t *testing.T) {
 	}
 }
 
-func testDimensionToOneDimensionUsingParentDimension(t *testing.T) {
+func testFactorToOneFactorUsingParentFactor(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local Dimension
-	var foreign Dimension
+	var local Factor
+	var foreign Factor
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err := randomize.Struct(seed, &local, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
-	if err := randomize.Struct(seed, &foreign, dimensionDBTypes, false, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err := randomize.Struct(seed, &foreign, factorDBTypes, false, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	queries.Assign(&local.ParentDimensionID, foreign.DimensionID)
+	queries.Assign(&local.ParentFactorID, foreign.FactorID)
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	check, err := local.ParentDimension().One(ctx, tx)
+	check, err := local.ParentFactor().One(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !queries.Equal(check.DimensionID, foreign.DimensionID) {
-		t.Errorf("want: %v, got %v", foreign.DimensionID, check.DimensionID)
+	if !queries.Equal(check.FactorID, foreign.FactorID) {
+		t.Errorf("want: %v, got %v", foreign.FactorID, check.FactorID)
 	}
 
-	slice := DimensionSlice{&local}
-	if err = local.L.LoadParentDimension(ctx, tx, false, (*[]*Dimension)(&slice), nil); err != nil {
+	slice := FactorSlice{&local}
+	if err = local.L.LoadParentFactor(ctx, tx, false, (*[]*Factor)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.ParentDimension == nil {
+	if local.R.ParentFactor == nil {
 		t.Error("struct should have been eager loaded")
 	}
 
-	local.R.ParentDimension = nil
-	if err = local.L.LoadParentDimension(ctx, tx, true, &local, nil); err != nil {
+	local.R.ParentFactor = nil
+	if err = local.L.LoadParentFactor(ctx, tx, true, &local, nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.ParentDimension == nil {
+	if local.R.ParentFactor == nil {
 		t.Error("struct should have been eager loaded")
 	}
 }
 
-func testDimensionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
+func testFactorToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
+	var a Factor
 	var b, c UserAccount
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, userAccountDBTypes, false, strmangle.SetComplement(userAccountPrimaryKeyColumns, userAccountColumnsWithoutDefault)...); err != nil {
@@ -1268,7 +1268,7 @@ func testDimensionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.Dimensions[0] != &a {
+		if x.R.Factors[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
 		if a.UserAccountID != x.UserAccountID {
@@ -1287,24 +1287,24 @@ func testDimensionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 		}
 	}
 }
-func testDimensionToOneSetOpDimensionUsingParentDimension(t *testing.T) {
+func testFactorToOneSetOpFactorUsingParentFactor(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b, c Dimension
+	var a Factor
+	var b, c Factor
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &b, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &c, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1315,51 +1315,51 @@ func testDimensionToOneSetOpDimensionUsingParentDimension(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	for i, x := range []*Dimension{&b, &c} {
-		err = a.SetParentDimension(ctx, tx, i != 0, x)
+	for i, x := range []*Factor{&b, &c} {
+		err = a.SetParentFactor(ctx, tx, i != 0, x)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if a.R.ParentDimension != x {
+		if a.R.ParentFactor != x {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.ParentDimensionDimensions[0] != &a {
+		if x.R.ParentFactorFactors[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if !queries.Equal(a.ParentDimensionID, x.DimensionID) {
-			t.Error("foreign key was wrong value", a.ParentDimensionID)
+		if !queries.Equal(a.ParentFactorID, x.FactorID) {
+			t.Error("foreign key was wrong value", a.ParentFactorID)
 		}
 
-		zero := reflect.Zero(reflect.TypeOf(a.ParentDimensionID))
-		reflect.Indirect(reflect.ValueOf(&a.ParentDimensionID)).Set(zero)
+		zero := reflect.Zero(reflect.TypeOf(a.ParentFactorID))
+		reflect.Indirect(reflect.ValueOf(&a.ParentFactorID)).Set(zero)
 
 		if err = a.Reload(ctx, tx); err != nil {
 			t.Fatal("failed to reload", err)
 		}
 
-		if !queries.Equal(a.ParentDimensionID, x.DimensionID) {
-			t.Error("foreign key was wrong value", a.ParentDimensionID, x.DimensionID)
+		if !queries.Equal(a.ParentFactorID, x.FactorID) {
+			t.Error("foreign key was wrong value", a.ParentFactorID, x.FactorID)
 		}
 	}
 }
 
-func testDimensionToOneRemoveOpDimensionUsingParentDimension(t *testing.T) {
+func testFactorToOneRemoveOpFactorUsingParentFactor(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Dimension
-	var b Dimension
+	var a Factor
+	var b Factor
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, dimensionDBTypes, false, strmangle.SetComplement(dimensionPrimaryKeyColumns, dimensionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &b, factorDBTypes, false, strmangle.SetComplement(factorPrimaryKeyColumns, factorColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1367,15 +1367,15 @@ func testDimensionToOneRemoveOpDimensionUsingParentDimension(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = a.SetParentDimension(ctx, tx, true, &b); err != nil {
+	if err = a.SetParentFactor(ctx, tx, true, &b); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = a.RemoveParentDimension(ctx, tx, &b); err != nil {
+	if err = a.RemoveParentFactor(ctx, tx, &b); err != nil {
 		t.Error("failed to remove relationship")
 	}
 
-	count, err := a.ParentDimension().Count(ctx, tx)
+	count, err := a.ParentFactor().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1383,27 +1383,27 @@ func testDimensionToOneRemoveOpDimensionUsingParentDimension(t *testing.T) {
 		t.Error("want no relationships remaining")
 	}
 
-	if a.R.ParentDimension != nil {
+	if a.R.ParentFactor != nil {
 		t.Error("R struct entry should be nil")
 	}
 
-	if !queries.IsValuerNil(a.ParentDimensionID) {
+	if !queries.IsValuerNil(a.ParentFactorID) {
 		t.Error("foreign key value should be nil")
 	}
 
-	if len(b.R.ParentDimensionDimensions) != 0 {
+	if len(b.R.ParentFactorFactors) != 0 {
 		t.Error("failed to remove a from b's relationships")
 	}
 }
 
-func testDimensionsReload(t *testing.T) {
+func testFactorsReload(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1418,14 +1418,14 @@ func testDimensionsReload(t *testing.T) {
 	}
 }
 
-func testDimensionsReloadAll(t *testing.T) {
+func testFactorsReloadAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1435,21 +1435,21 @@ func testDimensionsReloadAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := DimensionSlice{o}
+	slice := FactorSlice{o}
 
 	if err = slice.ReloadAll(ctx, tx); err != nil {
 		t.Error(err)
 	}
 }
 
-func testDimensionsSelect(t *testing.T) {
+func testFactorsSelect(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1459,7 +1459,7 @@ func testDimensionsSelect(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice, err := Dimensions().All(ctx, tx)
+	slice, err := Factors().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1470,25 +1470,25 @@ func testDimensionsSelect(t *testing.T) {
 }
 
 var (
-	dimensionDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `DimensionDescription`: `varchar`, `DimensionID`: `int8`, `DimensionName`: `varchar`, `ParentDimensionID`: `int8`, `UserAccountID`: `int8`}
-	_                = bytes.MinRead
+	factorDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `FactorDescription`: `varchar`, `FactorID`: `int8`, `FactorName`: `varchar`, `ParentFactorID`: `int8`, `UserAccountID`: `int8`}
+	_             = bytes.MinRead
 )
 
-func testDimensionsUpdate(t *testing.T) {
+func testFactorsUpdate(t *testing.T) {
 	t.Parallel()
 
-	if 0 == len(dimensionPrimaryKeyColumns) {
+	if 0 == len(factorPrimaryKeyColumns) {
 		t.Skip("Skipping table with no primary key columns")
 	}
-	if len(dimensionColumns) == len(dimensionPrimaryKeyColumns) {
+	if len(factorColumns) == len(factorPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1498,7 +1498,7 @@ func testDimensionsUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1507,8 +1507,8 @@ func testDimensionsUpdate(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	if rowsAff, err := o.Update(ctx, tx, boil.Infer()); err != nil {
@@ -1518,18 +1518,18 @@ func testDimensionsUpdate(t *testing.T) {
 	}
 }
 
-func testDimensionsSliceUpdateAll(t *testing.T) {
+func testFactorsSliceUpdateAll(t *testing.T) {
 	t.Parallel()
 
-	if len(dimensionColumns) == len(dimensionPrimaryKeyColumns) {
+	if len(factorColumns) == len(factorPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Dimension{}
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := &Factor{}
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1539,7 +1539,7 @@ func testDimensionsSliceUpdateAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1548,18 +1548,18 @@ func testDimensionsSliceUpdateAll(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, dimensionDBTypes, true, dimensionPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, o, factorDBTypes, true, factorPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	// Remove Primary keys and unique columns from what we plan to update
 	var fields []string
-	if strmangle.StringSliceMatch(dimensionColumns, dimensionPrimaryKeyColumns) {
-		fields = dimensionColumns
+	if strmangle.StringSliceMatch(factorColumns, factorPrimaryKeyColumns) {
+		fields = factorColumns
 	} else {
 		fields = strmangle.SetComplement(
-			dimensionColumns,
-			dimensionPrimaryKeyColumns,
+			factorColumns,
+			factorPrimaryKeyColumns,
 		)
 	}
 
@@ -1577,7 +1577,7 @@ func testDimensionsSliceUpdateAll(t *testing.T) {
 		}
 	}
 
-	slice := DimensionSlice{o}
+	slice := FactorSlice{o}
 	if rowsAff, err := slice.UpdateAll(ctx, tx, updateMap); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
@@ -1585,29 +1585,29 @@ func testDimensionsSliceUpdateAll(t *testing.T) {
 	}
 }
 
-func testDimensionsUpsert(t *testing.T) {
+func testFactorsUpsert(t *testing.T) {
 	t.Parallel()
 
-	if len(dimensionColumns) == len(dimensionPrimaryKeyColumns) {
+	if len(factorColumns) == len(factorPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
 	// Attempt the INSERT side of an UPSERT
-	o := Dimension{}
-	if err = randomize.Struct(seed, &o, dimensionDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	o := Factor{}
+	if err = randomize.Struct(seed, &o, factorDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 	if err = o.Upsert(ctx, tx, false, nil, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Dimension: %s", err)
+		t.Errorf("Unable to upsert Factor: %s", err)
 	}
 
-	count, err := Dimensions().Count(ctx, tx)
+	count, err := Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1616,15 +1616,15 @@ func testDimensionsUpsert(t *testing.T) {
 	}
 
 	// Attempt the UPDATE side of an UPSERT
-	if err = randomize.Struct(seed, &o, dimensionDBTypes, false, dimensionPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Dimension struct: %s", err)
+	if err = randomize.Struct(seed, &o, factorDBTypes, false, factorPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Factor struct: %s", err)
 	}
 
 	if err = o.Upsert(ctx, tx, true, nil, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Dimension: %s", err)
+		t.Errorf("Unable to upsert Factor: %s", err)
 	}
 
-	count, err = Dimensions().Count(ctx, tx)
+	count, err = Factors().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}

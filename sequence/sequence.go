@@ -94,22 +94,32 @@ func (seq *Sequence) getNextBlock() {
 	}
 }
 
-func (seq *Sequence) GetCursor(numVals int) SequenceCursor {
-	blocks := seq.getBlocks(numVals)
+func (seq *Sequence) GetCursor(numVals int) (SequenceCursor, error) {
+	var sequenceCursor SequenceCursor
+
+	if numVals < 1 {
+		return sequenceCursor, nil
+	}
+
+	blocks, err := seq.getBlocks(numVals)
+
+	if err != nil {
+		return sequenceCursor, err
+	}
 
 	return SequenceCursor{
 		blocks:            blocks,
 		currentBlockIndex: 0,
 		currentId:         blocks[0].Start - 1,
-	}
+	}, nil
 }
 
-func (seq *Sequence) getBlocks(numVals int) []SequenceBlock {
+func (seq *Sequence) getBlocks(numVals int) ([]SequenceBlock, error) {
+
 	numValues := int64(numVals)
 	if seq.CurrentValue+numValues > seq.Max {
 		if seq.nextBlock == nil {
-			log.Fatalf("Could not obtain sequences for %s in time", seq.Name)
-			panic(nil)
+			return nil, fmt.Errorf("Could not obtain sequences for %s in time", seq.Name)
 		}
 
 		if seq.Max == 0 {
@@ -138,15 +148,15 @@ func (seq *Sequence) getBlocks(numVals int) []SequenceBlock {
 		seq.CurrentValue += numValues
 
 		if existingSeqBlock == nil {
-			return []SequenceBlock{newSeqBlock}
+			return []SequenceBlock{newSeqBlock}, nil
 		} else {
-			return []SequenceBlock{*existingSeqBlock, newSeqBlock}
+			return []SequenceBlock{*existingSeqBlock, newSeqBlock}, nil
 		}
 	} else {
 		newSeqBlock := SequenceBlock{Start: seq.CurrentValue + 1, Length: numValues, End: seq.CurrentValue + numValues}
 
 		seq.CurrentValue += numValues
 
-		return []SequenceBlock{newSeqBlock}
+		return []SequenceBlock{newSeqBlock}, nil
 	}
 }

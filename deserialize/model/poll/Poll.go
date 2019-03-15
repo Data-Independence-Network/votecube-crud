@@ -30,7 +30,7 @@ func DeserializePoll(ctx *deserialize.CreatePollDeserializeContext, err error) (
 	poll.R.PollsStates, err = location.DeserializePollStates(ctx, err)
 	//poll.R.PollsCounties, err = location.DeserializePollCounties(ctx, err)
 	poll.R.PollsTowns, err = location.DeserializePollTowns(ctx, err)
-	poll.R.PollsDimensionsDirections, err = DeserializePollDimDirs(ctx, err)
+	poll.R.PollsFactorsPositions, err = DeserializePollFactorPositions(ctx, err)
 	poll.R.PollsLabels, err = DeserializePollLabels(ctx, err)
 
 	poll.StartDate, err = deserialize.RTime(ctx, err)
@@ -44,7 +44,7 @@ func DeserializePoll(ctx *deserialize.CreatePollDeserializeContext, err error) (
 	}
 
 	poll.ThemeID, err = deserialize.RNum(ctx, err)
-	_, themeIdExists := ctx.LocMaps.ThemeMap[poll.ThemeID]
+	_, themeIdExists := (*ctx.ThemeMap)[poll.ThemeID]
 
 	if !themeIdExists {
 		return poll, fmt.Errorf("provided Theme ID does not exist: %v", poll.ThemeID)

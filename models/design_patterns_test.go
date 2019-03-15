@@ -494,14 +494,14 @@ func testDesignPatternsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testDesignPatternToManyDirections(t *testing.T) {
+func testDesignPatternToManyPollsFactorsPositions(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c Direction
+	var b, c PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, true, designPatternColumnsWithDefault...); err != nil {
@@ -512,10 +512,10 @@ func testDesignPatternToManyDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -528,13 +528,13 @@ func testDesignPatternToManyDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	direction, err := a.Directions().All(ctx, tx)
+	pollsFactorsPosition, err := a.PollsFactorsPositions().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range direction {
+	for _, v := range pollsFactorsPosition {
 		if queries.Equal(v.DesignPatternID, b.DesignPatternID) {
 			bFound = true
 		}
@@ -551,34 +551,34 @@ func testDesignPatternToManyDirections(t *testing.T) {
 	}
 
 	slice := DesignPatternSlice{&a}
-	if err = a.L.LoadDirections(ctx, tx, false, (*[]*DesignPattern)(&slice), nil); err != nil {
+	if err = a.L.LoadPollsFactorsPositions(ctx, tx, false, (*[]*DesignPattern)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.Directions); got != 2 {
+	if got := len(a.R.PollsFactorsPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.Directions = nil
-	if err = a.L.LoadDirections(ctx, tx, true, &a, nil); err != nil {
+	a.R.PollsFactorsPositions = nil
+	if err = a.L.LoadPollsFactorsPositions(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.Directions); got != 2 {
+	if got := len(a.R.PollsFactorsPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", direction)
+		t.Logf("%#v", pollsFactorsPosition)
 	}
 }
 
-func testDesignPatternToManyPollsDimensionsDirections(t *testing.T) {
+func testDesignPatternToManyPositions(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c PollsDimensionsDirection
+	var b, c Position
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, true, designPatternColumnsWithDefault...); err != nil {
@@ -589,10 +589,10 @@ func testDesignPatternToManyPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -605,13 +605,13 @@ func testDesignPatternToManyPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pollsDimensionsDirection, err := a.PollsDimensionsDirections().All(ctx, tx)
+	position, err := a.Positions().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range pollsDimensionsDirection {
+	for _, v := range position {
 		if queries.Equal(v.DesignPatternID, b.DesignPatternID) {
 			bFound = true
 		}
@@ -628,27 +628,27 @@ func testDesignPatternToManyPollsDimensionsDirections(t *testing.T) {
 	}
 
 	slice := DesignPatternSlice{&a}
-	if err = a.L.LoadPollsDimensionsDirections(ctx, tx, false, (*[]*DesignPattern)(&slice), nil); err != nil {
+	if err = a.L.LoadPositions(ctx, tx, false, (*[]*DesignPattern)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.PollsDimensionsDirections); got != 2 {
+	if got := len(a.R.Positions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.PollsDimensionsDirections = nil
-	if err = a.L.LoadPollsDimensionsDirections(ctx, tx, true, &a, nil); err != nil {
+	a.R.Positions = nil
+	if err = a.L.LoadPositions(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.PollsDimensionsDirections); got != 2 {
+	if got := len(a.R.Positions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", pollsDimensionsDirection)
+		t.Logf("%#v", position)
 	}
 }
 
-func testDesignPatternToManyAddOpDirections(t *testing.T) {
+func testDesignPatternToManyAddOpPollsFactorsPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -656,15 +656,15 @@ func testDesignPatternToManyAddOpDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c, d, e Direction
+	var b, c, d, e PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Direction{&b, &c, &d, &e}
+	foreigners := []*PollsFactorsPosition{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -679,13 +679,13 @@ func testDesignPatternToManyAddOpDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*Direction{
+	foreignersSplitByInsertion := [][]*PollsFactorsPosition{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddDirections(ctx, tx, i != 0, x...)
+		err = a.AddPollsFactorsPositions(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -707,14 +707,14 @@ func testDesignPatternToManyAddOpDirections(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.Directions[i*2] != first {
+		if a.R.PollsFactorsPositions[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.Directions[i*2+1] != second {
+		if a.R.PollsFactorsPositions[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.Directions().Count(ctx, tx)
+		count, err := a.PollsFactorsPositions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -724,7 +724,7 @@ func testDesignPatternToManyAddOpDirections(t *testing.T) {
 	}
 }
 
-func testDesignPatternToManySetOpDirections(t *testing.T) {
+func testDesignPatternToManySetOpPollsFactorsPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -732,15 +732,15 @@ func testDesignPatternToManySetOpDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c, d, e Direction
+	var b, c, d, e PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Direction{&b, &c, &d, &e}
+	foreigners := []*PollsFactorsPosition{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -755,12 +755,12 @@ func testDesignPatternToManySetOpDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = a.SetDirections(ctx, tx, false, &b, &c)
+	err = a.SetPollsFactorsPositions(ctx, tx, false, &b, &c)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err := a.Directions().Count(ctx, tx)
+	count, err := a.PollsFactorsPositions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -768,12 +768,12 @@ func testDesignPatternToManySetOpDirections(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	err = a.SetDirections(ctx, tx, true, &d, &e)
+	err = a.SetPollsFactorsPositions(ctx, tx, true, &d, &e)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err = a.Directions().Count(ctx, tx)
+	count, err = a.PollsFactorsPositions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -807,15 +807,15 @@ func testDesignPatternToManySetOpDirections(t *testing.T) {
 		t.Error("relationship was not added properly to the foreign struct")
 	}
 
-	if a.R.Directions[0] != &d {
+	if a.R.PollsFactorsPositions[0] != &d {
 		t.Error("relationship struct slice not set to correct value")
 	}
-	if a.R.Directions[1] != &e {
+	if a.R.PollsFactorsPositions[1] != &e {
 		t.Error("relationship struct slice not set to correct value")
 	}
 }
 
-func testDesignPatternToManyRemoveOpDirections(t *testing.T) {
+func testDesignPatternToManyRemoveOpPollsFactorsPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -823,15 +823,15 @@ func testDesignPatternToManyRemoveOpDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c, d, e Direction
+	var b, c, d, e PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*Direction{&b, &c, &d, &e}
+	foreigners := []*PollsFactorsPosition{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -840,12 +840,12 @@ func testDesignPatternToManyRemoveOpDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = a.AddDirections(ctx, tx, true, foreigners...)
+	err = a.AddPollsFactorsPositions(ctx, tx, true, foreigners...)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err := a.Directions().Count(ctx, tx)
+	count, err := a.PollsFactorsPositions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -853,12 +853,12 @@ func testDesignPatternToManyRemoveOpDirections(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	err = a.RemoveDirections(ctx, tx, foreigners[:2]...)
+	err = a.RemovePollsFactorsPositions(ctx, tx, foreigners[:2]...)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err = a.Directions().Count(ctx, tx)
+	count, err = a.PollsFactorsPositions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -886,20 +886,20 @@ func testDesignPatternToManyRemoveOpDirections(t *testing.T) {
 		t.Error("relationship to a should have been preserved")
 	}
 
-	if len(a.R.Directions) != 2 {
+	if len(a.R.PollsFactorsPositions) != 2 {
 		t.Error("should have preserved two relationships")
 	}
 
 	// Removal doesn't do a stable deletion for performance so we have to flip the order
-	if a.R.Directions[1] != &d {
+	if a.R.PollsFactorsPositions[1] != &d {
 		t.Error("relationship to d should have been preserved")
 	}
-	if a.R.Directions[0] != &e {
+	if a.R.PollsFactorsPositions[0] != &e {
 		t.Error("relationship to e should have been preserved")
 	}
 }
 
-func testDesignPatternToManyAddOpPollsDimensionsDirections(t *testing.T) {
+func testDesignPatternToManyAddOpPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -907,15 +907,15 @@ func testDesignPatternToManyAddOpPollsDimensionsDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c, d, e PollsDimensionsDirection
+	var b, c, d, e Position
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*PollsDimensionsDirection{&b, &c, &d, &e}
+	foreigners := []*Position{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -930,13 +930,13 @@ func testDesignPatternToManyAddOpPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*PollsDimensionsDirection{
+	foreignersSplitByInsertion := [][]*Position{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddPollsDimensionsDirections(ctx, tx, i != 0, x...)
+		err = a.AddPositions(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -958,14 +958,14 @@ func testDesignPatternToManyAddOpPollsDimensionsDirections(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.PollsDimensionsDirections[i*2] != first {
+		if a.R.Positions[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.PollsDimensionsDirections[i*2+1] != second {
+		if a.R.Positions[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.PollsDimensionsDirections().Count(ctx, tx)
+		count, err := a.Positions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -975,7 +975,7 @@ func testDesignPatternToManyAddOpPollsDimensionsDirections(t *testing.T) {
 	}
 }
 
-func testDesignPatternToManySetOpPollsDimensionsDirections(t *testing.T) {
+func testDesignPatternToManySetOpPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -983,15 +983,15 @@ func testDesignPatternToManySetOpPollsDimensionsDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c, d, e PollsDimensionsDirection
+	var b, c, d, e Position
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*PollsDimensionsDirection{&b, &c, &d, &e}
+	foreigners := []*Position{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -1006,12 +1006,12 @@ func testDesignPatternToManySetOpPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = a.SetPollsDimensionsDirections(ctx, tx, false, &b, &c)
+	err = a.SetPositions(ctx, tx, false, &b, &c)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err := a.PollsDimensionsDirections().Count(ctx, tx)
+	count, err := a.Positions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1019,12 +1019,12 @@ func testDesignPatternToManySetOpPollsDimensionsDirections(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	err = a.SetPollsDimensionsDirections(ctx, tx, true, &d, &e)
+	err = a.SetPositions(ctx, tx, true, &d, &e)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err = a.PollsDimensionsDirections().Count(ctx, tx)
+	count, err = a.Positions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1058,15 +1058,15 @@ func testDesignPatternToManySetOpPollsDimensionsDirections(t *testing.T) {
 		t.Error("relationship was not added properly to the foreign struct")
 	}
 
-	if a.R.PollsDimensionsDirections[0] != &d {
+	if a.R.Positions[0] != &d {
 		t.Error("relationship struct slice not set to correct value")
 	}
-	if a.R.PollsDimensionsDirections[1] != &e {
+	if a.R.Positions[1] != &e {
 		t.Error("relationship struct slice not set to correct value")
 	}
 }
 
-func testDesignPatternToManyRemoveOpPollsDimensionsDirections(t *testing.T) {
+func testDesignPatternToManyRemoveOpPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -1074,15 +1074,15 @@ func testDesignPatternToManyRemoveOpPollsDimensionsDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a DesignPattern
-	var b, c, d, e PollsDimensionsDirection
+	var b, c, d, e Position
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*PollsDimensionsDirection{&b, &c, &d, &e}
+	foreigners := []*Position{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -1091,12 +1091,12 @@ func testDesignPatternToManyRemoveOpPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = a.AddPollsDimensionsDirections(ctx, tx, true, foreigners...)
+	err = a.AddPositions(ctx, tx, true, foreigners...)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err := a.PollsDimensionsDirections().Count(ctx, tx)
+	count, err := a.Positions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1104,12 +1104,12 @@ func testDesignPatternToManyRemoveOpPollsDimensionsDirections(t *testing.T) {
 		t.Error("count was wrong:", count)
 	}
 
-	err = a.RemovePollsDimensionsDirections(ctx, tx, foreigners[:2]...)
+	err = a.RemovePositions(ctx, tx, foreigners[:2]...)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	count, err = a.PollsDimensionsDirections().Count(ctx, tx)
+	count, err = a.Positions().Count(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1137,15 +1137,15 @@ func testDesignPatternToManyRemoveOpPollsDimensionsDirections(t *testing.T) {
 		t.Error("relationship to a should have been preserved")
 	}
 
-	if len(a.R.PollsDimensionsDirections) != 2 {
+	if len(a.R.Positions) != 2 {
 		t.Error("should have preserved two relationships")
 	}
 
 	// Removal doesn't do a stable deletion for performance so we have to flip the order
-	if a.R.PollsDimensionsDirections[1] != &d {
+	if a.R.Positions[1] != &d {
 		t.Error("relationship to d should have been preserved")
 	}
-	if a.R.PollsDimensionsDirections[0] != &e {
+	if a.R.Positions[0] != &e {
 		t.Error("relationship to e should have been preserved")
 	}
 }

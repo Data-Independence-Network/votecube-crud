@@ -596,155 +596,155 @@ func testVoteToOnePollUsingPoll(t *testing.T) {
 	}
 }
 
-func testVoteToOnePollsDimensionsDirectionUsingZPollDimensionDirection(t *testing.T) {
+func testVoteToOnePollsFactorsPositionUsingZPollFactorPosition(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var local Vote
-	var foreign PollsDimensionsDirection
+	var foreign PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err := randomize.Struct(seed, &local, voteDBTypes, false, voteColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Vote struct: %s", err)
 	}
-	if err := randomize.Struct(seed, &foreign, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize PollsDimensionsDirection struct: %s", err)
+	if err := randomize.Struct(seed, &foreign, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize PollsFactorsPosition struct: %s", err)
 	}
 
 	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	local.ZPollDimensionDirectionID = foreign.PollDimensionDirectionID
+	local.ZPollFactorPositionID = foreign.PollFactorPositionID
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	check, err := local.ZPollDimensionDirection().One(ctx, tx)
+	check, err := local.ZPollFactorPosition().One(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if check.PollDimensionDirectionID != foreign.PollDimensionDirectionID {
-		t.Errorf("want: %v, got %v", foreign.PollDimensionDirectionID, check.PollDimensionDirectionID)
+	if check.PollFactorPositionID != foreign.PollFactorPositionID {
+		t.Errorf("want: %v, got %v", foreign.PollFactorPositionID, check.PollFactorPositionID)
 	}
 
 	slice := VoteSlice{&local}
-	if err = local.L.LoadZPollDimensionDirection(ctx, tx, false, (*[]*Vote)(&slice), nil); err != nil {
+	if err = local.L.LoadZPollFactorPosition(ctx, tx, false, (*[]*Vote)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.ZPollDimensionDirection == nil {
+	if local.R.ZPollFactorPosition == nil {
 		t.Error("struct should have been eager loaded")
 	}
 
-	local.R.ZPollDimensionDirection = nil
-	if err = local.L.LoadZPollDimensionDirection(ctx, tx, true, &local, nil); err != nil {
+	local.R.ZPollFactorPosition = nil
+	if err = local.L.LoadZPollFactorPosition(ctx, tx, true, &local, nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.ZPollDimensionDirection == nil {
+	if local.R.ZPollFactorPosition == nil {
 		t.Error("struct should have been eager loaded")
 	}
 }
 
-func testVoteToOnePollsDimensionsDirectionUsingYPollDimensionDirection(t *testing.T) {
+func testVoteToOnePollsFactorsPositionUsingYPollFactorPosition(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var local Vote
-	var foreign PollsDimensionsDirection
+	var foreign PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err := randomize.Struct(seed, &local, voteDBTypes, false, voteColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Vote struct: %s", err)
 	}
-	if err := randomize.Struct(seed, &foreign, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize PollsDimensionsDirection struct: %s", err)
+	if err := randomize.Struct(seed, &foreign, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize PollsFactorsPosition struct: %s", err)
 	}
 
 	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	local.YPollDimensionDirectionID = foreign.PollDimensionDirectionID
+	local.YPollFactorPositionID = foreign.PollFactorPositionID
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	check, err := local.YPollDimensionDirection().One(ctx, tx)
+	check, err := local.YPollFactorPosition().One(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if check.PollDimensionDirectionID != foreign.PollDimensionDirectionID {
-		t.Errorf("want: %v, got %v", foreign.PollDimensionDirectionID, check.PollDimensionDirectionID)
+	if check.PollFactorPositionID != foreign.PollFactorPositionID {
+		t.Errorf("want: %v, got %v", foreign.PollFactorPositionID, check.PollFactorPositionID)
 	}
 
 	slice := VoteSlice{&local}
-	if err = local.L.LoadYPollDimensionDirection(ctx, tx, false, (*[]*Vote)(&slice), nil); err != nil {
+	if err = local.L.LoadYPollFactorPosition(ctx, tx, false, (*[]*Vote)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.YPollDimensionDirection == nil {
+	if local.R.YPollFactorPosition == nil {
 		t.Error("struct should have been eager loaded")
 	}
 
-	local.R.YPollDimensionDirection = nil
-	if err = local.L.LoadYPollDimensionDirection(ctx, tx, true, &local, nil); err != nil {
+	local.R.YPollFactorPosition = nil
+	if err = local.L.LoadYPollFactorPosition(ctx, tx, true, &local, nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.YPollDimensionDirection == nil {
+	if local.R.YPollFactorPosition == nil {
 		t.Error("struct should have been eager loaded")
 	}
 }
 
-func testVoteToOnePollsDimensionsDirectionUsingXPollDimensionDirection(t *testing.T) {
+func testVoteToOnePollsFactorsPositionUsingXPollFactorPosition(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var local Vote
-	var foreign PollsDimensionsDirection
+	var foreign PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err := randomize.Struct(seed, &local, voteDBTypes, false, voteColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Vote struct: %s", err)
 	}
-	if err := randomize.Struct(seed, &foreign, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize PollsDimensionsDirection struct: %s", err)
+	if err := randomize.Struct(seed, &foreign, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize PollsFactorsPosition struct: %s", err)
 	}
 
 	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	local.XPollDimensionDirectionID = foreign.PollDimensionDirectionID
+	local.XPollFactorPositionID = foreign.PollFactorPositionID
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	check, err := local.XPollDimensionDirection().One(ctx, tx)
+	check, err := local.XPollFactorPosition().One(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if check.PollDimensionDirectionID != foreign.PollDimensionDirectionID {
-		t.Errorf("want: %v, got %v", foreign.PollDimensionDirectionID, check.PollDimensionDirectionID)
+	if check.PollFactorPositionID != foreign.PollFactorPositionID {
+		t.Errorf("want: %v, got %v", foreign.PollFactorPositionID, check.PollFactorPositionID)
 	}
 
 	slice := VoteSlice{&local}
-	if err = local.L.LoadXPollDimensionDirection(ctx, tx, false, (*[]*Vote)(&slice), nil); err != nil {
+	if err = local.L.LoadXPollFactorPosition(ctx, tx, false, (*[]*Vote)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.XPollDimensionDirection == nil {
+	if local.R.XPollFactorPosition == nil {
 		t.Error("struct should have been eager loaded")
 	}
 
-	local.R.XPollDimensionDirection = nil
-	if err = local.L.LoadXPollDimensionDirection(ctx, tx, true, &local, nil); err != nil {
+	local.R.XPollFactorPosition = nil
+	if err = local.L.LoadXPollFactorPosition(ctx, tx, true, &local, nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.XPollDimensionDirection == nil {
+	if local.R.XPollFactorPosition == nil {
 		t.Error("struct should have been eager loaded")
 	}
 }
@@ -863,7 +863,7 @@ func testVoteToOneSetOpPollUsingPoll(t *testing.T) {
 		}
 	}
 }
-func testVoteToOneSetOpPollsDimensionsDirectionUsingZPollDimensionDirection(t *testing.T) {
+func testVoteToOneSetOpPollsFactorsPositionUsingZPollFactorPosition(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -871,16 +871,16 @@ func testVoteToOneSetOpPollsDimensionsDirectionUsingZPollDimensionDirection(t *t
 	defer func() { _ = tx.Rollback() }()
 
 	var a Vote
-	var b, c PollsDimensionsDirection
+	var b, c PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, voteDBTypes, false, strmangle.SetComplement(votePrimaryKeyColumns, voteColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &b, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &c, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -891,36 +891,36 @@ func testVoteToOneSetOpPollsDimensionsDirectionUsingZPollDimensionDirection(t *t
 		t.Fatal(err)
 	}
 
-	for i, x := range []*PollsDimensionsDirection{&b, &c} {
-		err = a.SetZPollDimensionDirection(ctx, tx, i != 0, x)
+	for i, x := range []*PollsFactorsPosition{&b, &c} {
+		err = a.SetZPollFactorPosition(ctx, tx, i != 0, x)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if a.R.ZPollDimensionDirection != x {
+		if a.R.ZPollFactorPosition != x {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.ZPollDimensionDirectionVotes[0] != &a {
+		if x.R.ZPollFactorPositionVotes[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.ZPollDimensionDirectionID != x.PollDimensionDirectionID {
-			t.Error("foreign key was wrong value", a.ZPollDimensionDirectionID)
+		if a.ZPollFactorPositionID != x.PollFactorPositionID {
+			t.Error("foreign key was wrong value", a.ZPollFactorPositionID)
 		}
 
-		zero := reflect.Zero(reflect.TypeOf(a.ZPollDimensionDirectionID))
-		reflect.Indirect(reflect.ValueOf(&a.ZPollDimensionDirectionID)).Set(zero)
+		zero := reflect.Zero(reflect.TypeOf(a.ZPollFactorPositionID))
+		reflect.Indirect(reflect.ValueOf(&a.ZPollFactorPositionID)).Set(zero)
 
 		if err = a.Reload(ctx, tx); err != nil {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.ZPollDimensionDirectionID != x.PollDimensionDirectionID {
-			t.Error("foreign key was wrong value", a.ZPollDimensionDirectionID, x.PollDimensionDirectionID)
+		if a.ZPollFactorPositionID != x.PollFactorPositionID {
+			t.Error("foreign key was wrong value", a.ZPollFactorPositionID, x.PollFactorPositionID)
 		}
 	}
 }
-func testVoteToOneSetOpPollsDimensionsDirectionUsingYPollDimensionDirection(t *testing.T) {
+func testVoteToOneSetOpPollsFactorsPositionUsingYPollFactorPosition(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -928,16 +928,16 @@ func testVoteToOneSetOpPollsDimensionsDirectionUsingYPollDimensionDirection(t *t
 	defer func() { _ = tx.Rollback() }()
 
 	var a Vote
-	var b, c PollsDimensionsDirection
+	var b, c PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, voteDBTypes, false, strmangle.SetComplement(votePrimaryKeyColumns, voteColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &b, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &c, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -948,36 +948,36 @@ func testVoteToOneSetOpPollsDimensionsDirectionUsingYPollDimensionDirection(t *t
 		t.Fatal(err)
 	}
 
-	for i, x := range []*PollsDimensionsDirection{&b, &c} {
-		err = a.SetYPollDimensionDirection(ctx, tx, i != 0, x)
+	for i, x := range []*PollsFactorsPosition{&b, &c} {
+		err = a.SetYPollFactorPosition(ctx, tx, i != 0, x)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if a.R.YPollDimensionDirection != x {
+		if a.R.YPollFactorPosition != x {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.YPollDimensionDirectionVotes[0] != &a {
+		if x.R.YPollFactorPositionVotes[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.YPollDimensionDirectionID != x.PollDimensionDirectionID {
-			t.Error("foreign key was wrong value", a.YPollDimensionDirectionID)
+		if a.YPollFactorPositionID != x.PollFactorPositionID {
+			t.Error("foreign key was wrong value", a.YPollFactorPositionID)
 		}
 
-		zero := reflect.Zero(reflect.TypeOf(a.YPollDimensionDirectionID))
-		reflect.Indirect(reflect.ValueOf(&a.YPollDimensionDirectionID)).Set(zero)
+		zero := reflect.Zero(reflect.TypeOf(a.YPollFactorPositionID))
+		reflect.Indirect(reflect.ValueOf(&a.YPollFactorPositionID)).Set(zero)
 
 		if err = a.Reload(ctx, tx); err != nil {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.YPollDimensionDirectionID != x.PollDimensionDirectionID {
-			t.Error("foreign key was wrong value", a.YPollDimensionDirectionID, x.PollDimensionDirectionID)
+		if a.YPollFactorPositionID != x.PollFactorPositionID {
+			t.Error("foreign key was wrong value", a.YPollFactorPositionID, x.PollFactorPositionID)
 		}
 	}
 }
-func testVoteToOneSetOpPollsDimensionsDirectionUsingXPollDimensionDirection(t *testing.T) {
+func testVoteToOneSetOpPollsFactorsPositionUsingXPollFactorPosition(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -985,16 +985,16 @@ func testVoteToOneSetOpPollsDimensionsDirectionUsingXPollDimensionDirection(t *t
 	defer func() { _ = tx.Rollback() }()
 
 	var a Vote
-	var b, c PollsDimensionsDirection
+	var b, c PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, voteDBTypes, false, strmangle.SetComplement(votePrimaryKeyColumns, voteColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &b, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &c, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1005,32 +1005,32 @@ func testVoteToOneSetOpPollsDimensionsDirectionUsingXPollDimensionDirection(t *t
 		t.Fatal(err)
 	}
 
-	for i, x := range []*PollsDimensionsDirection{&b, &c} {
-		err = a.SetXPollDimensionDirection(ctx, tx, i != 0, x)
+	for i, x := range []*PollsFactorsPosition{&b, &c} {
+		err = a.SetXPollFactorPosition(ctx, tx, i != 0, x)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if a.R.XPollDimensionDirection != x {
+		if a.R.XPollFactorPosition != x {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.XPollDimensionDirectionVotes[0] != &a {
+		if x.R.XPollFactorPositionVotes[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.XPollDimensionDirectionID != x.PollDimensionDirectionID {
-			t.Error("foreign key was wrong value", a.XPollDimensionDirectionID)
+		if a.XPollFactorPositionID != x.PollFactorPositionID {
+			t.Error("foreign key was wrong value", a.XPollFactorPositionID)
 		}
 
-		zero := reflect.Zero(reflect.TypeOf(a.XPollDimensionDirectionID))
-		reflect.Indirect(reflect.ValueOf(&a.XPollDimensionDirectionID)).Set(zero)
+		zero := reflect.Zero(reflect.TypeOf(a.XPollFactorPositionID))
+		reflect.Indirect(reflect.ValueOf(&a.XPollFactorPositionID)).Set(zero)
 
 		if err = a.Reload(ctx, tx); err != nil {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.XPollDimensionDirectionID != x.PollDimensionDirectionID {
-			t.Error("foreign key was wrong value", a.XPollDimensionDirectionID, x.PollDimensionDirectionID)
+		if a.XPollFactorPositionID != x.PollFactorPositionID {
+			t.Error("foreign key was wrong value", a.XPollFactorPositionID, x.PollFactorPositionID)
 		}
 	}
 }
@@ -1109,7 +1109,7 @@ func testVotesSelect(t *testing.T) {
 }
 
 var (
-	voteDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `PollID`: `int8`, `UserAccountID`: `int8`, `VoteID`: `int8`, `XPollDimensionDirectionID`: `int8`, `XShare`: `int2`, `YPollDimensionDirectionID`: `int8`, `YShare`: `int2`, `ZPollDimensionDirectionID`: `int8`, `ZShare`: `int2`}
+	voteDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `PollID`: `int8`, `UserAccountID`: `int8`, `VoteID`: `int8`, `XPollFactorPositionID`: `int8`, `XShare`: `int2`, `YPollFactorPositionID`: `int8`, `YShare`: `int2`, `ZPollFactorPositionID`: `int8`, `ZShare`: `int2`}
 	_           = bytes.MinRead
 )
 

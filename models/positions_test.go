@@ -21,24 +21,24 @@ var (
 	_ = queries.Equal
 )
 
-func testDirections(t *testing.T) {
+func testPositions(t *testing.T) {
 	t.Parallel()
 
-	query := Directions()
+	query := Positions()
 
 	if query.Query == nil {
 		t.Error("expected a query, got nothing")
 	}
 }
 
-func testDirectionsDelete(t *testing.T) {
+func testPositionsDelete(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -54,7 +54,7 @@ func testDirectionsDelete(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,14 +64,14 @@ func testDirectionsDelete(t *testing.T) {
 	}
 }
 
-func testDirectionsQueryDeleteAll(t *testing.T) {
+func testPositionsQueryDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -81,13 +81,13 @@ func testDirectionsQueryDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if rowsAff, err := Directions().DeleteAll(ctx, tx); err != nil {
+	if rowsAff, err := Positions().DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,14 +97,14 @@ func testDirectionsQueryDeleteAll(t *testing.T) {
 	}
 }
 
-func testDirectionsSliceDeleteAll(t *testing.T) {
+func testPositionsSliceDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func testDirectionsSliceDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := DirectionSlice{o}
+	slice := PositionSlice{o}
 
 	if rowsAff, err := slice.DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
@@ -122,7 +122,7 @@ func testDirectionsSliceDeleteAll(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,14 +132,14 @@ func testDirectionsSliceDeleteAll(t *testing.T) {
 	}
 }
 
-func testDirectionsExists(t *testing.T) {
+func testPositionsExists(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -149,23 +149,23 @@ func testDirectionsExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := DirectionExists(ctx, tx, o.DirectionID)
+	e, err := PositionExists(ctx, tx, o.PositionID)
 	if err != nil {
-		t.Errorf("Unable to check if Direction exists: %s", err)
+		t.Errorf("Unable to check if Position exists: %s", err)
 	}
 	if !e {
-		t.Errorf("Expected DirectionExists to return true, but got false.")
+		t.Errorf("Expected PositionExists to return true, but got false.")
 	}
 }
 
-func testDirectionsFind(t *testing.T) {
+func testPositionsFind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -175,24 +175,24 @@ func testDirectionsFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	directionFound, err := FindDirection(ctx, tx, o.DirectionID)
+	positionFound, err := FindPosition(ctx, tx, o.PositionID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if directionFound == nil {
+	if positionFound == nil {
 		t.Error("want a record, got nil")
 	}
 }
 
-func testDirectionsBind(t *testing.T) {
+func testPositionsBind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -202,19 +202,19 @@ func testDirectionsBind(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err = Directions().Bind(ctx, tx, o); err != nil {
+	if err = Positions().Bind(ctx, tx, o); err != nil {
 		t.Error(err)
 	}
 }
 
-func testDirectionsOne(t *testing.T) {
+func testPositionsOne(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -224,38 +224,38 @@ func testDirectionsOne(t *testing.T) {
 		t.Error(err)
 	}
 
-	if x, err := Directions().One(ctx, tx); err != nil {
+	if x, err := Positions().One(ctx, tx); err != nil {
 		t.Error(err)
 	} else if x == nil {
 		t.Error("expected to get a non nil record")
 	}
 }
 
-func testDirectionsAll(t *testing.T) {
+func testPositionsAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	directionOne := &Direction{}
-	directionTwo := &Direction{}
-	if err = randomize.Struct(seed, directionOne, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	positionOne := &Position{}
+	positionTwo := &Position{}
+	if err = randomize.Struct(seed, positionOne, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
-	if err = randomize.Struct(seed, directionTwo, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err = randomize.Struct(seed, positionTwo, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = directionOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = directionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	slice, err := Directions().All(ctx, tx)
+	slice, err := Positions().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -265,31 +265,31 @@ func testDirectionsAll(t *testing.T) {
 	}
 }
 
-func testDirectionsCount(t *testing.T) {
+func testPositionsCount(t *testing.T) {
 	t.Parallel()
 
 	var err error
 	seed := randomize.NewSeed()
-	directionOne := &Direction{}
-	directionTwo := &Direction{}
-	if err = randomize.Struct(seed, directionOne, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	positionOne := &Position{}
+	positionTwo := &Position{}
+	if err = randomize.Struct(seed, positionOne, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
-	if err = randomize.Struct(seed, directionTwo, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err = randomize.Struct(seed, positionTwo, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = directionOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = directionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,155 +299,155 @@ func testDirectionsCount(t *testing.T) {
 	}
 }
 
-func directionBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func directionAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Direction) error {
-	*o = Direction{}
+func positionAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func testDirectionsHooks(t *testing.T) {
+func testPositionsHooks(t *testing.T) {
 	t.Parallel()
 
 	var err error
 
 	ctx := context.Background()
-	empty := &Direction{}
-	o := &Direction{}
+	empty := &Position{}
+	o := &Position{}
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, o, directionDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize Direction object: %s", err)
+	if err = randomize.Struct(seed, o, positionDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize Position object: %s", err)
 	}
 
-	AddDirectionHook(boil.BeforeInsertHook, directionBeforeInsertHook)
+	AddPositionHook(boil.BeforeInsertHook, positionBeforeInsertHook)
 	if err = o.doBeforeInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeInsertHook function to empty object, but got: %#v", o)
 	}
-	directionBeforeInsertHooks = []DirectionHook{}
+	positionBeforeInsertHooks = []PositionHook{}
 
-	AddDirectionHook(boil.AfterInsertHook, directionAfterInsertHook)
+	AddPositionHook(boil.AfterInsertHook, positionAfterInsertHook)
 	if err = o.doAfterInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterInsertHook function to empty object, but got: %#v", o)
 	}
-	directionAfterInsertHooks = []DirectionHook{}
+	positionAfterInsertHooks = []PositionHook{}
 
-	AddDirectionHook(boil.AfterSelectHook, directionAfterSelectHook)
+	AddPositionHook(boil.AfterSelectHook, positionAfterSelectHook)
 	if err = o.doAfterSelectHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterSelectHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterSelectHook function to empty object, but got: %#v", o)
 	}
-	directionAfterSelectHooks = []DirectionHook{}
+	positionAfterSelectHooks = []PositionHook{}
 
-	AddDirectionHook(boil.BeforeUpdateHook, directionBeforeUpdateHook)
+	AddPositionHook(boil.BeforeUpdateHook, positionBeforeUpdateHook)
 	if err = o.doBeforeUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpdateHook function to empty object, but got: %#v", o)
 	}
-	directionBeforeUpdateHooks = []DirectionHook{}
+	positionBeforeUpdateHooks = []PositionHook{}
 
-	AddDirectionHook(boil.AfterUpdateHook, directionAfterUpdateHook)
+	AddPositionHook(boil.AfterUpdateHook, positionAfterUpdateHook)
 	if err = o.doAfterUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpdateHook function to empty object, but got: %#v", o)
 	}
-	directionAfterUpdateHooks = []DirectionHook{}
+	positionAfterUpdateHooks = []PositionHook{}
 
-	AddDirectionHook(boil.BeforeDeleteHook, directionBeforeDeleteHook)
+	AddPositionHook(boil.BeforeDeleteHook, positionBeforeDeleteHook)
 	if err = o.doBeforeDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeDeleteHook function to empty object, but got: %#v", o)
 	}
-	directionBeforeDeleteHooks = []DirectionHook{}
+	positionBeforeDeleteHooks = []PositionHook{}
 
-	AddDirectionHook(boil.AfterDeleteHook, directionAfterDeleteHook)
+	AddPositionHook(boil.AfterDeleteHook, positionAfterDeleteHook)
 	if err = o.doAfterDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterDeleteHook function to empty object, but got: %#v", o)
 	}
-	directionAfterDeleteHooks = []DirectionHook{}
+	positionAfterDeleteHooks = []PositionHook{}
 
-	AddDirectionHook(boil.BeforeUpsertHook, directionBeforeUpsertHook)
+	AddPositionHook(boil.BeforeUpsertHook, positionBeforeUpsertHook)
 	if err = o.doBeforeUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpsertHook function to empty object, but got: %#v", o)
 	}
-	directionBeforeUpsertHooks = []DirectionHook{}
+	positionBeforeUpsertHooks = []PositionHook{}
 
-	AddDirectionHook(boil.AfterUpsertHook, directionAfterUpsertHook)
+	AddPositionHook(boil.AfterUpsertHook, positionAfterUpsertHook)
 	if err = o.doAfterUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpsertHook function to empty object, but got: %#v", o)
 	}
-	directionAfterUpsertHooks = []DirectionHook{}
+	positionAfterUpsertHooks = []PositionHook{}
 }
 
-func testDirectionsInsert(t *testing.T) {
+func testPositionsInsert(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -457,7 +457,7 @@ func testDirectionsInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -467,24 +467,24 @@ func testDirectionsInsert(t *testing.T) {
 	}
 }
 
-func testDirectionsInsertWhitelist(t *testing.T) {
+func testPositionsInsertWhitelist(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = o.Insert(ctx, tx, boil.Whitelist(directionColumnsWithoutDefault...)); err != nil {
+	if err = o.Insert(ctx, tx, boil.Whitelist(positionColumnsWithoutDefault...)); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,33 +494,33 @@ func testDirectionsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testDirectionToManyDimensionDirections(t *testing.T) {
+func testPositionToManyFactorPositions(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
-	var b, c DimensionDirection
+	var a Position
+	var b, c FactorPosition
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err = randomize.Struct(seed, &a, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, dimensionDirectionDBTypes, false, dimensionDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, factorPositionDBTypes, false, factorPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, dimensionDirectionDBTypes, false, dimensionDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, factorPositionDBTypes, false, factorPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	b.DirectionID = a.DirectionID
-	c.DirectionID = a.DirectionID
+	b.PositionID = a.PositionID
+	c.PositionID = a.PositionID
 
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
@@ -529,17 +529,17 @@ func testDirectionToManyDimensionDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dimensionDirection, err := a.DimensionDirections().All(ctx, tx)
+	factorPosition, err := a.FactorPositions().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range dimensionDirection {
-		if v.DirectionID == b.DirectionID {
+	for _, v := range factorPosition {
+		if v.PositionID == b.PositionID {
 			bFound = true
 		}
-		if v.DirectionID == c.DirectionID {
+		if v.PositionID == c.PositionID {
 			cFound = true
 		}
 	}
@@ -551,44 +551,44 @@ func testDirectionToManyDimensionDirections(t *testing.T) {
 		t.Error("expected to find c")
 	}
 
-	slice := DirectionSlice{&a}
-	if err = a.L.LoadDimensionDirections(ctx, tx, false, (*[]*Direction)(&slice), nil); err != nil {
+	slice := PositionSlice{&a}
+	if err = a.L.LoadFactorPositions(ctx, tx, false, (*[]*Position)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionDirections); got != 2 {
+	if got := len(a.R.FactorPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.DimensionDirections = nil
-	if err = a.L.LoadDimensionDirections(ctx, tx, true, &a, nil); err != nil {
+	a.R.FactorPositions = nil
+	if err = a.L.LoadFactorPositions(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionDirections); got != 2 {
+	if got := len(a.R.FactorPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", dimensionDirection)
+		t.Logf("%#v", factorPosition)
 	}
 }
 
-func testDirectionToManyAddOpDimensionDirections(t *testing.T) {
+func testPositionToManyAddOpFactorPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
-	var b, c, d, e DimensionDirection
+	var a Position
+	var b, c, d, e FactorPosition
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*DimensionDirection{&b, &c, &d, &e}
+	foreigners := []*FactorPosition{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionDirectionDBTypes, false, strmangle.SetComplement(dimensionDirectionPrimaryKeyColumns, dimensionDirectionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorPositionDBTypes, false, strmangle.SetComplement(factorPositionPrimaryKeyColumns, factorPositionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -603,13 +603,13 @@ func testDirectionToManyAddOpDimensionDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*DimensionDirection{
+	foreignersSplitByInsertion := [][]*FactorPosition{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddDimensionDirections(ctx, tx, i != 0, x...)
+		err = a.AddFactorPositions(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -617,28 +617,28 @@ func testDirectionToManyAddOpDimensionDirections(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.DirectionID != first.DirectionID {
-			t.Error("foreign key was wrong value", a.DirectionID, first.DirectionID)
+		if a.PositionID != first.PositionID {
+			t.Error("foreign key was wrong value", a.PositionID, first.PositionID)
 		}
-		if a.DirectionID != second.DirectionID {
-			t.Error("foreign key was wrong value", a.DirectionID, second.DirectionID)
+		if a.PositionID != second.PositionID {
+			t.Error("foreign key was wrong value", a.PositionID, second.PositionID)
 		}
 
-		if first.R.Direction != &a {
+		if first.R.Position != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if second.R.Direction != &a {
+		if second.R.Position != &a {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.DimensionDirections[i*2] != first {
+		if a.R.FactorPositions[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.DimensionDirections[i*2+1] != second {
+		if a.R.FactorPositions[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.DimensionDirections().Count(ctx, tx)
+		count, err := a.FactorPositions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -647,17 +647,17 @@ func testDirectionToManyAddOpDimensionDirections(t *testing.T) {
 		}
 	}
 }
-func testDirectionToOneUserAccountUsingUserAccount(t *testing.T) {
+func testPositionToOneUserAccountUsingUserAccount(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local Direction
+	var local Position
 	var foreign UserAccount
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, directionDBTypes, false, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err := randomize.Struct(seed, &local, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, userAccountDBTypes, false, userAccountColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize UserAccount struct: %s", err)
@@ -681,8 +681,8 @@ func testDirectionToOneUserAccountUsingUserAccount(t *testing.T) {
 		t.Errorf("want: %v, got %v", foreign.UserAccountID, check.UserAccountID)
 	}
 
-	slice := DirectionSlice{&local}
-	if err = local.L.LoadUserAccount(ctx, tx, false, (*[]*Direction)(&slice), nil); err != nil {
+	slice := PositionSlice{&local}
+	if err = local.L.LoadUserAccount(ctx, tx, false, (*[]*Position)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if local.R.UserAccount == nil {
@@ -698,17 +698,17 @@ func testDirectionToOneUserAccountUsingUserAccount(t *testing.T) {
 	}
 }
 
-func testDirectionToOneEmojiUsingEmoji(t *testing.T) {
+func testPositionToOneEmojiUsingEmoji(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local Direction
+	var local Position
 	var foreign Emoji
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err := randomize.Struct(seed, &local, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, emojiDBTypes, false, emojiColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Emoji struct: %s", err)
@@ -732,8 +732,8 @@ func testDirectionToOneEmojiUsingEmoji(t *testing.T) {
 		t.Errorf("want: %v, got %v", foreign.EmojiID, check.EmojiID)
 	}
 
-	slice := DirectionSlice{&local}
-	if err = local.L.LoadEmoji(ctx, tx, false, (*[]*Direction)(&slice), nil); err != nil {
+	slice := PositionSlice{&local}
+	if err = local.L.LoadEmoji(ctx, tx, false, (*[]*Position)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if local.R.Emoji == nil {
@@ -749,17 +749,17 @@ func testDirectionToOneEmojiUsingEmoji(t *testing.T) {
 	}
 }
 
-func testDirectionToOneDesignPatternUsingDesignPattern(t *testing.T) {
+func testPositionToOneDesignPatternUsingDesignPattern(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local Direction
+	var local Position
 	var foreign DesignPattern
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err := randomize.Struct(seed, &local, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, designPatternDBTypes, false, designPatternColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize DesignPattern struct: %s", err)
@@ -783,8 +783,8 @@ func testDirectionToOneDesignPatternUsingDesignPattern(t *testing.T) {
 		t.Errorf("want: %v, got %v", foreign.DesignPatternID, check.DesignPatternID)
 	}
 
-	slice := DirectionSlice{&local}
-	if err = local.L.LoadDesignPattern(ctx, tx, false, (*[]*Direction)(&slice), nil); err != nil {
+	slice := PositionSlice{&local}
+	if err = local.L.LoadDesignPattern(ctx, tx, false, (*[]*Position)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if local.R.DesignPattern == nil {
@@ -800,18 +800,18 @@ func testDirectionToOneDesignPatternUsingDesignPattern(t *testing.T) {
 	}
 }
 
-func testDirectionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
+func testPositionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
+	var a Position
 	var b, c UserAccount
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, userAccountDBTypes, false, strmangle.SetComplement(userAccountPrimaryKeyColumns, userAccountColumnsWithoutDefault)...); err != nil {
@@ -838,7 +838,7 @@ func testDirectionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.Directions[0] != &a {
+		if x.R.Positions[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
 		if a.UserAccountID != x.UserAccountID {
@@ -857,18 +857,18 @@ func testDirectionToOneSetOpUserAccountUsingUserAccount(t *testing.T) {
 		}
 	}
 }
-func testDirectionToOneSetOpEmojiUsingEmoji(t *testing.T) {
+func testPositionToOneSetOpEmojiUsingEmoji(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
+	var a Position
 	var b, c Emoji
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
@@ -895,7 +895,7 @@ func testDirectionToOneSetOpEmojiUsingEmoji(t *testing.T) {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.Directions[0] != &a {
+		if x.R.Positions[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
 		if !queries.Equal(a.EmojiID, x.EmojiID) {
@@ -915,18 +915,18 @@ func testDirectionToOneSetOpEmojiUsingEmoji(t *testing.T) {
 	}
 }
 
-func testDirectionToOneRemoveOpEmojiUsingEmoji(t *testing.T) {
+func testPositionToOneRemoveOpEmojiUsingEmoji(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
+	var a Position
 	var b Emoji
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, emojiDBTypes, false, strmangle.SetComplement(emojiPrimaryKeyColumns, emojiColumnsWithoutDefault)...); err != nil {
@@ -961,23 +961,23 @@ func testDirectionToOneRemoveOpEmojiUsingEmoji(t *testing.T) {
 		t.Error("foreign key value should be nil")
 	}
 
-	if len(b.R.Directions) != 0 {
+	if len(b.R.Positions) != 0 {
 		t.Error("failed to remove a from b's relationships")
 	}
 }
 
-func testDirectionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
+func testPositionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
+	var a Position
 	var b, c DesignPattern
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
@@ -1004,7 +1004,7 @@ func testDirectionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.Directions[0] != &a {
+		if x.R.Positions[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
 		if !queries.Equal(a.DesignPatternID, x.DesignPatternID) {
@@ -1024,18 +1024,18 @@ func testDirectionToOneSetOpDesignPatternUsingDesignPattern(t *testing.T) {
 	}
 }
 
-func testDirectionToOneRemoveOpDesignPatternUsingDesignPattern(t *testing.T) {
+func testPositionToOneRemoveOpDesignPatternUsingDesignPattern(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Direction
+	var a Position
 	var b DesignPattern
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, directionDBTypes, false, strmangle.SetComplement(directionPrimaryKeyColumns, directionColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, designPatternDBTypes, false, strmangle.SetComplement(designPatternPrimaryKeyColumns, designPatternColumnsWithoutDefault)...); err != nil {
@@ -1070,19 +1070,19 @@ func testDirectionToOneRemoveOpDesignPatternUsingDesignPattern(t *testing.T) {
 		t.Error("foreign key value should be nil")
 	}
 
-	if len(b.R.Directions) != 0 {
+	if len(b.R.Positions) != 0 {
 		t.Error("failed to remove a from b's relationships")
 	}
 }
 
-func testDirectionsReload(t *testing.T) {
+func testPositionsReload(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1097,14 +1097,14 @@ func testDirectionsReload(t *testing.T) {
 	}
 }
 
-func testDirectionsReloadAll(t *testing.T) {
+func testPositionsReloadAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1114,21 +1114,21 @@ func testDirectionsReloadAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := DirectionSlice{o}
+	slice := PositionSlice{o}
 
 	if err = slice.ReloadAll(ctx, tx); err != nil {
 		t.Error(err)
 	}
 }
 
-func testDirectionsSelect(t *testing.T) {
+func testPositionsSelect(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1138,7 +1138,7 @@ func testDirectionsSelect(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice, err := Directions().All(ctx, tx)
+	slice, err := Positions().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1149,25 +1149,25 @@ func testDirectionsSelect(t *testing.T) {
 }
 
 var (
-	directionDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `DesignPatternID`: `int8`, `DirectionDescription`: `varchar`, `DirectionID`: `int8`, `EmojiID`: `int8`, `ParentDirectionID`: `int8`, `UserAccountID`: `int8`}
-	_                = bytes.MinRead
+	positionDBTypes = map[string]string{`CreatedAt`: `timestamptz`, `DesignPatternID`: `int8`, `EmojiID`: `int8`, `ParentPositionID`: `int8`, `PositionDescription`: `varchar`, `PositionID`: `int8`, `UserAccountID`: `int8`}
+	_               = bytes.MinRead
 )
 
-func testDirectionsUpdate(t *testing.T) {
+func testPositionsUpdate(t *testing.T) {
 	t.Parallel()
 
-	if 0 == len(directionPrimaryKeyColumns) {
+	if 0 == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with no primary key columns")
 	}
-	if len(directionColumns) == len(directionPrimaryKeyColumns) {
+	if len(positionColumns) == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1177,7 +1177,7 @@ func testDirectionsUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1186,8 +1186,8 @@ func testDirectionsUpdate(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	if rowsAff, err := o.Update(ctx, tx, boil.Infer()); err != nil {
@@ -1197,18 +1197,18 @@ func testDirectionsUpdate(t *testing.T) {
 	}
 }
 
-func testDirectionsSliceUpdateAll(t *testing.T) {
+func testPositionsSliceUpdateAll(t *testing.T) {
 	t.Parallel()
 
-	if len(directionColumns) == len(directionPrimaryKeyColumns) {
+	if len(positionColumns) == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &Direction{}
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -1218,7 +1218,7 @@ func testDirectionsSliceUpdateAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1227,18 +1227,18 @@ func testDirectionsSliceUpdateAll(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, directionDBTypes, true, directionPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	// Remove Primary keys and unique columns from what we plan to update
 	var fields []string
-	if strmangle.StringSliceMatch(directionColumns, directionPrimaryKeyColumns) {
-		fields = directionColumns
+	if strmangle.StringSliceMatch(positionColumns, positionPrimaryKeyColumns) {
+		fields = positionColumns
 	} else {
 		fields = strmangle.SetComplement(
-			directionColumns,
-			directionPrimaryKeyColumns,
+			positionColumns,
+			positionPrimaryKeyColumns,
 		)
 	}
 
@@ -1256,7 +1256,7 @@ func testDirectionsSliceUpdateAll(t *testing.T) {
 		}
 	}
 
-	slice := DirectionSlice{o}
+	slice := PositionSlice{o}
 	if rowsAff, err := slice.UpdateAll(ctx, tx, updateMap); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
@@ -1264,29 +1264,29 @@ func testDirectionsSliceUpdateAll(t *testing.T) {
 	}
 }
 
-func testDirectionsUpsert(t *testing.T) {
+func testPositionsUpsert(t *testing.T) {
 	t.Parallel()
 
-	if len(directionColumns) == len(directionPrimaryKeyColumns) {
+	if len(positionColumns) == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
 	// Attempt the INSERT side of an UPSERT
-	o := Direction{}
-	if err = randomize.Struct(seed, &o, directionDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	o := Position{}
+	if err = randomize.Struct(seed, &o, positionDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 	if err = o.Upsert(ctx, tx, false, nil, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Direction: %s", err)
+		t.Errorf("Unable to upsert Position: %s", err)
 	}
 
-	count, err := Directions().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -1295,15 +1295,15 @@ func testDirectionsUpsert(t *testing.T) {
 	}
 
 	// Attempt the UPDATE side of an UPSERT
-	if err = randomize.Struct(seed, &o, directionDBTypes, false, directionPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize Direction struct: %s", err)
+	if err = randomize.Struct(seed, &o, positionDBTypes, false, positionPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	if err = o.Upsert(ctx, tx, true, nil, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert Direction: %s", err)
+		t.Errorf("Unable to upsert Position: %s", err)
 	}
 
-	count, err = Directions().Count(ctx, tx)
+	count, err = Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,52 +1,51 @@
-package db
+package sequence
 
 import (
 	"github.com/diapco/votecube-crud/crud"
 	"github.com/diapco/votecube-crud/models"
-	"github.com/diapco/votecube-crud/sequence"
 )
 
 var (
-	DimensionId              sequence.Sequence
-	DimensionDirectionId     sequence.Sequence
-	DirectionId              sequence.Sequence
-	LabelId                  sequence.Sequence
-	PollContinentId          sequence.Sequence
-	PollCountryId            sequence.Sequence
-	PollCountyId             sequence.Sequence
-	PollDimensionDirectionId sequence.Sequence
-	PollId                   sequence.Sequence
-	PollLabelId              sequence.Sequence
-	PollStateId              sequence.Sequence
-	PollTownId               sequence.Sequence
+	FactorId             Sequence
+	FactorPositionId     Sequence
+	PositionId           Sequence
+	LabelId              Sequence
+	PollContinentId      Sequence
+	PollCountryId        Sequence
+	PollCountyId         Sequence
+	PollFactorPositionId Sequence
+	PollId               Sequence
+	PollLabelId          Sequence
+	PollStateId          Sequence
+	PollTownId           Sequence
 )
 
 func SetupSequences() {
-	DimensionId = sequence.Sequence{
+	FactorId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         models.DimensionColumns.DimensionID,
+		Name:         models.FactorColumns.FactorID,
 	}
 
-	DimensionDirectionId = sequence.Sequence{
+	FactorPositionId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         models.DimensionDirectionColumns.DimensionDirectionID,
+		Name:         models.FactorPositionColumns.FactorPositionID,
 	}
 
-	DirectionId = sequence.Sequence{
+	PositionId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         models.DirectionColumns.DirectionID,
+		Name:         models.PositionColumns.PositionID,
 	}
 
-	LabelId = sequence.Sequence{
+	LabelId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -54,7 +53,7 @@ func SetupSequences() {
 		Name:         models.LabelColumns.LabelID,
 	}
 
-	PollContinentId = sequence.Sequence{
+	PollContinentId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -62,7 +61,7 @@ func SetupSequences() {
 		Name:         models.PollsContinentColumns.PollContinentID,
 	}
 
-	PollCountryId = sequence.Sequence{
+	PollCountryId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -70,7 +69,7 @@ func SetupSequences() {
 		Name:         models.PollsCountryColumns.PollCountryID,
 	}
 
-	PollCountyId = sequence.Sequence{
+	PollCountyId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -78,15 +77,15 @@ func SetupSequences() {
 		Name:         models.PollsCountyColumns.PollCountyID,
 	}
 
-	PollDimensionDirectionId = sequence.Sequence{
+	PollFactorPositionId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
 		Max:          0,
-		Name:         models.PollsDimensionsDirectionColumns.PollDimensionDirectionID,
+		Name:         models.PollsFactorsPositionColumns.PollFactorPositionID,
 	}
 
-	PollLabelId = sequence.Sequence{
+	PollLabelId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -94,7 +93,7 @@ func SetupSequences() {
 		Name:         models.PollsLabelColumns.PollLabelID,
 	}
 
-	PollId = sequence.Sequence{
+	PollId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -102,7 +101,7 @@ func SetupSequences() {
 		Name:         models.PollColumns.PollID,
 	}
 
-	PollStateId = sequence.Sequence{
+	PollStateId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -110,7 +109,7 @@ func SetupSequences() {
 		Name:         models.PollsStateColumns.PollStateID,
 	}
 
-	PollTownId = sequence.Sequence{
+	PollTownId = Sequence{
 		CurrentValue: 0,
 		Db:           crud.DB,
 		IncrementBy:  60000,
@@ -121,14 +120,14 @@ func SetupSequences() {
 	numSequences := 12
 	seqInitsDone := make(chan bool, numSequences)
 
-	go DimensionId.Init(seqInitsDone)
-	go DimensionDirectionId.Init(seqInitsDone)
-	go DirectionId.Init(seqInitsDone)
+	go FactorId.Init(seqInitsDone)
+	go FactorPositionId.Init(seqInitsDone)
+	go PositionId.Init(seqInitsDone)
 	go LabelId.Init(seqInitsDone)
 	go PollContinentId.Init(seqInitsDone)
 	go PollCountryId.Init(seqInitsDone)
 	go PollCountyId.Init(seqInitsDone)
-	go PollDimensionDirectionId.Init(seqInitsDone)
+	go PollFactorPositionId.Init(seqInitsDone)
 	go PollLabelId.Init(seqInitsDone)
 	go PollId.Init(seqInitsDone)
 	go PollStateId.Init(seqInitsDone)

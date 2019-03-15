@@ -53,15 +53,16 @@ type CreatePollRequest struct {
 	Done          chan bool
 	Index         int
 	Poll          models.Poll
+	ResponseData  *[]byte
 	UserAccountId int64
 }
 
 type CreatePollIdReferences struct {
-	DimDirIdRefs     map[int64]map[int]*CreatePollRequest
-	DimIdRefs        map[int64]map[int]*CreatePollRequest
-	DirIdRefs        map[int64]map[int]*CreatePollRequest
-	LabelIdRefs      map[int64]map[int]*CreatePollRequest
-	ParentPollIdRefs map[int64]map[int]*CreatePollRequest
+	FactorPositionIdRefs map[int64]map[int]*CreatePollRequest
+	FactorIdRefs         map[int64]map[int]*CreatePollRequest
+	PositionIdRefs       map[int64]map[int]*CreatePollRequest
+	LabelIdRefs          map[int64]map[int]*CreatePollRequest
+	ParentPollIdRefs     map[int64]map[int]*CreatePollRequest
 }
 
 func RStr(ctx *CreatePollDeserializeContext, err error) (string, error) {

@@ -21,97 +21,97 @@ import (
 	"github.com/volatiletech/sqlboiler/strmangle"
 )
 
-// Direction is an object representing the database table.
-type Direction struct {
-	DirectionID          int64      `boil:"direction_id" json:"direction_id" toml:"direction_id" yaml:"direction_id"`
-	ParentDirectionID    null.Int64 `boil:"parent_direction_id" json:"parent_direction_id,omitempty" toml:"parent_direction_id" yaml:"parent_direction_id,omitempty"`
-	DirectionDescription string     `boil:"direction_description" json:"direction_description" toml:"direction_description" yaml:"direction_description"`
-	UserAccountID        int64      `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
-	DesignPatternID      null.Int64 `boil:"design_pattern_id" json:"design_pattern_id,omitempty" toml:"design_pattern_id" yaml:"design_pattern_id,omitempty"`
-	EmojiID              null.Int64 `boil:"emoji_id" json:"emoji_id,omitempty" toml:"emoji_id" yaml:"emoji_id,omitempty"`
-	CreatedAt            time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+// Position is an object representing the database table.
+type Position struct {
+	PositionID          int64      `boil:"position_id" json:"position_id" toml:"position_id" yaml:"position_id"`
+	ParentPositionID    null.Int64 `boil:"parent_position_id" json:"parent_position_id,omitempty" toml:"parent_position_id" yaml:"parent_position_id,omitempty"`
+	PositionDescription string     `boil:"position_description" json:"position_description" toml:"position_description" yaml:"position_description"`
+	UserAccountID       int64      `boil:"user_account_id" json:"user_account_id" toml:"user_account_id" yaml:"user_account_id"`
+	DesignPatternID     null.Int64 `boil:"design_pattern_id" json:"design_pattern_id,omitempty" toml:"design_pattern_id" yaml:"design_pattern_id,omitempty"`
+	EmojiID             null.Int64 `boil:"emoji_id" json:"emoji_id,omitempty" toml:"emoji_id" yaml:"emoji_id,omitempty"`
+	CreatedAt           time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 
-	R *directionR `boil:"-" json:"-" toml:"-" yaml:"-"`
-	L directionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
+	R *positionR `boil:"-" json:"-" toml:"-" yaml:"-"`
+	L positionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
-var DirectionColumns = struct {
-	DirectionID          string
-	ParentDirectionID    string
-	DirectionDescription string
-	UserAccountID        string
-	DesignPatternID      string
-	EmojiID              string
-	CreatedAt            string
+var PositionColumns = struct {
+	PositionID          string
+	ParentPositionID    string
+	PositionDescription string
+	UserAccountID       string
+	DesignPatternID     string
+	EmojiID             string
+	CreatedAt           string
 }{
-	DirectionID:          "direction_id",
-	ParentDirectionID:    "parent_direction_id",
-	DirectionDescription: "direction_description",
-	UserAccountID:        "user_account_id",
-	DesignPatternID:      "design_pattern_id",
-	EmojiID:              "emoji_id",
-	CreatedAt:            "created_at",
+	PositionID:          "position_id",
+	ParentPositionID:    "parent_position_id",
+	PositionDescription: "position_description",
+	UserAccountID:       "user_account_id",
+	DesignPatternID:     "design_pattern_id",
+	EmojiID:             "emoji_id",
+	CreatedAt:           "created_at",
 }
 
-// DirectionRels is where relationship names are stored.
-var DirectionRels = struct {
-	UserAccount         string
-	Emoji               string
-	DesignPattern       string
-	DimensionDirections string
+// PositionRels is where relationship names are stored.
+var PositionRels = struct {
+	UserAccount     string
+	Emoji           string
+	DesignPattern   string
+	FactorPositions string
 }{
-	UserAccount:         "UserAccount",
-	Emoji:               "Emoji",
-	DesignPattern:       "DesignPattern",
-	DimensionDirections: "DimensionDirections",
+	UserAccount:     "UserAccount",
+	Emoji:           "Emoji",
+	DesignPattern:   "DesignPattern",
+	FactorPositions: "FactorPositions",
 }
 
-// directionR is where relationships are stored.
-type directionR struct {
-	UserAccount         *UserAccount
-	Emoji               *Emoji
-	DesignPattern       *DesignPattern
-	DimensionDirections DimensionDirectionSlice
+// positionR is where relationships are stored.
+type positionR struct {
+	UserAccount     *UserAccount
+	Emoji           *Emoji
+	DesignPattern   *DesignPattern
+	FactorPositions FactorPositionSlice
 }
 
 // NewStruct creates a new relationship struct
-func (*directionR) NewStruct() *directionR {
-	return &directionR{}
+func (*positionR) NewStruct() *positionR {
+	return &positionR{}
 }
 
-// directionL is where Load methods for each relationship are stored.
-type directionL struct{}
+// positionL is where Load methods for each relationship are stored.
+type positionL struct{}
 
 var (
-	directionColumns               = []string{"direction_id", "parent_direction_id", "direction_description", "user_account_id", "design_pattern_id", "emoji_id", "created_at"}
-	directionColumnsWithoutDefault = []string{"direction_id", "parent_direction_id", "direction_description", "user_account_id", "design_pattern_id", "emoji_id", "created_at"}
-	directionColumnsWithDefault    = []string{}
-	directionPrimaryKeyColumns     = []string{"direction_id"}
+	positionColumns               = []string{"position_id", "parent_position_id", "position_description", "user_account_id", "design_pattern_id", "emoji_id", "created_at"}
+	positionColumnsWithoutDefault = []string{"position_id", "parent_position_id", "position_description", "user_account_id", "design_pattern_id", "emoji_id", "created_at"}
+	positionColumnsWithDefault    = []string{}
+	positionPrimaryKeyColumns     = []string{"position_id"}
 )
 
 type (
-	// DirectionSlice is an alias for a slice of pointers to Direction.
-	// This should generally be used opposed to []Direction.
-	DirectionSlice []*Direction
-	// DirectionHook is the signature for custom Direction hook methods
-	DirectionHook func(context.Context, boil.ContextExecutor, *Direction) error
+	// PositionSlice is an alias for a slice of pointers to Position.
+	// This should generally be used opposed to []Position.
+	PositionSlice []*Position
+	// PositionHook is the signature for custom Position hook methods
+	PositionHook func(context.Context, boil.ContextExecutor, *Position) error
 
-	directionQuery struct {
+	positionQuery struct {
 		*queries.Query
 	}
 )
 
 // Cache for insert, update and upsert
 var (
-	directionType                 = reflect.TypeOf(&Direction{})
-	directionMapping              = queries.MakeStructMapping(directionType)
-	directionPrimaryKeyMapping, _ = queries.BindMapping(directionType, directionMapping, directionPrimaryKeyColumns)
-	directionInsertCacheMut       sync.RWMutex
-	directionInsertCache          = make(map[string]insertCache)
-	directionUpdateCacheMut       sync.RWMutex
-	directionUpdateCache          = make(map[string]updateCache)
-	directionUpsertCacheMut       sync.RWMutex
-	directionUpsertCache          = make(map[string]insertCache)
+	positionType                 = reflect.TypeOf(&Position{})
+	positionMapping              = queries.MakeStructMapping(positionType)
+	positionPrimaryKeyMapping, _ = queries.BindMapping(positionType, positionMapping, positionPrimaryKeyColumns)
+	positionInsertCacheMut       sync.RWMutex
+	positionInsertCache          = make(map[string]insertCache)
+	positionUpdateCacheMut       sync.RWMutex
+	positionUpdateCache          = make(map[string]updateCache)
+	positionUpsertCacheMut       sync.RWMutex
+	positionUpsertCache          = make(map[string]insertCache)
 )
 
 var (
@@ -119,20 +119,20 @@ var (
 	_ = time.Second
 )
 
-var directionBeforeInsertHooks []DirectionHook
-var directionBeforeUpdateHooks []DirectionHook
-var directionBeforeDeleteHooks []DirectionHook
-var directionBeforeUpsertHooks []DirectionHook
+var positionBeforeInsertHooks []PositionHook
+var positionBeforeUpdateHooks []PositionHook
+var positionBeforeDeleteHooks []PositionHook
+var positionBeforeUpsertHooks []PositionHook
 
-var directionAfterInsertHooks []DirectionHook
-var directionAfterSelectHooks []DirectionHook
-var directionAfterUpdateHooks []DirectionHook
-var directionAfterDeleteHooks []DirectionHook
-var directionAfterUpsertHooks []DirectionHook
+var positionAfterInsertHooks []PositionHook
+var positionAfterSelectHooks []PositionHook
+var positionAfterUpdateHooks []PositionHook
+var positionAfterDeleteHooks []PositionHook
+var positionAfterUpsertHooks []PositionHook
 
 // doBeforeInsertHooks executes all "before insert" hooks.
-func (o *Direction) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionBeforeInsertHooks {
+func (o *Position) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionBeforeInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -142,8 +142,8 @@ func (o *Direction) doBeforeInsertHooks(ctx context.Context, exec boil.ContextEx
 }
 
 // doBeforeUpdateHooks executes all "before Update" hooks.
-func (o *Direction) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionBeforeUpdateHooks {
+func (o *Position) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionBeforeUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -153,8 +153,8 @@ func (o *Direction) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextEx
 }
 
 // doBeforeDeleteHooks executes all "before Delete" hooks.
-func (o *Direction) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionBeforeDeleteHooks {
+func (o *Position) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionBeforeDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -164,8 +164,8 @@ func (o *Direction) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextEx
 }
 
 // doBeforeUpsertHooks executes all "before Upsert" hooks.
-func (o *Direction) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionBeforeUpsertHooks {
+func (o *Position) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionBeforeUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -175,8 +175,8 @@ func (o *Direction) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextEx
 }
 
 // doAfterInsertHooks executes all "after Insert" hooks.
-func (o *Direction) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionAfterInsertHooks {
+func (o *Position) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionAfterInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -186,8 +186,8 @@ func (o *Direction) doAfterInsertHooks(ctx context.Context, exec boil.ContextExe
 }
 
 // doAfterSelectHooks executes all "after Select" hooks.
-func (o *Direction) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionAfterSelectHooks {
+func (o *Position) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionAfterSelectHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -197,8 +197,8 @@ func (o *Direction) doAfterSelectHooks(ctx context.Context, exec boil.ContextExe
 }
 
 // doAfterUpdateHooks executes all "after Update" hooks.
-func (o *Direction) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionAfterUpdateHooks {
+func (o *Position) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionAfterUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -208,8 +208,8 @@ func (o *Direction) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExe
 }
 
 // doAfterDeleteHooks executes all "after Delete" hooks.
-func (o *Direction) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionAfterDeleteHooks {
+func (o *Position) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionAfterDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -219,8 +219,8 @@ func (o *Direction) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExe
 }
 
 // doAfterUpsertHooks executes all "after Upsert" hooks.
-func (o *Direction) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
-	for _, hook := range directionAfterUpsertHooks {
+func (o *Position) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	for _, hook := range positionAfterUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -229,33 +229,33 @@ func (o *Direction) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExe
 	return nil
 }
 
-// AddDirectionHook registers your hook function for all future operations.
-func AddDirectionHook(hookPoint boil.HookPoint, directionHook DirectionHook) {
+// AddPositionHook registers your hook function for all future operations.
+func AddPositionHook(hookPoint boil.HookPoint, positionHook PositionHook) {
 	switch hookPoint {
 	case boil.BeforeInsertHook:
-		directionBeforeInsertHooks = append(directionBeforeInsertHooks, directionHook)
+		positionBeforeInsertHooks = append(positionBeforeInsertHooks, positionHook)
 	case boil.BeforeUpdateHook:
-		directionBeforeUpdateHooks = append(directionBeforeUpdateHooks, directionHook)
+		positionBeforeUpdateHooks = append(positionBeforeUpdateHooks, positionHook)
 	case boil.BeforeDeleteHook:
-		directionBeforeDeleteHooks = append(directionBeforeDeleteHooks, directionHook)
+		positionBeforeDeleteHooks = append(positionBeforeDeleteHooks, positionHook)
 	case boil.BeforeUpsertHook:
-		directionBeforeUpsertHooks = append(directionBeforeUpsertHooks, directionHook)
+		positionBeforeUpsertHooks = append(positionBeforeUpsertHooks, positionHook)
 	case boil.AfterInsertHook:
-		directionAfterInsertHooks = append(directionAfterInsertHooks, directionHook)
+		positionAfterInsertHooks = append(positionAfterInsertHooks, positionHook)
 	case boil.AfterSelectHook:
-		directionAfterSelectHooks = append(directionAfterSelectHooks, directionHook)
+		positionAfterSelectHooks = append(positionAfterSelectHooks, positionHook)
 	case boil.AfterUpdateHook:
-		directionAfterUpdateHooks = append(directionAfterUpdateHooks, directionHook)
+		positionAfterUpdateHooks = append(positionAfterUpdateHooks, positionHook)
 	case boil.AfterDeleteHook:
-		directionAfterDeleteHooks = append(directionAfterDeleteHooks, directionHook)
+		positionAfterDeleteHooks = append(positionAfterDeleteHooks, positionHook)
 	case boil.AfterUpsertHook:
-		directionAfterUpsertHooks = append(directionAfterUpsertHooks, directionHook)
+		positionAfterUpsertHooks = append(positionAfterUpsertHooks, positionHook)
 	}
 }
 
-// One returns a single direction record from the query.
-func (q directionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Direction, error) {
-	o := &Direction{}
+// One returns a single position record from the query.
+func (q positionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Position, error) {
+	o := &Position{}
 
 	queries.SetLimit(q.Query, 1)
 
@@ -264,7 +264,7 @@ func (q directionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Di
 		if errors.Cause(err) == sql.ErrNoRows {
 			return nil, sql.ErrNoRows
 		}
-		return nil, errors.Wrap(err, "models: failed to execute a one query for directions")
+		return nil, errors.Wrap(err, "models: failed to execute a one query for positions")
 	}
 
 	if err := o.doAfterSelectHooks(ctx, exec); err != nil {
@@ -274,16 +274,16 @@ func (q directionQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Di
 	return o, nil
 }
 
-// All returns all Direction records from the query.
-func (q directionQuery) All(ctx context.Context, exec boil.ContextExecutor) (DirectionSlice, error) {
-	var o []*Direction
+// All returns all Position records from the query.
+func (q positionQuery) All(ctx context.Context, exec boil.ContextExecutor) (PositionSlice, error) {
+	var o []*Position
 
 	err := q.Bind(ctx, exec, &o)
 	if err != nil {
-		return nil, errors.Wrap(err, "models: failed to assign all query results to Direction slice")
+		return nil, errors.Wrap(err, "models: failed to assign all query results to Position slice")
 	}
 
-	if len(directionAfterSelectHooks) != 0 {
+	if len(positionAfterSelectHooks) != 0 {
 		for _, obj := range o {
 			if err := obj.doAfterSelectHooks(ctx, exec); err != nil {
 				return o, err
@@ -294,8 +294,8 @@ func (q directionQuery) All(ctx context.Context, exec boil.ContextExecutor) (Dir
 	return o, nil
 }
 
-// Count returns the count of all Direction records in the query.
-func (q directionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+// Count returns the count of all Position records in the query.
+func (q positionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
 
 	queries.SetSelect(q.Query, nil)
@@ -303,14 +303,14 @@ func (q directionQuery) Count(ctx context.Context, exec boil.ContextExecutor) (i
 
 	err := q.Query.QueryRowContext(ctx, exec).Scan(&count)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: failed to count directions rows")
+		return 0, errors.Wrap(err, "models: failed to count positions rows")
 	}
 
 	return count, nil
 }
 
 // Exists checks if the row exists in the table.
-func (q directionQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
+func (q positionQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
 	var count int64
 
 	queries.SetCount(q.Query)
@@ -318,14 +318,14 @@ func (q directionQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (
 
 	err := q.Query.QueryRowContext(ctx, exec).Scan(&count)
 	if err != nil {
-		return false, errors.Wrap(err, "models: failed to check if directions exists")
+		return false, errors.Wrap(err, "models: failed to check if positions exists")
 	}
 
 	return count > 0, nil
 }
 
 // UserAccount pointed to by the foreign key.
-func (o *Direction) UserAccount(mods ...qm.QueryMod) userAccountQuery {
+func (o *Position) UserAccount(mods ...qm.QueryMod) userAccountQuery {
 	queryMods := []qm.QueryMod{
 		qm.Where("user_account_id=?", o.UserAccountID),
 	}
@@ -339,7 +339,7 @@ func (o *Direction) UserAccount(mods ...qm.QueryMod) userAccountQuery {
 }
 
 // Emoji pointed to by the foreign key.
-func (o *Direction) Emoji(mods ...qm.QueryMod) emojiQuery {
+func (o *Position) Emoji(mods ...qm.QueryMod) emojiQuery {
 	queryMods := []qm.QueryMod{
 		qm.Where("emoji_id=?", o.EmojiID),
 	}
@@ -353,7 +353,7 @@ func (o *Direction) Emoji(mods ...qm.QueryMod) emojiQuery {
 }
 
 // DesignPattern pointed to by the foreign key.
-func (o *Direction) DesignPattern(mods ...qm.QueryMod) designPatternQuery {
+func (o *Position) DesignPattern(mods ...qm.QueryMod) designPatternQuery {
 	queryMods := []qm.QueryMod{
 		qm.Where("design_pattern_id=?", o.DesignPatternID),
 	}
@@ -366,22 +366,22 @@ func (o *Direction) DesignPattern(mods ...qm.QueryMod) designPatternQuery {
 	return query
 }
 
-// DimensionDirections retrieves all the dimension_direction's DimensionDirections with an executor.
-func (o *Direction) DimensionDirections(mods ...qm.QueryMod) dimensionDirectionQuery {
+// FactorPositions retrieves all the factor_position's FactorPositions with an executor.
+func (o *Position) FactorPositions(mods ...qm.QueryMod) factorPositionQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"dimension_directions\".\"direction_id\"=?", o.DirectionID),
+		qm.Where("\"factor_positions\".\"position_id\"=?", o.PositionID),
 	)
 
-	query := DimensionDirections(queryMods...)
-	queries.SetFrom(query.Query, "\"dimension_directions\"")
+	query := FactorPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"factor_positions\"")
 
 	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"dimension_directions\".*"})
+		queries.SetSelect(query.Query, []string{"\"factor_positions\".*"})
 	}
 
 	return query
@@ -389,27 +389,27 @@ func (o *Direction) DimensionDirections(mods ...qm.QueryMod) dimensionDirectionQ
 
 // LoadUserAccount allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (directionL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, singular bool, maybeDirection interface{}, mods queries.Applicator) error {
-	var slice []*Direction
-	var object *Direction
+func (positionL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, singular bool, maybePosition interface{}, mods queries.Applicator) error {
+	var slice []*Position
+	var object *Position
 
 	if singular {
-		object = maybeDirection.(*Direction)
+		object = maybePosition.(*Position)
 	} else {
-		slice = *maybeDirection.(*[]*Direction)
+		slice = *maybePosition.(*[]*Position)
 	}
 
 	args := make([]interface{}, 0, 1)
 	if singular {
 		if object.R == nil {
-			object.R = &directionR{}
+			object.R = &positionR{}
 		}
 		args = append(args, object.UserAccountID)
 	} else {
 	Outer:
 		for _, obj := range slice {
 			if obj.R == nil {
-				obj.R = &directionR{}
+				obj.R = &positionR{}
 			}
 
 			for _, a := range args {
@@ -444,7 +444,7 @@ func (directionL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, s
 		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for user_account")
 	}
 
-	if len(directionAfterSelectHooks) != 0 {
+	if len(positionAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -462,7 +462,7 @@ func (directionL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, s
 		if foreign.R == nil {
 			foreign.R = &userAccountR{}
 		}
-		foreign.R.Directions = append(foreign.R.Directions, object)
+		foreign.R.Positions = append(foreign.R.Positions, object)
 		return nil
 	}
 
@@ -473,7 +473,7 @@ func (directionL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, s
 				if foreign.R == nil {
 					foreign.R = &userAccountR{}
 				}
-				foreign.R.Directions = append(foreign.R.Directions, local)
+				foreign.R.Positions = append(foreign.R.Positions, local)
 				break
 			}
 		}
@@ -484,27 +484,27 @@ func (directionL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, s
 
 // LoadEmoji allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singular bool, maybeDirection interface{}, mods queries.Applicator) error {
-	var slice []*Direction
-	var object *Direction
+func (positionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singular bool, maybePosition interface{}, mods queries.Applicator) error {
+	var slice []*Position
+	var object *Position
 
 	if singular {
-		object = maybeDirection.(*Direction)
+		object = maybePosition.(*Position)
 	} else {
-		slice = *maybeDirection.(*[]*Direction)
+		slice = *maybePosition.(*[]*Position)
 	}
 
 	args := make([]interface{}, 0, 1)
 	if singular {
 		if object.R == nil {
-			object.R = &directionR{}
+			object.R = &positionR{}
 		}
 		args = append(args, object.EmojiID)
 	} else {
 	Outer:
 		for _, obj := range slice {
 			if obj.R == nil {
-				obj.R = &directionR{}
+				obj.R = &positionR{}
 			}
 
 			for _, a := range args {
@@ -539,7 +539,7 @@ func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singula
 		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for emoji")
 	}
 
-	if len(directionAfterSelectHooks) != 0 {
+	if len(positionAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -557,7 +557,7 @@ func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singula
 		if foreign.R == nil {
 			foreign.R = &emojiR{}
 		}
-		foreign.R.Directions = append(foreign.R.Directions, object)
+		foreign.R.Positions = append(foreign.R.Positions, object)
 		return nil
 	}
 
@@ -568,7 +568,7 @@ func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singula
 				if foreign.R == nil {
 					foreign.R = &emojiR{}
 				}
-				foreign.R.Directions = append(foreign.R.Directions, local)
+				foreign.R.Positions = append(foreign.R.Positions, local)
 				break
 			}
 		}
@@ -579,27 +579,27 @@ func (directionL) LoadEmoji(ctx context.Context, e boil.ContextExecutor, singula
 
 // LoadDesignPattern allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor, singular bool, maybeDirection interface{}, mods queries.Applicator) error {
-	var slice []*Direction
-	var object *Direction
+func (positionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor, singular bool, maybePosition interface{}, mods queries.Applicator) error {
+	var slice []*Position
+	var object *Position
 
 	if singular {
-		object = maybeDirection.(*Direction)
+		object = maybePosition.(*Position)
 	} else {
-		slice = *maybeDirection.(*[]*Direction)
+		slice = *maybePosition.(*[]*Position)
 	}
 
 	args := make([]interface{}, 0, 1)
 	if singular {
 		if object.R == nil {
-			object.R = &directionR{}
+			object.R = &positionR{}
 		}
 		args = append(args, object.DesignPatternID)
 	} else {
 	Outer:
 		for _, obj := range slice {
 			if obj.R == nil {
-				obj.R = &directionR{}
+				obj.R = &positionR{}
 			}
 
 			for _, a := range args {
@@ -634,7 +634,7 @@ func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor,
 		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for design_patterns")
 	}
 
-	if len(directionAfterSelectHooks) != 0 {
+	if len(positionAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -652,7 +652,7 @@ func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor,
 		if foreign.R == nil {
 			foreign.R = &designPatternR{}
 		}
-		foreign.R.Directions = append(foreign.R.Directions, object)
+		foreign.R.Positions = append(foreign.R.Positions, object)
 		return nil
 	}
 
@@ -663,7 +663,7 @@ func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor,
 				if foreign.R == nil {
 					foreign.R = &designPatternR{}
 				}
-				foreign.R.Directions = append(foreign.R.Directions, local)
+				foreign.R.Positions = append(foreign.R.Positions, local)
 				break
 			}
 		}
@@ -672,64 +672,64 @@ func (directionL) LoadDesignPattern(ctx context.Context, e boil.ContextExecutor,
 	return nil
 }
 
-// LoadDimensionDirections allows an eager lookup of values, cached into the
+// LoadFactorPositions allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (directionL) LoadDimensionDirections(ctx context.Context, e boil.ContextExecutor, singular bool, maybeDirection interface{}, mods queries.Applicator) error {
-	var slice []*Direction
-	var object *Direction
+func (positionL) LoadFactorPositions(ctx context.Context, e boil.ContextExecutor, singular bool, maybePosition interface{}, mods queries.Applicator) error {
+	var slice []*Position
+	var object *Position
 
 	if singular {
-		object = maybeDirection.(*Direction)
+		object = maybePosition.(*Position)
 	} else {
-		slice = *maybeDirection.(*[]*Direction)
+		slice = *maybePosition.(*[]*Position)
 	}
 
 	args := make([]interface{}, 0, 1)
 	if singular {
 		if object.R == nil {
-			object.R = &directionR{}
+			object.R = &positionR{}
 		}
-		args = append(args, object.DirectionID)
+		args = append(args, object.PositionID)
 	} else {
 	Outer:
 		for _, obj := range slice {
 			if obj.R == nil {
-				obj.R = &directionR{}
+				obj.R = &positionR{}
 			}
 
 			for _, a := range args {
-				if a == obj.DirectionID {
+				if a == obj.PositionID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.DirectionID)
+			args = append(args, obj.PositionID)
 		}
 	}
 
-	query := NewQuery(qm.From(`dimension_directions`), qm.WhereIn(`direction_id in ?`, args...))
+	query := NewQuery(qm.From(`factor_positions`), qm.WhereIn(`position_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load dimension_directions")
+		return errors.Wrap(err, "failed to eager load factor_positions")
 	}
 
-	var resultSlice []*DimensionDirection
+	var resultSlice []*FactorPosition
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice dimension_directions")
+		return errors.Wrap(err, "failed to bind eager loaded slice factor_positions")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on dimension_directions")
+		return errors.Wrap(err, "failed to close results in eager load on factor_positions")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for dimension_directions")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for factor_positions")
 	}
 
-	if len(dimensionDirectionAfterSelectHooks) != 0 {
+	if len(factorPositionAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -737,24 +737,24 @@ func (directionL) LoadDimensionDirections(ctx context.Context, e boil.ContextExe
 		}
 	}
 	if singular {
-		object.R.DimensionDirections = resultSlice
+		object.R.FactorPositions = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &dimensionDirectionR{}
+				foreign.R = &factorPositionR{}
 			}
-			foreign.R.Direction = object
+			foreign.R.Position = object
 		}
 		return nil
 	}
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if local.DirectionID == foreign.DirectionID {
-				local.R.DimensionDirections = append(local.R.DimensionDirections, foreign)
+			if local.PositionID == foreign.PositionID {
+				local.R.FactorPositions = append(local.R.FactorPositions, foreign)
 				if foreign.R == nil {
-					foreign.R = &dimensionDirectionR{}
+					foreign.R = &factorPositionR{}
 				}
-				foreign.R.Direction = local
+				foreign.R.Position = local
 				break
 			}
 		}
@@ -763,10 +763,10 @@ func (directionL) LoadDimensionDirections(ctx context.Context, e boil.ContextExe
 	return nil
 }
 
-// SetUserAccount of the direction to the related item.
+// SetUserAccount of the position to the related item.
 // Sets o.R.UserAccount to related.
-// Adds o to related.R.Directions.
-func (o *Direction) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, insert bool, related *UserAccount) error {
+// Adds o to related.R.Positions.
+func (o *Position) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, insert bool, related *UserAccount) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -775,11 +775,11 @@ func (o *Direction) SetUserAccount(ctx context.Context, exec boil.ContextExecuto
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE \"directions\" SET %s WHERE %s",
+		"UPDATE \"positions\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, []string{"user_account_id"}),
-		strmangle.WhereClause("\"", "\"", 2, directionPrimaryKeyColumns),
+		strmangle.WhereClause("\"", "\"", 2, positionPrimaryKeyColumns),
 	)
-	values := []interface{}{related.UserAccountID, o.DirectionID}
+	values := []interface{}{related.UserAccountID, o.PositionID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -792,7 +792,7 @@ func (o *Direction) SetUserAccount(ctx context.Context, exec boil.ContextExecuto
 
 	o.UserAccountID = related.UserAccountID
 	if o.R == nil {
-		o.R = &directionR{
+		o.R = &positionR{
 			UserAccount: related,
 		}
 	} else {
@@ -801,19 +801,19 @@ func (o *Direction) SetUserAccount(ctx context.Context, exec boil.ContextExecuto
 
 	if related.R == nil {
 		related.R = &userAccountR{
-			Directions: DirectionSlice{o},
+			Positions: PositionSlice{o},
 		}
 	} else {
-		related.R.Directions = append(related.R.Directions, o)
+		related.R.Positions = append(related.R.Positions, o)
 	}
 
 	return nil
 }
 
-// SetEmoji of the direction to the related item.
+// SetEmoji of the position to the related item.
 // Sets o.R.Emoji to related.
-// Adds o to related.R.Directions.
-func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Emoji) error {
+// Adds o to related.R.Positions.
+func (o *Position) SetEmoji(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Emoji) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -822,11 +822,11 @@ func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, ins
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE \"directions\" SET %s WHERE %s",
+		"UPDATE \"positions\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, []string{"emoji_id"}),
-		strmangle.WhereClause("\"", "\"", 2, directionPrimaryKeyColumns),
+		strmangle.WhereClause("\"", "\"", 2, positionPrimaryKeyColumns),
 	)
-	values := []interface{}{related.EmojiID, o.DirectionID}
+	values := []interface{}{related.EmojiID, o.PositionID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -839,7 +839,7 @@ func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, ins
 
 	queries.Assign(&o.EmojiID, related.EmojiID)
 	if o.R == nil {
-		o.R = &directionR{
+		o.R = &positionR{
 			Emoji: related,
 		}
 	} else {
@@ -848,10 +848,10 @@ func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, ins
 
 	if related.R == nil {
 		related.R = &emojiR{
-			Directions: DirectionSlice{o},
+			Positions: PositionSlice{o},
 		}
 	} else {
-		related.R.Directions = append(related.R.Directions, o)
+		related.R.Positions = append(related.R.Positions, o)
 	}
 
 	return nil
@@ -860,7 +860,7 @@ func (o *Direction) SetEmoji(ctx context.Context, exec boil.ContextExecutor, ins
 // RemoveEmoji relationship.
 // Sets o.R.Emoji to nil.
 // Removes o from all passed in related items' relationships struct (Optional).
-func (o *Direction) RemoveEmoji(ctx context.Context, exec boil.ContextExecutor, related *Emoji) error {
+func (o *Position) RemoveEmoji(ctx context.Context, exec boil.ContextExecutor, related *Emoji) error {
 	var err error
 
 	queries.SetScanner(&o.EmojiID, nil)
@@ -873,25 +873,25 @@ func (o *Direction) RemoveEmoji(ctx context.Context, exec boil.ContextExecutor, 
 		return nil
 	}
 
-	for i, ri := range related.R.Directions {
+	for i, ri := range related.R.Positions {
 		if queries.Equal(o.EmojiID, ri.EmojiID) {
 			continue
 		}
 
-		ln := len(related.R.Directions)
+		ln := len(related.R.Positions)
 		if ln > 1 && i < ln-1 {
-			related.R.Directions[i] = related.R.Directions[ln-1]
+			related.R.Positions[i] = related.R.Positions[ln-1]
 		}
-		related.R.Directions = related.R.Directions[:ln-1]
+		related.R.Positions = related.R.Positions[:ln-1]
 		break
 	}
 	return nil
 }
 
-// SetDesignPattern of the direction to the related item.
+// SetDesignPattern of the position to the related item.
 // Sets o.R.DesignPattern to related.
-// Adds o to related.R.Directions.
-func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecutor, insert bool, related *DesignPattern) error {
+// Adds o to related.R.Positions.
+func (o *Position) SetDesignPattern(ctx context.Context, exec boil.ContextExecutor, insert bool, related *DesignPattern) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -900,11 +900,11 @@ func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecu
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE \"directions\" SET %s WHERE %s",
+		"UPDATE \"positions\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, []string{"design_pattern_id"}),
-		strmangle.WhereClause("\"", "\"", 2, directionPrimaryKeyColumns),
+		strmangle.WhereClause("\"", "\"", 2, positionPrimaryKeyColumns),
 	)
-	values := []interface{}{related.DesignPatternID, o.DirectionID}
+	values := []interface{}{related.DesignPatternID, o.PositionID}
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -917,7 +917,7 @@ func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecu
 
 	queries.Assign(&o.DesignPatternID, related.DesignPatternID)
 	if o.R == nil {
-		o.R = &directionR{
+		o.R = &positionR{
 			DesignPattern: related,
 		}
 	} else {
@@ -926,10 +926,10 @@ func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecu
 
 	if related.R == nil {
 		related.R = &designPatternR{
-			Directions: DirectionSlice{o},
+			Positions: PositionSlice{o},
 		}
 	} else {
-		related.R.Directions = append(related.R.Directions, o)
+		related.R.Positions = append(related.R.Positions, o)
 	}
 
 	return nil
@@ -938,7 +938,7 @@ func (o *Direction) SetDesignPattern(ctx context.Context, exec boil.ContextExecu
 // RemoveDesignPattern relationship.
 // Sets o.R.DesignPattern to nil.
 // Removes o from all passed in related items' relationships struct (Optional).
-func (o *Direction) RemoveDesignPattern(ctx context.Context, exec boil.ContextExecutor, related *DesignPattern) error {
+func (o *Position) RemoveDesignPattern(ctx context.Context, exec boil.ContextExecutor, related *DesignPattern) error {
 	var err error
 
 	queries.SetScanner(&o.DesignPatternID, nil)
@@ -951,40 +951,40 @@ func (o *Direction) RemoveDesignPattern(ctx context.Context, exec boil.ContextEx
 		return nil
 	}
 
-	for i, ri := range related.R.Directions {
+	for i, ri := range related.R.Positions {
 		if queries.Equal(o.DesignPatternID, ri.DesignPatternID) {
 			continue
 		}
 
-		ln := len(related.R.Directions)
+		ln := len(related.R.Positions)
 		if ln > 1 && i < ln-1 {
-			related.R.Directions[i] = related.R.Directions[ln-1]
+			related.R.Positions[i] = related.R.Positions[ln-1]
 		}
-		related.R.Directions = related.R.Directions[:ln-1]
+		related.R.Positions = related.R.Positions[:ln-1]
 		break
 	}
 	return nil
 }
 
-// AddDimensionDirections adds the given related objects to the existing relationships
-// of the direction, optionally inserting them as new records.
-// Appends related to o.R.DimensionDirections.
-// Sets related.R.Direction appropriately.
-func (o *Direction) AddDimensionDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*DimensionDirection) error {
+// AddFactorPositions adds the given related objects to the existing relationships
+// of the position, optionally inserting them as new records.
+// Appends related to o.R.FactorPositions.
+// Sets related.R.Position appropriately.
+func (o *Position) AddFactorPositions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*FactorPosition) error {
 	var err error
 	for _, rel := range related {
 		if insert {
-			rel.DirectionID = o.DirectionID
+			rel.PositionID = o.PositionID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"dimension_directions\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"direction_id"}),
-				strmangle.WhereClause("\"", "\"", 2, dimensionDirectionPrimaryKeyColumns),
+				"UPDATE \"factor_positions\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"position_id"}),
+				strmangle.WhereClause("\"", "\"", 2, factorPositionPrimaryKeyColumns),
 			)
-			values := []interface{}{o.DirectionID, rel.DimensionDirectionID}
+			values := []interface{}{o.PositionID, rel.FactorPositionID}
 
 			if boil.DebugMode {
 				fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -995,67 +995,67 @@ func (o *Direction) AddDimensionDirections(ctx context.Context, exec boil.Contex
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			rel.DirectionID = o.DirectionID
+			rel.PositionID = o.PositionID
 		}
 	}
 
 	if o.R == nil {
-		o.R = &directionR{
-			DimensionDirections: related,
+		o.R = &positionR{
+			FactorPositions: related,
 		}
 	} else {
-		o.R.DimensionDirections = append(o.R.DimensionDirections, related...)
+		o.R.FactorPositions = append(o.R.FactorPositions, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &dimensionDirectionR{
-				Direction: o,
+			rel.R = &factorPositionR{
+				Position: o,
 			}
 		} else {
-			rel.R.Direction = o
+			rel.R.Position = o
 		}
 	}
 	return nil
 }
 
-// Directions retrieves all the records using an executor.
-func Directions(mods ...qm.QueryMod) directionQuery {
-	mods = append(mods, qm.From("\"directions\""))
-	return directionQuery{NewQuery(mods...)}
+// Positions retrieves all the records using an executor.
+func Positions(mods ...qm.QueryMod) positionQuery {
+	mods = append(mods, qm.From("\"positions\""))
+	return positionQuery{NewQuery(mods...)}
 }
 
-// FindDirection retrieves a single record by ID with an executor.
+// FindPosition retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindDirection(ctx context.Context, exec boil.ContextExecutor, directionID int64, selectCols ...string) (*Direction, error) {
-	directionObj := &Direction{}
+func FindPosition(ctx context.Context, exec boil.ContextExecutor, positionID int64, selectCols ...string) (*Position, error) {
+	positionObj := &Position{}
 
 	sel := "*"
 	if len(selectCols) > 0 {
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from \"directions\" where \"direction_id\"=$1", sel,
+		"select %s from \"positions\" where \"position_id\"=$1", sel,
 	)
 
-	q := queries.Raw(query, directionID)
+	q := queries.Raw(query, positionID)
 
-	err := q.Bind(ctx, exec, directionObj)
+	err := q.Bind(ctx, exec, positionObj)
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
 			return nil, sql.ErrNoRows
 		}
-		return nil, errors.Wrap(err, "models: unable to select from directions")
+		return nil, errors.Wrap(err, "models: unable to select from positions")
 	}
 
-	return directionObj, nil
+	return positionObj, nil
 }
 
 // Insert a single record using an executor.
 // See boil.Columns.InsertColumnSet documentation to understand column list inference for inserts.
-func (o *Direction) Insert(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
+func (o *Position) Insert(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
 	if o == nil {
-		return errors.New("models: no directions provided for insertion")
+		return errors.New("models: no positions provided for insertion")
 	}
 
 	var err error
@@ -1069,33 +1069,33 @@ func (o *Direction) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 		return err
 	}
 
-	nzDefaults := queries.NonZeroDefaultSet(directionColumnsWithDefault, o)
+	nzDefaults := queries.NonZeroDefaultSet(positionColumnsWithDefault, o)
 
 	key := makeCacheKey(columns, nzDefaults)
-	directionInsertCacheMut.RLock()
-	cache, cached := directionInsertCache[key]
-	directionInsertCacheMut.RUnlock()
+	positionInsertCacheMut.RLock()
+	cache, cached := positionInsertCache[key]
+	positionInsertCacheMut.RUnlock()
 
 	if !cached {
 		wl, returnColumns := columns.InsertColumnSet(
-			directionColumns,
-			directionColumnsWithDefault,
-			directionColumnsWithoutDefault,
+			positionColumns,
+			positionColumnsWithDefault,
+			positionColumnsWithoutDefault,
 			nzDefaults,
 		)
 
-		cache.valueMapping, err = queries.BindMapping(directionType, directionMapping, wl)
+		cache.valueMapping, err = queries.BindMapping(positionType, positionMapping, wl)
 		if err != nil {
 			return err
 		}
-		cache.retMapping, err = queries.BindMapping(directionType, directionMapping, returnColumns)
+		cache.retMapping, err = queries.BindMapping(positionType, positionMapping, returnColumns)
 		if err != nil {
 			return err
 		}
 		if len(wl) != 0 {
-			cache.query = fmt.Sprintf("INSERT INTO \"directions\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
+			cache.query = fmt.Sprintf("INSERT INTO \"positions\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
 		} else {
-			cache.query = "INSERT INTO \"directions\" %sDEFAULT VALUES%s"
+			cache.query = "INSERT INTO \"positions\" %sDEFAULT VALUES%s"
 		}
 
 		var queryOutput, queryReturning string
@@ -1122,49 +1122,49 @@ func (o *Direction) Insert(ctx context.Context, exec boil.ContextExecutor, colum
 	}
 
 	if err != nil {
-		return errors.Wrap(err, "models: unable to insert into directions")
+		return errors.Wrap(err, "models: unable to insert into positions")
 	}
 
 	if !cached {
-		directionInsertCacheMut.Lock()
-		directionInsertCache[key] = cache
-		directionInsertCacheMut.Unlock()
+		positionInsertCacheMut.Lock()
+		positionInsertCache[key] = cache
+		positionInsertCacheMut.Unlock()
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// Update uses an executor to update the Direction.
+// Update uses an executor to update the Position.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
-func (o *Direction) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
+func (o *Position) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
 	var err error
 	if err = o.doBeforeUpdateHooks(ctx, exec); err != nil {
 		return 0, err
 	}
 	key := makeCacheKey(columns, nil)
-	directionUpdateCacheMut.RLock()
-	cache, cached := directionUpdateCache[key]
-	directionUpdateCacheMut.RUnlock()
+	positionUpdateCacheMut.RLock()
+	cache, cached := positionUpdateCache[key]
+	positionUpdateCacheMut.RUnlock()
 
 	if !cached {
 		wl := columns.UpdateColumnSet(
-			directionColumns,
-			directionPrimaryKeyColumns,
+			positionColumns,
+			positionPrimaryKeyColumns,
 		)
 
 		if !columns.IsWhitelist() {
 			wl = strmangle.SetComplement(wl, []string{"created_at"})
 		}
 		if len(wl) == 0 {
-			return 0, errors.New("models: unable to update directions, could not build whitelist")
+			return 0, errors.New("models: unable to update positions, could not build whitelist")
 		}
 
-		cache.query = fmt.Sprintf("UPDATE \"directions\" SET %s WHERE %s",
+		cache.query = fmt.Sprintf("UPDATE \"positions\" SET %s WHERE %s",
 			strmangle.SetParamNames("\"", "\"", 1, wl),
-			strmangle.WhereClause("\"", "\"", len(wl)+1, directionPrimaryKeyColumns),
+			strmangle.WhereClause("\"", "\"", len(wl)+1, positionPrimaryKeyColumns),
 		)
-		cache.valueMapping, err = queries.BindMapping(directionType, directionMapping, append(wl, directionPrimaryKeyColumns...))
+		cache.valueMapping, err = queries.BindMapping(positionType, positionMapping, append(wl, positionPrimaryKeyColumns...))
 		if err != nil {
 			return 0, err
 		}
@@ -1180,42 +1180,42 @@ func (o *Direction) Update(ctx context.Context, exec boil.ContextExecutor, colum
 	var result sql.Result
 	result, err = exec.ExecContext(ctx, cache.query, values...)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to update directions row")
+		return 0, errors.Wrap(err, "models: unable to update positions row")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "models: failed to get rows affected by update for directions")
+		return 0, errors.Wrap(err, "models: failed to get rows affected by update for positions")
 	}
 
 	if !cached {
-		directionUpdateCacheMut.Lock()
-		directionUpdateCache[key] = cache
-		directionUpdateCacheMut.Unlock()
+		positionUpdateCacheMut.Lock()
+		positionUpdateCache[key] = cache
+		positionUpdateCacheMut.Unlock()
 	}
 
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
 // UpdateAll updates all rows with the specified column values.
-func (q directionQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
+func (q positionQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
 
 	result, err := q.Query.ExecContext(ctx, exec)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to update all for directions")
+		return 0, errors.Wrap(err, "models: unable to update all for positions")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to retrieve rows affected for directions")
+		return 0, errors.Wrap(err, "models: unable to retrieve rows affected for positions")
 	}
 
 	return rowsAff, nil
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
-func (o DirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
+func (o PositionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
 	if ln == 0 {
 		return 0, nil
@@ -1237,13 +1237,13 @@ func (o DirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 
 	// Append all of the primary key values for each column
 	for _, obj := range o {
-		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), directionPrimaryKeyMapping)
+		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), positionPrimaryKeyMapping)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := fmt.Sprintf("UPDATE \"directions\" SET %s WHERE %s",
+	sql := fmt.Sprintf("UPDATE \"positions\" SET %s WHERE %s",
 		strmangle.SetParamNames("\"", "\"", 1, colNames),
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), len(colNames)+1, directionPrimaryKeyColumns, len(o)))
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), len(colNames)+1, positionPrimaryKeyColumns, len(o)))
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, sql)
@@ -1252,21 +1252,21 @@ func (o DirectionSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor
 
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to update all in direction slice")
+		return 0, errors.Wrap(err, "models: unable to update all in position slice")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all direction")
+		return 0, errors.Wrap(err, "models: unable to retrieve rows affected all in update all position")
 	}
 	return rowsAff, nil
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
 // See boil.Columns documentation for how to properly use updateColumns and insertColumns.
-func (o *Direction) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
+func (o *Position) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
-		return errors.New("models: no directions provided for upsert")
+		return errors.New("models: no positions provided for upsert")
 	}
 	currTime := time.Now().In(boil.GetLocation())
 
@@ -1278,7 +1278,7 @@ func (o *Direction) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 		return err
 	}
 
-	nzDefaults := queries.NonZeroDefaultSet(directionColumnsWithDefault, o)
+	nzDefaults := queries.NonZeroDefaultSet(positionColumnsWithDefault, o)
 
 	// Build cache key in-line uglily - mysql vs psql problems
 	buf := strmangle.GetBuffer()
@@ -1308,41 +1308,41 @@ func (o *Direction) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	key := buf.String()
 	strmangle.PutBuffer(buf)
 
-	directionUpsertCacheMut.RLock()
-	cache, cached := directionUpsertCache[key]
-	directionUpsertCacheMut.RUnlock()
+	positionUpsertCacheMut.RLock()
+	cache, cached := positionUpsertCache[key]
+	positionUpsertCacheMut.RUnlock()
 
 	var err error
 
 	if !cached {
 		insert, ret := insertColumns.InsertColumnSet(
-			directionColumns,
-			directionColumnsWithDefault,
-			directionColumnsWithoutDefault,
+			positionColumns,
+			positionColumnsWithDefault,
+			positionColumnsWithoutDefault,
 			nzDefaults,
 		)
 		update := updateColumns.UpdateColumnSet(
-			directionColumns,
-			directionPrimaryKeyColumns,
+			positionColumns,
+			positionPrimaryKeyColumns,
 		)
 
 		if len(update) == 0 {
-			return errors.New("models: unable to upsert directions, could not build update column list")
+			return errors.New("models: unable to upsert positions, could not build update column list")
 		}
 
 		conflict := conflictColumns
 		if len(conflict) == 0 {
-			conflict = make([]string, len(directionPrimaryKeyColumns))
-			copy(conflict, directionPrimaryKeyColumns)
+			conflict = make([]string, len(positionPrimaryKeyColumns))
+			copy(conflict, positionPrimaryKeyColumns)
 		}
-		cache.query = buildUpsertQueryCockroachDB(dialect, "\"directions\"", updateOnConflict, ret, update, conflict, insert)
+		cache.query = buildUpsertQueryCockroachDB(dialect, "\"positions\"", updateOnConflict, ret, update, conflict, insert)
 
-		cache.valueMapping, err = queries.BindMapping(directionType, directionMapping, insert)
+		cache.valueMapping, err = queries.BindMapping(positionType, positionMapping, insert)
 		if err != nil {
 			return err
 		}
 		if len(ret) != 0 {
-			cache.retMapping, err = queries.BindMapping(directionType, directionMapping, ret)
+			cache.retMapping, err = queries.BindMapping(positionType, positionMapping, ret)
 			if err != nil {
 				return err
 			}
@@ -1370,31 +1370,31 @@ func (o *Direction) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 		_, err = exec.ExecContext(ctx, cache.query, vals...)
 	}
 	if err != nil {
-		return errors.Wrap(err, "models: unable to upsert directions")
+		return errors.Wrap(err, "models: unable to upsert positions")
 	}
 
 	if !cached {
-		directionUpsertCacheMut.Lock()
-		directionUpsertCache[key] = cache
-		directionUpsertCacheMut.Unlock()
+		positionUpsertCacheMut.Lock()
+		positionUpsertCache[key] = cache
+		positionUpsertCacheMut.Unlock()
 	}
 
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// Delete deletes a single Direction record with an executor.
+// Delete deletes a single Position record with an executor.
 // Delete will match against the primary key column to find the record to delete.
-func (o *Direction) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+func (o *Position) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
-		return 0, errors.New("models: no Direction provided for delete")
+		return 0, errors.New("models: no Position provided for delete")
 	}
 
 	if err := o.doBeforeDeleteHooks(ctx, exec); err != nil {
 		return 0, err
 	}
 
-	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), directionPrimaryKeyMapping)
-	sql := "DELETE FROM \"directions\" WHERE \"direction_id\"=$1"
+	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), positionPrimaryKeyMapping)
+	sql := "DELETE FROM \"positions\" WHERE \"position_id\"=$1"
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, sql)
@@ -1403,12 +1403,12 @@ func (o *Direction) Delete(ctx context.Context, exec boil.ContextExecutor) (int6
 
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to delete from directions")
+		return 0, errors.Wrap(err, "models: unable to delete from positions")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "models: failed to get rows affected by delete for directions")
+		return 0, errors.Wrap(err, "models: failed to get rows affected by delete for positions")
 	}
 
 	if err := o.doAfterDeleteHooks(ctx, exec); err != nil {
@@ -1419,37 +1419,37 @@ func (o *Direction) Delete(ctx context.Context, exec boil.ContextExecutor) (int6
 }
 
 // DeleteAll deletes all matching rows.
-func (q directionQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+func (q positionQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
-		return 0, errors.New("models: no directionQuery provided for delete all")
+		return 0, errors.New("models: no positionQuery provided for delete all")
 	}
 
 	queries.SetDelete(q.Query)
 
 	result, err := q.Query.ExecContext(ctx, exec)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to delete all from directions")
+		return 0, errors.Wrap(err, "models: unable to delete all from positions")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "models: failed to get rows affected by deleteall for directions")
+		return 0, errors.Wrap(err, "models: failed to get rows affected by deleteall for positions")
 	}
 
 	return rowsAff, nil
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
-func (o DirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+func (o PositionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
-		return 0, errors.New("models: no Direction slice provided for delete all")
+		return 0, errors.New("models: no Position slice provided for delete all")
 	}
 
 	if len(o) == 0 {
 		return 0, nil
 	}
 
-	if len(directionBeforeDeleteHooks) != 0 {
+	if len(positionBeforeDeleteHooks) != 0 {
 		for _, obj := range o {
 			if err := obj.doBeforeDeleteHooks(ctx, exec); err != nil {
 				return 0, err
@@ -1459,12 +1459,12 @@ func (o DirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 
 	var args []interface{}
 	for _, obj := range o {
-		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), directionPrimaryKeyMapping)
+		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), positionPrimaryKeyMapping)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "DELETE FROM \"directions\" WHERE " +
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, directionPrimaryKeyColumns, len(o))
+	sql := "DELETE FROM \"positions\" WHERE " +
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, positionPrimaryKeyColumns, len(o))
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, sql)
@@ -1473,15 +1473,15 @@ func (o DirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "models: unable to delete all from direction slice")
+		return 0, errors.Wrap(err, "models: unable to delete all from position slice")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "models: failed to get rows affected by deleteall for directions")
+		return 0, errors.Wrap(err, "models: failed to get rows affected by deleteall for positions")
 	}
 
-	if len(directionAfterDeleteHooks) != 0 {
+	if len(positionAfterDeleteHooks) != 0 {
 		for _, obj := range o {
 			if err := obj.doAfterDeleteHooks(ctx, exec); err != nil {
 				return 0, err
@@ -1494,8 +1494,8 @@ func (o DirectionSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor
 
 // Reload refetches the object from the database
 // using the primary keys with an executor.
-func (o *Direction) Reload(ctx context.Context, exec boil.ContextExecutor) error {
-	ret, err := FindDirection(ctx, exec, o.DirectionID)
+func (o *Position) Reload(ctx context.Context, exec boil.ContextExecutor) error {
+	ret, err := FindPosition(ctx, exec, o.PositionID)
 	if err != nil {
 		return err
 	}
@@ -1506,26 +1506,26 @@ func (o *Direction) Reload(ctx context.Context, exec boil.ContextExecutor) error
 
 // ReloadAll refetches every row with matching primary key column values
 // and overwrites the original object slice with the newly updated slice.
-func (o *DirectionSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) error {
+func (o *PositionSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) error {
 	if o == nil || len(*o) == 0 {
 		return nil
 	}
 
-	slice := DirectionSlice{}
+	slice := PositionSlice{}
 	var args []interface{}
 	for _, obj := range *o {
-		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), directionPrimaryKeyMapping)
+		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), positionPrimaryKeyMapping)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "SELECT \"directions\".* FROM \"directions\" WHERE " +
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, directionPrimaryKeyColumns, len(*o))
+	sql := "SELECT \"positions\".* FROM \"positions\" WHERE " +
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, positionPrimaryKeyColumns, len(*o))
 
 	q := queries.Raw(sql, args...)
 
 	err := q.Bind(ctx, exec, &slice)
 	if err != nil {
-		return errors.Wrap(err, "models: unable to reload all in DirectionSlice")
+		return errors.Wrap(err, "models: unable to reload all in PositionSlice")
 	}
 
 	*o = slice
@@ -1533,21 +1533,21 @@ func (o *DirectionSlice) ReloadAll(ctx context.Context, exec boil.ContextExecuto
 	return nil
 }
 
-// DirectionExists checks if the Direction row exists.
-func DirectionExists(ctx context.Context, exec boil.ContextExecutor, directionID int64) (bool, error) {
+// PositionExists checks if the Position row exists.
+func PositionExists(ctx context.Context, exec boil.ContextExecutor, positionID int64) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from \"directions\" where \"direction_id\"=$1 limit 1)"
+	sql := "select exists(select 1 from \"positions\" where \"position_id\"=$1 limit 1)"
 
 	if boil.DebugMode {
 		fmt.Fprintln(boil.DebugWriter, sql)
-		fmt.Fprintln(boil.DebugWriter, directionID)
+		fmt.Fprintln(boil.DebugWriter, positionID)
 	}
 
-	row := exec.QueryRowContext(ctx, sql, directionID)
+	row := exec.QueryRowContext(ctx, sql, positionID)
 
 	err := row.Scan(&exists)
 	if err != nil {
-		return false, errors.Wrap(err, "models: unable to check if directions exists")
+		return false, errors.Wrap(err, "models: unable to check if positions exists")
 	}
 
 	return exists, nil

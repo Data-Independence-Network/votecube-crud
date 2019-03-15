@@ -12,11 +12,9 @@ func WNum(naturalNumber int64, data *[]byte) {
 		naturalNumber = (naturalNumber - byteVal) / 256
 	}
 
-	localData := append(*data, byte(len(numBytes)))
+	*data = append(*data, byte(len(numBytes)))
 
 	for _, aByte := range numBytes {
-		localData = append(*data, aByte)
+		*data = append(*data, aByte)
 	}
-
-	data = &localData
 }

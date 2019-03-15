@@ -841,14 +841,14 @@ func testPollToManyPollsCounties(t *testing.T) {
 	}
 }
 
-func testPollToManyPollsDimensionsDirections(t *testing.T) {
+func testPollToManyPollsFactorsPositions(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a Poll
-	var b, c PollsDimensionsDirection
+	var b, c PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, pollDBTypes, true, pollColumnsWithDefault...); err != nil {
@@ -859,10 +859,10 @@ func testPollToManyPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, pollsDimensionsDirectionDBTypes, false, pollsDimensionsDirectionColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, pollsFactorsPositionDBTypes, false, pollsFactorsPositionColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -876,13 +876,13 @@ func testPollToManyPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pollsDimensionsDirection, err := a.PollsDimensionsDirections().All(ctx, tx)
+	pollsFactorsPosition, err := a.PollsFactorsPositions().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range pollsDimensionsDirection {
+	for _, v := range pollsFactorsPosition {
 		if v.PollID == b.PollID {
 			bFound = true
 		}
@@ -899,23 +899,23 @@ func testPollToManyPollsDimensionsDirections(t *testing.T) {
 	}
 
 	slice := PollSlice{&a}
-	if err = a.L.LoadPollsDimensionsDirections(ctx, tx, false, (*[]*Poll)(&slice), nil); err != nil {
+	if err = a.L.LoadPollsFactorsPositions(ctx, tx, false, (*[]*Poll)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.PollsDimensionsDirections); got != 2 {
+	if got := len(a.R.PollsFactorsPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.PollsDimensionsDirections = nil
-	if err = a.L.LoadPollsDimensionsDirections(ctx, tx, true, &a, nil); err != nil {
+	a.R.PollsFactorsPositions = nil
+	if err = a.L.LoadPollsFactorsPositions(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.PollsDimensionsDirections); got != 2 {
+	if got := len(a.R.PollsFactorsPositions); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", pollsDimensionsDirection)
+		t.Logf("%#v", pollsFactorsPosition)
 	}
 }
 
@@ -1690,7 +1690,7 @@ func testPollToManyAddOpPollsCounties(t *testing.T) {
 		}
 	}
 }
-func testPollToManyAddOpPollsDimensionsDirections(t *testing.T) {
+func testPollToManyAddOpPollsFactorsPositions(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -1698,15 +1698,15 @@ func testPollToManyAddOpPollsDimensionsDirections(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a Poll
-	var b, c, d, e PollsDimensionsDirection
+	var b, c, d, e PollsFactorsPosition
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, pollDBTypes, false, strmangle.SetComplement(pollPrimaryKeyColumns, pollColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*PollsDimensionsDirection{&b, &c, &d, &e}
+	foreigners := []*PollsFactorsPosition{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, pollsDimensionsDirectionDBTypes, false, strmangle.SetComplement(pollsDimensionsDirectionPrimaryKeyColumns, pollsDimensionsDirectionColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, pollsFactorsPositionDBTypes, false, strmangle.SetComplement(pollsFactorsPositionPrimaryKeyColumns, pollsFactorsPositionColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -1721,13 +1721,13 @@ func testPollToManyAddOpPollsDimensionsDirections(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*PollsDimensionsDirection{
+	foreignersSplitByInsertion := [][]*PollsFactorsPosition{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddPollsDimensionsDirections(ctx, tx, i != 0, x...)
+		err = a.AddPollsFactorsPositions(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -1749,14 +1749,14 @@ func testPollToManyAddOpPollsDimensionsDirections(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.PollsDimensionsDirections[i*2] != first {
+		if a.R.PollsFactorsPositions[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.PollsDimensionsDirections[i*2+1] != second {
+		if a.R.PollsFactorsPositions[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.PollsDimensionsDirections().Count(ctx, tx)
+		count, err := a.PollsFactorsPositions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}

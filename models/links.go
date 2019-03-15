@@ -48,23 +48,23 @@ var LinkColumns = struct {
 
 // LinkRels is where relationship names are stored.
 var LinkRels = struct {
-	UserAccount     string
-	DimensionsLinks string
-	MessagesLinks   string
-	PollsLinks      string
+	UserAccount   string
+	FactorsLinks  string
+	MessagesLinks string
+	PollsLinks    string
 }{
-	UserAccount:     "UserAccount",
-	DimensionsLinks: "DimensionsLinks",
-	MessagesLinks:   "MessagesLinks",
-	PollsLinks:      "PollsLinks",
+	UserAccount:   "UserAccount",
+	FactorsLinks:  "FactorsLinks",
+	MessagesLinks: "MessagesLinks",
+	PollsLinks:    "PollsLinks",
 }
 
 // linkR is where relationships are stored.
 type linkR struct {
-	UserAccount     *UserAccount
-	DimensionsLinks DimensionsLinkSlice
-	MessagesLinks   MessagesLinkSlice
-	PollsLinks      PollsLinkSlice
+	UserAccount   *UserAccount
+	FactorsLinks  FactorsLinkSlice
+	MessagesLinks MessagesLinkSlice
+	PollsLinks    PollsLinkSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -331,22 +331,22 @@ func (o *Link) UserAccount(mods ...qm.QueryMod) userAccountQuery {
 	return query
 }
 
-// DimensionsLinks retrieves all the dimensions_link's DimensionsLinks with an executor.
-func (o *Link) DimensionsLinks(mods ...qm.QueryMod) dimensionsLinkQuery {
+// FactorsLinks retrieves all the factors_link's FactorsLinks with an executor.
+func (o *Link) FactorsLinks(mods ...qm.QueryMod) factorsLinkQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"dimensions_links\".\"links_id\"=?", o.LinkID),
+		qm.Where("\"factors_links\".\"links_id\"=?", o.LinkID),
 	)
 
-	query := DimensionsLinks(queryMods...)
-	queries.SetFrom(query.Query, "\"dimensions_links\"")
+	query := FactorsLinks(queryMods...)
+	queries.SetFrom(query.Query, "\"factors_links\"")
 
 	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"dimensions_links\".*"})
+		queries.SetSelect(query.Query, []string{"\"factors_links\".*"})
 	}
 
 	return query
@@ -489,9 +489,9 @@ func (linkL) LoadUserAccount(ctx context.Context, e boil.ContextExecutor, singul
 	return nil
 }
 
-// LoadDimensionsLinks allows an eager lookup of values, cached into the
+// LoadFactorsLinks allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (linkL) LoadDimensionsLinks(ctx context.Context, e boil.ContextExecutor, singular bool, maybeLink interface{}, mods queries.Applicator) error {
+func (linkL) LoadFactorsLinks(ctx context.Context, e boil.ContextExecutor, singular bool, maybeLink interface{}, mods queries.Applicator) error {
 	var slice []*Link
 	var object *Link
 
@@ -524,29 +524,29 @@ func (linkL) LoadDimensionsLinks(ctx context.Context, e boil.ContextExecutor, si
 		}
 	}
 
-	query := NewQuery(qm.From(`dimensions_links`), qm.WhereIn(`links_id in ?`, args...))
+	query := NewQuery(qm.From(`factors_links`), qm.WhereIn(`links_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load dimensions_links")
+		return errors.Wrap(err, "failed to eager load factors_links")
 	}
 
-	var resultSlice []*DimensionsLink
+	var resultSlice []*FactorsLink
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice dimensions_links")
+		return errors.Wrap(err, "failed to bind eager loaded slice factors_links")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on dimensions_links")
+		return errors.Wrap(err, "failed to close results in eager load on factors_links")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for dimensions_links")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for factors_links")
 	}
 
-	if len(dimensionsLinkAfterSelectHooks) != 0 {
+	if len(factorsLinkAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -554,10 +554,10 @@ func (linkL) LoadDimensionsLinks(ctx context.Context, e boil.ContextExecutor, si
 		}
 	}
 	if singular {
-		object.R.DimensionsLinks = resultSlice
+		object.R.FactorsLinks = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &dimensionsLinkR{}
+				foreign.R = &factorsLinkR{}
 			}
 			foreign.R.Link = object
 		}
@@ -567,9 +567,9 @@ func (linkL) LoadDimensionsLinks(ctx context.Context, e boil.ContextExecutor, si
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.LinkID == foreign.LinksID {
-				local.R.DimensionsLinks = append(local.R.DimensionsLinks, foreign)
+				local.R.FactorsLinks = append(local.R.FactorsLinks, foreign)
 				if foreign.R == nil {
-					foreign.R = &dimensionsLinkR{}
+					foreign.R = &factorsLinkR{}
 				}
 				foreign.R.Link = local
 				break
@@ -809,11 +809,11 @@ func (o *Link) SetUserAccount(ctx context.Context, exec boil.ContextExecutor, in
 	return nil
 }
 
-// AddDimensionsLinks adds the given related objects to the existing relationships
+// AddFactorsLinks adds the given related objects to the existing relationships
 // of the link, optionally inserting them as new records.
-// Appends related to o.R.DimensionsLinks.
+// Appends related to o.R.FactorsLinks.
 // Sets related.R.Link appropriately.
-func (o *Link) AddDimensionsLinks(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*DimensionsLink) error {
+func (o *Link) AddFactorsLinks(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*FactorsLink) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -823,11 +823,11 @@ func (o *Link) AddDimensionsLinks(ctx context.Context, exec boil.ContextExecutor
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"dimensions_links\" SET %s WHERE %s",
+				"UPDATE \"factors_links\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"links_id"}),
-				strmangle.WhereClause("\"", "\"", 2, dimensionsLinkPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, factorsLinkPrimaryKeyColumns),
 			)
-			values := []interface{}{o.LinkID, rel.DimensionsLinkID}
+			values := []interface{}{o.LinkID, rel.FactorsLinkID}
 
 			if boil.DebugMode {
 				fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -844,15 +844,15 @@ func (o *Link) AddDimensionsLinks(ctx context.Context, exec boil.ContextExecutor
 
 	if o.R == nil {
 		o.R = &linkR{
-			DimensionsLinks: related,
+			FactorsLinks: related,
 		}
 	} else {
-		o.R.DimensionsLinks = append(o.R.DimensionsLinks, related...)
+		o.R.FactorsLinks = append(o.R.FactorsLinks, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &dimensionsLinkR{
+			rel.R = &factorsLinkR{
 				Link: o,
 			}
 		} else {

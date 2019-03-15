@@ -21,14 +21,14 @@
 #  version = "2.4.0"
 
 
-[[constraint]]
-  name = "github.com/valyala/fasthttp"
-  version = "1.2.0"
+#[[constraint]]
+#  name = "github.com/valyala/fasthttp"
+#  version = "1.2.0"
 
-[[constraint]]
-  name = "github.com/volatiletech/sqlboiler"
-  version = "3.2.0"
+#[[constraint]]
+#  name = "github.com/volatiletech/sqlboiler"
+#  version = "3.2.0"
   
-[[constraint]]
-  name = "github.com/volatiletech/null"
-  version = "8.0.0"
+#[[constraint]]
+#  name = "github.com/volatiletech/null"
+#  version = "8.0.0"

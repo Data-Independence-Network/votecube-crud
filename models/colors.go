@@ -39,14 +39,14 @@ var ColorColumns = struct {
 
 // ColorRels is where relationship names are stored.
 var ColorRels = struct {
-	PollsDimensionsDirections string
+	PollsFactorsPositions string
 }{
-	PollsDimensionsDirections: "PollsDimensionsDirections",
+	PollsFactorsPositions: "PollsFactorsPositions",
 }
 
 // colorR is where relationships are stored.
 type colorR struct {
-	PollsDimensionsDirections PollsDimensionsDirectionSlice
+	PollsFactorsPositions PollsFactorsPositionSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -299,30 +299,30 @@ func (q colorQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 	return count > 0, nil
 }
 
-// PollsDimensionsDirections retrieves all the polls_dimensions_direction's PollsDimensionsDirections with an executor.
-func (o *Color) PollsDimensionsDirections(mods ...qm.QueryMod) pollsDimensionsDirectionQuery {
+// PollsFactorsPositions retrieves all the polls_factors_position's PollsFactorsPositions with an executor.
+func (o *Color) PollsFactorsPositions(mods ...qm.QueryMod) pollsFactorsPositionQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"polls_dimensions_directions\".\"color_id\"=?", o.ColorID),
+		qm.Where("\"polls_factors_positions\".\"color_id\"=?", o.ColorID),
 	)
 
-	query := PollsDimensionsDirections(queryMods...)
-	queries.SetFrom(query.Query, "\"polls_dimensions_directions\"")
+	query := PollsFactorsPositions(queryMods...)
+	queries.SetFrom(query.Query, "\"polls_factors_positions\"")
 
 	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"polls_dimensions_directions\".*"})
+		queries.SetSelect(query.Query, []string{"\"polls_factors_positions\".*"})
 	}
 
 	return query
 }
 
-// LoadPollsDimensionsDirections allows an eager lookup of values, cached into the
+// LoadPollsFactorsPositions allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (colorL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextExecutor, singular bool, maybeColor interface{}, mods queries.Applicator) error {
+func (colorL) LoadPollsFactorsPositions(ctx context.Context, e boil.ContextExecutor, singular bool, maybeColor interface{}, mods queries.Applicator) error {
 	var slice []*Color
 	var object *Color
 
@@ -355,29 +355,29 @@ func (colorL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 		}
 	}
 
-	query := NewQuery(qm.From(`polls_dimensions_directions`), qm.WhereIn(`color_id in ?`, args...))
+	query := NewQuery(qm.From(`polls_factors_positions`), qm.WhereIn(`color_id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
 	}
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load polls_dimensions_directions")
+		return errors.Wrap(err, "failed to eager load polls_factors_positions")
 	}
 
-	var resultSlice []*PollsDimensionsDirection
+	var resultSlice []*PollsFactorsPosition
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice polls_dimensions_directions")
+		return errors.Wrap(err, "failed to bind eager loaded slice polls_factors_positions")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on polls_dimensions_directions")
+		return errors.Wrap(err, "failed to close results in eager load on polls_factors_positions")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_dimensions_directions")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for polls_factors_positions")
 	}
 
-	if len(pollsDimensionsDirectionAfterSelectHooks) != 0 {
+	if len(pollsFactorsPositionAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -385,10 +385,10 @@ func (colorL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 		}
 	}
 	if singular {
-		object.R.PollsDimensionsDirections = resultSlice
+		object.R.PollsFactorsPositions = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &pollsDimensionsDirectionR{}
+				foreign.R = &pollsFactorsPositionR{}
 			}
 			foreign.R.Color = object
 		}
@@ -398,9 +398,9 @@ func (colorL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.ColorID == foreign.ColorID {
-				local.R.PollsDimensionsDirections = append(local.R.PollsDimensionsDirections, foreign)
+				local.R.PollsFactorsPositions = append(local.R.PollsFactorsPositions, foreign)
 				if foreign.R == nil {
-					foreign.R = &pollsDimensionsDirectionR{}
+					foreign.R = &pollsFactorsPositionR{}
 				}
 				foreign.R.Color = local
 				break
@@ -411,11 +411,11 @@ func (colorL) LoadPollsDimensionsDirections(ctx context.Context, e boil.ContextE
 	return nil
 }
 
-// AddPollsDimensionsDirections adds the given related objects to the existing relationships
+// AddPollsFactorsPositions adds the given related objects to the existing relationships
 // of the color, optionally inserting them as new records.
-// Appends related to o.R.PollsDimensionsDirections.
+// Appends related to o.R.PollsFactorsPositions.
 // Sets related.R.Color appropriately.
-func (o *Color) AddPollsDimensionsDirections(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PollsDimensionsDirection) error {
+func (o *Color) AddPollsFactorsPositions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PollsFactorsPosition) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -425,11 +425,11 @@ func (o *Color) AddPollsDimensionsDirections(ctx context.Context, exec boil.Cont
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE \"polls_dimensions_directions\" SET %s WHERE %s",
+				"UPDATE \"polls_factors_positions\" SET %s WHERE %s",
 				strmangle.SetParamNames("\"", "\"", 1, []string{"color_id"}),
-				strmangle.WhereClause("\"", "\"", 2, pollsDimensionsDirectionPrimaryKeyColumns),
+				strmangle.WhereClause("\"", "\"", 2, pollsFactorsPositionPrimaryKeyColumns),
 			)
-			values := []interface{}{o.ColorID, rel.PollDimensionDirectionID}
+			values := []interface{}{o.ColorID, rel.PollFactorPositionID}
 
 			if boil.DebugMode {
 				fmt.Fprintln(boil.DebugWriter, updateQuery)
@@ -446,15 +446,15 @@ func (o *Color) AddPollsDimensionsDirections(ctx context.Context, exec boil.Cont
 
 	if o.R == nil {
 		o.R = &colorR{
-			PollsDimensionsDirections: related,
+			PollsFactorsPositions: related,
 		}
 	} else {
-		o.R.PollsDimensionsDirections = append(o.R.PollsDimensionsDirections, related...)
+		o.R.PollsFactorsPositions = append(o.R.PollsFactorsPositions, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &pollsDimensionsDirectionR{
+			rel.R = &pollsFactorsPositionR{
 				Color: o,
 			}
 		} else {

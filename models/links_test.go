@@ -494,14 +494,14 @@ func testLinksInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testLinkToManyDimensionsLinks(t *testing.T) {
+func testLinkToManyFactorsLinks(t *testing.T) {
 	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a Link
-	var b, c DimensionsLink
+	var b, c FactorsLink
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, linkDBTypes, true, linkColumnsWithDefault...); err != nil {
@@ -512,10 +512,10 @@ func testLinkToManyDimensionsLinks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = randomize.Struct(seed, &b, dimensionsLinkDBTypes, false, dimensionsLinkColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &b, factorsLinkDBTypes, false, factorsLinkColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &c, dimensionsLinkDBTypes, false, dimensionsLinkColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &c, factorsLinkDBTypes, false, factorsLinkColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
@@ -529,13 +529,13 @@ func testLinkToManyDimensionsLinks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dimensionsLink, err := a.DimensionsLinks().All(ctx, tx)
+	factorsLink, err := a.FactorsLinks().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range dimensionsLink {
+	for _, v := range factorsLink {
 		if v.LinksID == b.LinksID {
 			bFound = true
 		}
@@ -552,23 +552,23 @@ func testLinkToManyDimensionsLinks(t *testing.T) {
 	}
 
 	slice := LinkSlice{&a}
-	if err = a.L.LoadDimensionsLinks(ctx, tx, false, (*[]*Link)(&slice), nil); err != nil {
+	if err = a.L.LoadFactorsLinks(ctx, tx, false, (*[]*Link)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionsLinks); got != 2 {
+	if got := len(a.R.FactorsLinks); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
-	a.R.DimensionsLinks = nil
-	if err = a.L.LoadDimensionsLinks(ctx, tx, true, &a, nil); err != nil {
+	a.R.FactorsLinks = nil
+	if err = a.L.LoadFactorsLinks(ctx, tx, true, &a, nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := len(a.R.DimensionsLinks); got != 2 {
+	if got := len(a.R.FactorsLinks); got != 2 {
 		t.Error("number of eager loaded records wrong, got:", got)
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", dimensionsLink)
+		t.Logf("%#v", factorsLink)
 	}
 }
 
@@ -728,7 +728,7 @@ func testLinkToManyPollsLinks(t *testing.T) {
 	}
 }
 
-func testLinkToManyAddOpDimensionsLinks(t *testing.T) {
+func testLinkToManyAddOpFactorsLinks(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -736,15 +736,15 @@ func testLinkToManyAddOpDimensionsLinks(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a Link
-	var b, c, d, e DimensionsLink
+	var b, c, d, e FactorsLink
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, linkDBTypes, false, strmangle.SetComplement(linkPrimaryKeyColumns, linkColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	foreigners := []*DimensionsLink{&b, &c, &d, &e}
+	foreigners := []*FactorsLink{&b, &c, &d, &e}
 	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, dimensionsLinkDBTypes, false, strmangle.SetComplement(dimensionsLinkPrimaryKeyColumns, dimensionsLinkColumnsWithoutDefault)...); err != nil {
+		if err = randomize.Struct(seed, x, factorsLinkDBTypes, false, strmangle.SetComplement(factorsLinkPrimaryKeyColumns, factorsLinkColumnsWithoutDefault)...); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -759,13 +759,13 @@ func testLinkToManyAddOpDimensionsLinks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*DimensionsLink{
+	foreignersSplitByInsertion := [][]*FactorsLink{
 		{&b, &c},
 		{&d, &e},
 	}
 
 	for i, x := range foreignersSplitByInsertion {
-		err = a.AddDimensionsLinks(ctx, tx, i != 0, x...)
+		err = a.AddFactorsLinks(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -787,14 +787,14 @@ func testLinkToManyAddOpDimensionsLinks(t *testing.T) {
 			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.R.DimensionsLinks[i*2] != first {
+		if a.R.FactorsLinks[i*2] != first {
 			t.Error("relationship struct slice not set to correct value")
 		}
-		if a.R.DimensionsLinks[i*2+1] != second {
+		if a.R.FactorsLinks[i*2+1] != second {
 			t.Error("relationship struct slice not set to correct value")
 		}
 
-		count, err := a.DimensionsLinks().Count(ctx, tx)
+		count, err := a.FactorsLinks().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
